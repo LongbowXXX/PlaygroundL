@@ -1,20 +1,20 @@
 PlaygroundL
 ===
-This is a playground for testing AI by calling OpenAI's Chat API.  
-Please refer to the [official documentation](https://platform.openai.com/docs/guides/chat) for more information about the Chat API.
+OpenAI の Chat API を呼び出して、AIを試すための Playground です。  
+Chat API については[公式ドキュメント](https://platform.openai.com/docs/guides/chat)を確認してください。  
 
-# Environment
-This application runs on Windows environment.  
-JAVA 17 is required for the application to run.
+# 環境
+Windows 環境で動作します。  
+アプリの動作には JAVA 17 が必要になります。  
 
-The application has been tested in an environment where Amazon Corretto 17 JDK is set in JAVA_HOME.  
-https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
+JAVA_HOME に Amazon corretto 17 の JDK が設定された環境で動作を確認しています。  
+https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html  
 
-# How to use the app
-Please refer to [HowToUse-en.md](documents/HowToUse-en.md).
+# アプリの使い方
+[HowToUse-ja.md](documents/HowToUse-ja.md)を参照してください。  
 
 # OSS
-The following OSS is used in this application.
+このアプリケーションで使用されているOSS。  
 
 - org.jetbrains.compose.desktop:desktop-jvm-windows-x64  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -30,5 +30,3 @@ The following OSS is used in this application.
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - com.squareup.okhttp3:okhttp  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
-
-**This document was translated using OpenAI.**
