@@ -1,0 +1,3 @@
+- Please translate into Japanese.
+- Please include the following sentence at the end of the output:
+  - **このドキュメントは OpenAI を使って翻訳されました。**
