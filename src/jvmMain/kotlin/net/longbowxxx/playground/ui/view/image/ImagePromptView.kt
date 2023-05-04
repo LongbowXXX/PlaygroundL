@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui.widget
+package net.longbowxxx.playground.ui.view.image
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -38,7 +38,7 @@ private const val CREATE_IMAGE_LABEL_TEXT = "CREATE IMAGE"
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
 @Composable
-fun RowScope.ImagePromptWidget() {
+fun RowScope.ImagePromptView() {
     var prompt by remember { imageViewModel.prompt }
     val verticalScrollState = rememberScrollState(0)
     val requesting by remember { imageViewModel.requesting }

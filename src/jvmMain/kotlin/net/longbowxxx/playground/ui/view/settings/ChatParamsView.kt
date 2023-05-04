@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui.widget
+package net.longbowxxx.playground.ui.view.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -22,6 +22,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import net.longbowxxx.playground.ui.widget.ModelSelectorWidget
 import net.longbowxxx.playground.viewmodel.chatProperties
 import kotlin.math.roundToInt
 
@@ -34,7 +35,7 @@ private const val RESET_TEXT = "RESET CHAT PARAMS"
 
 @Suppress("FunctionName")
 @Composable
-fun ChatParamsWidget() {
+fun ChatParamsView() {
     var temperature by remember { chatProperties.chatTemperature }
     var topP by remember { chatProperties.chatTopP }
     var maxTokens by remember { chatProperties.chatMaxTokens }

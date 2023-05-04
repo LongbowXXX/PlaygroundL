@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui
+package net.longbowxxx.playground.ui.view.settings
 
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Arrangement
@@ -19,9 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import net.longbowxxx.playground.ui.widget.AppParamsWidget
-import net.longbowxxx.playground.ui.widget.ChatParamsWidget
-import net.longbowxxx.playground.ui.widget.ImageParamsWidget
 
 private const val APP_CATEGORY_TEXT = "APP SETTINGS"
 private const val CHAT_CATEGORY_TEXT = "CHAT SETTINGS"
@@ -38,10 +35,10 @@ fun SettingsScreen() {
             .verticalScroll(rememberScrollState()),
     ) {
         Text(APP_CATEGORY_TEXT, style = MaterialTheme.typography.headlineLarge)
-        AppParamsWidget()
+        AppParamsView()
         Text(CHAT_CATEGORY_TEXT, style = MaterialTheme.typography.headlineLarge)
-        ChatParamsWidget()
+        ChatParamsView()
         Text(IMAGE_CATEGORY_TEXT, style = MaterialTheme.typography.headlineLarge)
-        ImageParamsWidget()
+        ImageParamsView()
     }
 }

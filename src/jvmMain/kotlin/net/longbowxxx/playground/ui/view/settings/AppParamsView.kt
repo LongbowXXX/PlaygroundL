@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui.widget
+package net.longbowxxx.playground.ui.view.settings
 
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import net.longbowxxx.playground.ui.widget.SecretTextInputWidget
 import net.longbowxxx.playground.viewmodel.appProperties
 import kotlin.math.roundToInt
 
@@ -22,7 +23,7 @@ private const val MESSAGE_FONT_SIZE_TEXT = "MESSAGE FONT SIZE"
 
 @Suppress("FunctionName")
 @Composable
-fun AppParamsWidget() {
+fun AppParamsView() {
     val apikeyEnabled by remember { appProperties.apiKeyEnabled }
     var messageFontSizeSp by remember { appProperties.messageFontSizeSp }
 

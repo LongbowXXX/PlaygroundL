@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui.widget
+package net.longbowxxx.playground.ui.view.chat
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -36,7 +36,7 @@ private const val SUBMIT_TEXT = "SUBMIT"
 
 @Suppress("FunctionName")
 @Composable
-fun ColumnScope.MessagesWidget() {
+fun ColumnScope.MessagesView() {
     val listState = rememberLazyListState()
     val messages by remember { chatViewModel.messages }
     val requesting by remember { chatViewModel.requesting }
@@ -48,7 +48,7 @@ fun ColumnScope.MessagesWidget() {
         state = listState,
     ) {
         itemsIndexed(messages) { index, message ->
-            MessageItemWidget(index, message)
+            MessageItemView(index, message)
         }
     }
     LaunchedEffect(messages.size) {

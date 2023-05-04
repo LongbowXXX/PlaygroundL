@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui.widget
+package net.longbowxxx.playground.ui.view.image
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -32,7 +32,7 @@ import net.longbowxxx.playground.viewmodel.imageViewModel
 
 @Suppress("FunctionName")
 @Composable
-fun RowScope.ImageListWidget() {
+fun RowScope.ImageListView() {
     val responseImages by remember { imageViewModel.responseImages }
     val listState = rememberLazyListState()
 

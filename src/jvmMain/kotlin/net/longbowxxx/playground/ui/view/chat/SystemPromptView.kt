@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui.widget
+package net.longbowxxx.playground.ui.view.chat
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
@@ -26,6 +26,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import net.longbowxxx.playground.ui.widget.FileChooseWidget
+import net.longbowxxx.playground.ui.widget.QuickLoadWidget
 import net.longbowxxx.playground.viewmodel.appProperties
 import net.longbowxxx.playground.viewmodel.chatProperties
 import net.longbowxxx.playground.viewmodel.chatViewModel
@@ -37,7 +39,7 @@ private const val LOAD_SYSTEM_TEXT = "LOAD SYSTEM PROMPT"
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
 @Composable
-fun ColumnScope.SystemPromptWidget() {
+fun ColumnScope.SystemPromptView() {
     var systemPrompt by remember { chatProperties.chatSystemPrompt }
     val requesting by remember { chatViewModel.requesting }
     val verticalScrollState = rememberScrollState(0)

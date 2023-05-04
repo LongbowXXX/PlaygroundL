@@ -26,6 +26,9 @@ import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import net.longbowxxx.playground.ui.view.chat.ChatScreen
+import net.longbowxxx.playground.ui.view.image.ImageScreen
+import net.longbowxxx.playground.ui.view.settings.SettingsScreen
 import net.longbowxxx.playground.ui.widget.BottomBar
 import net.longbowxxx.playground.ui.widget.CHAT_TAB
 import net.longbowxxx.playground.ui.widget.IMAGE_TAB

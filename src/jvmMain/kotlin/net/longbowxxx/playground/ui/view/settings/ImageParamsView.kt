@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui.widget
+package net.longbowxxx.playground.ui.view.settings
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,7 +27,7 @@ private const val TRANSLATE_TO_ENGLISH_PROMPT_TEXT = "PROMPT TO TRANSLATE TO ENG
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
 @Composable
-fun ImageParamsWidget() {
+fun ImageParamsView() {
     var numberOfCreate by remember { imageProperties.numberOfCreate }
     var numberOfEdit by remember { imageProperties.numberOfEdit }
     var numberOfVariation by remember { imageProperties.numberOfVariation }

@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui.widget
+package net.longbowxxx.playground.ui.view.chat
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -44,7 +44,7 @@ private const val REMOVE_TEXT = "REMOVE"
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
 @Composable
-fun MessageItemWidget(index: Int, message: OpenAiChatMessage) {
+fun MessageItemView(index: Int, message: OpenAiChatMessage) {
     val requesting by remember { chatViewModel.requesting }
     val messageFontSizeSp by remember { appProperties.messageFontSizeSp }
 

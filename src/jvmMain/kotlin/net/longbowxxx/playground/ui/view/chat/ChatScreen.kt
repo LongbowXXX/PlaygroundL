@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui
+package net.longbowxxx.playground.ui.view.chat
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,8 +17,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import net.longbowxxx.playground.ui.widget.ErrorWidget
-import net.longbowxxx.playground.ui.widget.MessagesWidget
-import net.longbowxxx.playground.ui.widget.SystemPromptWidget
 import net.longbowxxx.playground.viewmodel.chatViewModel
 
 @Suppress("FunctionName")
@@ -28,10 +26,10 @@ fun ChatScreen() {
 
     Row(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.weight(0.5f).fillMaxHeight()) {
-            SystemPromptWidget()
+            SystemPromptView()
         }
         Column(modifier = Modifier.weight(1f).fillMaxHeight()) {
-            MessagesWidget()
+            MessagesView()
         }
     }
     ErrorWidget(errorMessage) { errorMessage = "" }
