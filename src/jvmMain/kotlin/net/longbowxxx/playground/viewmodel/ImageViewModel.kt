@@ -42,6 +42,7 @@ class ImageViewModel(
     val prompt = mutableStateOf("")
     val promptJa = mutableStateOf("")
     val responseImages = mutableStateOf<List<Bitmap>>(emptyList())
+    val selectedImageIndex = mutableStateOf(-1)
     val requesting = mutableStateOf(false)
     val requestingTranslation = mutableStateOf(false)
     val errorMessage = mutableStateOf("")
@@ -123,9 +124,13 @@ class ImageViewModel(
         val newList = responseImages.value.toMutableList()
         newList.add(image)
         responseImages.value = newList
+        if (selectedImageIndex.value <= 0) {
+            selectedImageIndex.value = 0
+        }
     }
 
     private fun clearImages() {
+        selectedImageIndex.value = -1
         responseImages.value = emptyList()
     }
 

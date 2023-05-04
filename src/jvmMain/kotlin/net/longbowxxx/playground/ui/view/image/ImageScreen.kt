@@ -28,7 +28,7 @@ fun ImageScreen() {
 
     Row(modifier = Modifier.padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         ImagePromptView()
-        ImageListView()
+        ImageView()
     }
     ErrorWidget(errorMessage) { errorMessage = "" }
 }

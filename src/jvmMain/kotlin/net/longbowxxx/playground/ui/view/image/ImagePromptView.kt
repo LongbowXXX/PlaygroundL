@@ -89,6 +89,7 @@ fun RowScope.ImagePromptView() {
         }
         Button(
             { imageViewModel.requestCreateImage() },
+            enabled = !requesting,
         ) {
             Text(CREATE_IMAGE_LABEL_TEXT)
         }
