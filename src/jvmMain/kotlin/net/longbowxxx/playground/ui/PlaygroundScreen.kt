@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
@@ -31,7 +30,6 @@ import net.longbowxxx.playground.ui.widget.BottomBar
 import net.longbowxxx.playground.ui.widget.CHAT_TAB
 import net.longbowxxx.playground.ui.widget.IMAGE_TAB
 import net.longbowxxx.playground.ui.widget.SETTING_TAB
-import net.longbowxxx.playground.ui.widget.SubmitActionButton
 import net.longbowxxx.playground.viewmodel.appProperties
 import net.longbowxxx.playground.viewmodel.closeViewModelAndProperties
 import kotlin.math.roundToInt
@@ -74,13 +72,9 @@ fun PlaygroundScreen() {
 
     MaterialTheme {
         Scaffold(
-            floatingActionButton = {
-                SubmitActionButton(selectedTab)
-            },
             bottomBar = {
                 BottomBar(selectedTab) { selectedTab = it }
             },
-            floatingActionButtonPosition = FabPosition.Center,
         ) {
             // padding は bottomBar を考慮
             Column(

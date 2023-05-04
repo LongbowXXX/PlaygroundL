@@ -13,9 +13,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.longbowxxx.openai.client.OPENAI_CHAT_URL
+import net.longbowxxx.openai.client.OpenAiChatMessage
+import net.longbowxxx.openai.client.OpenAiChatRequest
+import net.longbowxxx.openai.client.OpenAiChatRoleTypes
+import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiCreateImageRequest
 import net.longbowxxx.openai.client.OpenAiSettings
@@ -35,9 +40,49 @@ class ImageViewModel(
     override val coroutineContext: CoroutineContext = dispatcher + job
 
     val prompt = mutableStateOf("")
+    val promptJa = mutableStateOf("")
     val responseImages = mutableStateOf<List<Bitmap>>(emptyList())
     val requesting = mutableStateOf(false)
+    val requestingTranslation = mutableStateOf(false)
     val errorMessage = mutableStateOf("")
+
+    fun requestTranslation() {
+        launch {
+            requestingTranslation.value = true
+            runCatching {
+                val request = OpenAiChatRequest(
+                    chatProperties.chatModel.value,
+                    messages = listOf(
+                        OpenAiChatMessage(OpenAiChatRoleTypes.SYSTEM, imageProperties.translationPrompt.value),
+                        OpenAiChatMessage(OpenAiChatRoleTypes.USER, promptJa.value),
+                    ),
+                    stream = true,
+                    temperature = 0f,
+                )
+                val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
+                client.requestChatWithStreaming(request).correctStreamResponse()
+            }.onFailure {
+                errorMessage.value = it.message ?: it.toString()
+            }.also {
+                requestingTranslation.value = false
+            }
+        }
+    }
+
+    private suspend fun Flow<OpenAiChatStreamResponse>.correctStreamResponse() {
+        var firstTime = true
+        this.collect { streamResponse ->
+            if (firstTime) {
+                firstTime = false
+                prompt.value = ""
+            }
+
+            streamResponse.choices.firstOrNull()?.delta?.content?.let { contentDelta ->
+                val oldMessage = prompt.value
+                prompt.value = oldMessage + contentDelta
+            }
+        }
+    }
 
     fun requestCreateImage() {
         launch {

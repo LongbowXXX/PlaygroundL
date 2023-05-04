@@ -32,6 +32,7 @@ import net.longbowxxx.playground.viewmodel.chatViewModel
 
 private const val ADD_MESSAGE_TEXT = "ADD MESSAGE"
 private const val CLEAR_MESSAGES_TEXT = "CLEAR MESSAGES"
+private const val SUBMIT_TEXT = "SUBMIT"
 
 @Suppress("FunctionName")
 @Composable
@@ -66,6 +67,12 @@ fun ColumnScope.MessagesWidget() {
             enabled = !requesting,
         ) {
             Text(ADD_MESSAGE_TEXT)
+        }
+        Button(
+            { chatViewModel.requestChat() },
+            enabled = !requesting,
+        ) {
+            Text(SUBMIT_TEXT)
         }
         Button(
             { chatViewModel.clearMessages() },

@@ -16,7 +16,9 @@ class ImagePreference : PreferenceBase() {
         private const val IMAGE_CREATE_NUMBER_KEY = "image.create.number"
         private const val IMAGE_EDIT_NUMBER_KEY = "image.edit.number"
         private const val IMAGE_VARIATION_NUMBER_KEY = "image.variation.number"
+        private const val IMAGE_TRANSLATION_PROMPT_KEY = "image.translation.prompt"
         private const val DEFAULT_IMAGE_NUMBER = 1
+        private const val DEFAULT_TRANSLATION_PROMPT = "英語に翻訳してください"
 
         private const val FILE_NAME = "image.properties"
         private const val FILE_COMMENT = "Playground Image Properties"
@@ -26,6 +28,7 @@ class ImagePreference : PreferenceBase() {
     val numberOfCreate = mutableStateOf(DEFAULT_IMAGE_NUMBER)
     val numberOfEdit = mutableStateOf(DEFAULT_IMAGE_NUMBER)
     val numberOfVariation = mutableStateOf(DEFAULT_IMAGE_NUMBER)
+    val translationPrompt = mutableStateOf(DEFAULT_TRANSLATION_PROMPT)
 
     fun load() {
         runCatching {
@@ -35,6 +38,7 @@ class ImagePreference : PreferenceBase() {
             numberOfCreate.value = properties.getIntProperty(IMAGE_CREATE_NUMBER_KEY, DEFAULT_IMAGE_NUMBER)
             numberOfEdit.value = properties.getIntProperty(IMAGE_EDIT_NUMBER_KEY, DEFAULT_IMAGE_NUMBER)
             numberOfVariation.value = properties.getIntProperty(IMAGE_VARIATION_NUMBER_KEY, DEFAULT_IMAGE_NUMBER)
+            translationPrompt.value = properties.getProperty(IMAGE_TRANSLATION_PROMPT_KEY, DEFAULT_TRANSLATION_PROMPT)
         }.onFailure {
             save()
         }
@@ -44,6 +48,7 @@ class ImagePreference : PreferenceBase() {
         properties.setProperty(IMAGE_CREATE_NUMBER_KEY, numberOfCreate.value.toString())
         properties.setProperty(IMAGE_EDIT_NUMBER_KEY, numberOfEdit.value.toString())
         properties.setProperty(IMAGE_VARIATION_NUMBER_KEY, numberOfVariation.value.toString())
+        properties.setProperty(IMAGE_TRANSLATION_PROMPT_KEY, translationPrompt.value)
         File(FILE_NAME).writer(Charsets.UTF_8).use { writer ->
             properties.store(writer, FILE_COMMENT)
         }
