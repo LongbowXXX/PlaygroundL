@@ -35,7 +35,7 @@ class ImageViewModel(
     override val coroutineContext: CoroutineContext = dispatcher + job
 
     val prompt = mutableStateOf("")
-    val responseImage = mutableStateOf<Bitmap?>(null)
+    val responseImages = mutableStateOf<List<Bitmap>>(emptyList())
     val requesting = mutableStateOf(false)
     val errorMessage = mutableStateOf("")
 
@@ -47,16 +47,22 @@ class ImageViewModel(
                 val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
                 val request = OpenAiCreateImageRequest(
                     prompt.value,
+                    n = 3,
                 )
                 logger.logCreateRequest(request)
 
                 val response = client.requestCreateImage(request)
-                response.data.first().url?.let { imageUrl ->
-                    val imageUrl = URL(imageUrl)
-                    val image = ImageIO.read(imageUrl)
-                    responseImage.value = image.toBitmap()
-                    logger.logResponseImage(listOf(imageUrl))
-                }
+
+                response.data.mapNotNull { imageData -> imageData.url?.toURL() }
+                    .also { urlList ->
+                        launch {
+                            logger.logResponseImage(urlList)
+                        }
+                    }
+                    .map { imageUrl ->
+                        val image = ImageIO.read(imageUrl)
+                        addImage(image.toBitmap())
+                    }
             }.onFailure {
                 errorMessage.value = it.toString()
                 logger.logError(it)
@@ -65,6 +71,16 @@ class ImageViewModel(
                 logger.close()
             }
         }
+    }
+
+    private fun String.toURL(): URL {
+        return URL(this)
+    }
+
+    private fun addImage(image: Bitmap) {
+        val newList = responseImages.value.toMutableList()
+        newList.add(image)
+        responseImages.value = newList
     }
 
     override fun close() {
