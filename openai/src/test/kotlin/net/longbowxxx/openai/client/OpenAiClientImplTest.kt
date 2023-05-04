@@ -3,6 +3,8 @@ package net.longbowxxx.openai.client
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
+import java.io.File
+import java.net.URL
 
 class OpenAiClientImplTest {
 
@@ -26,11 +28,32 @@ class OpenAiClientImplTest {
     @Test
     fun requestCreateImage() = runBlocking {
         val client = OpenAiClient(openAiSettings)
-        val request = OpenAiCreateImageRequest(
-            "女性の絵",
-            responseFormat = OpenAiImageResponseFormatTypes.B64_JSON,
+        val createImageRequest = OpenAiCreateImageRequest(
+            "two lady\nmanga",
+            responseFormat = OpenAiImageResponseFormatTypes.URL,
         )
-        val response = client.requestCreateImage(request)
-        println("$response")
+        val createResponse = client.requestCreateImage(createImageRequest)
+        println("$createResponse")
+        val createdImageFile = File("created_image.png")
+        URL(createResponse.data[0].url).openStream().use { input ->
+            createdImageFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+
+        val editImageRequest = OpenAiEditImageRequest(
+            createdImageFile,
+            null,
+            "photo real",
+        )
+        val editResponse = client.requestEditImage(editImageRequest)
+        println("$editResponse")
+        val editImageFile = File("edit_image.png")
+        URL(editResponse.data[0].url).openStream().use { input ->
+            editImageFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
+        }
+        Unit
     }
 }

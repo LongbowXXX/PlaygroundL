@@ -9,6 +9,7 @@ package net.longbowxxx.openai.client
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import java.io.File
 
 @Serializable
 data class OpenAiCreateImageRequest(
@@ -32,6 +33,15 @@ enum class OpenAiSizeTypes {
     SIZE_1024,
 }
 
+val OpenAiSizeTypes.requestValue: String
+    get() {
+        return when (this) {
+            OpenAiSizeTypes.SIZE_256 -> "256x256"
+            OpenAiSizeTypes.SIZE_512 -> "512x512"
+            OpenAiSizeTypes.SIZE_1024 -> "1024x1024"
+        }
+    }
+
 @Serializable
 enum class OpenAiImageResponseFormatTypes {
     @SerialName("url")
@@ -52,4 +62,14 @@ data class OpenAiImageData(
     val url: String? = null,
     @SerialName("b64_json")
     val b64Json: String? = null,
+)
+
+data class OpenAiEditImageRequest(
+    val image: File,
+    val mask: File?,
+    val prompt: String,
+    val n: Int = 1,
+    val size: OpenAiSizeTypes = OpenAiSizeTypes.SIZE_1024,
+    val responseFormat: OpenAiImageResponseFormatTypes = OpenAiImageResponseFormatTypes.URL,
+    val user: String? = null,
 )
