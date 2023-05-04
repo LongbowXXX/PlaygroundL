@@ -8,8 +8,6 @@
 package net.longbowxxx.playground.preference
 
 import androidx.compose.runtime.mutableStateOf
-import java.io.File
-import java.util.*
 
 class ImagePreference : PreferenceBase() {
     companion object {
@@ -24,37 +22,29 @@ class ImagePreference : PreferenceBase() {
         private const val FILE_COMMENT = "Playground Image Properties"
     }
 
-    private val properties = Properties()
+    override val fileName = FILE_NAME
+    override val fileComment = FILE_COMMENT
+
     val numberOfCreate = mutableStateOf(DEFAULT_IMAGE_NUMBER)
     val numberOfEdit = mutableStateOf(DEFAULT_IMAGE_NUMBER)
     val numberOfVariation = mutableStateOf(DEFAULT_IMAGE_NUMBER)
     val translationPrompt = mutableStateOf(DEFAULT_TRANSLATION_PROMPT)
 
-    fun load() {
-        runCatching {
-            File(FILE_NAME).reader(Charsets.UTF_8).use { reader ->
-                properties.load(reader)
-            }
-            numberOfCreate.value = properties.getIntProperty(IMAGE_CREATE_NUMBER_KEY, DEFAULT_IMAGE_NUMBER)
-            numberOfEdit.value = properties.getIntProperty(IMAGE_EDIT_NUMBER_KEY, DEFAULT_IMAGE_NUMBER)
-            numberOfVariation.value = properties.getIntProperty(IMAGE_VARIATION_NUMBER_KEY, DEFAULT_IMAGE_NUMBER)
-            translationPrompt.value = properties.getProperty(IMAGE_TRANSLATION_PROMPT_KEY, DEFAULT_TRANSLATION_PROMPT)
-        }.onFailure {
-            save()
+    override fun load() {
+        loadInternal {
+            numberOfCreate.value = getIntProperty(IMAGE_CREATE_NUMBER_KEY, DEFAULT_IMAGE_NUMBER)
+            numberOfEdit.value = getIntProperty(IMAGE_EDIT_NUMBER_KEY, DEFAULT_IMAGE_NUMBER)
+            numberOfVariation.value = getIntProperty(IMAGE_VARIATION_NUMBER_KEY, DEFAULT_IMAGE_NUMBER)
+            translationPrompt.value = getProperty(IMAGE_TRANSLATION_PROMPT_KEY, DEFAULT_TRANSLATION_PROMPT)
         }
     }
 
-    private fun save() {
-        properties.setProperty(IMAGE_CREATE_NUMBER_KEY, numberOfCreate.value.toString())
-        properties.setProperty(IMAGE_EDIT_NUMBER_KEY, numberOfEdit.value.toString())
-        properties.setProperty(IMAGE_VARIATION_NUMBER_KEY, numberOfVariation.value.toString())
-        properties.setProperty(IMAGE_TRANSLATION_PROMPT_KEY, translationPrompt.value)
-        File(FILE_NAME).writer(Charsets.UTF_8).use { writer ->
-            properties.store(writer, FILE_COMMENT)
+    override fun save() {
+        saveInternal {
+            setProperty(IMAGE_CREATE_NUMBER_KEY, numberOfCreate.value.toString())
+            setProperty(IMAGE_EDIT_NUMBER_KEY, numberOfEdit.value.toString())
+            setProperty(IMAGE_VARIATION_NUMBER_KEY, numberOfVariation.value.toString())
+            setProperty(IMAGE_TRANSLATION_PROMPT_KEY, translationPrompt.value)
         }
-    }
-
-    override fun close() {
-        save()
     }
 }

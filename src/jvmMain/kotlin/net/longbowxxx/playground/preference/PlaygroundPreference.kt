@@ -8,8 +8,6 @@
 package net.longbowxxx.playground.preference
 
 import androidx.compose.runtime.mutableStateOf
-import java.io.File
-import java.util.*
 
 class PlaygroundPreference : PreferenceBase() {
     companion object {
@@ -34,7 +32,8 @@ class PlaygroundPreference : PreferenceBase() {
     var windowTop: Int = DEFAULT_WINDOW_TOP
     var windowWidth: Int = DEFAULT_WINDOW_WIDTH
     var windowHeight: Int = DEFAULT_WINDOW_HEIGHT
-    private val properties = Properties()
+    override val fileName = FILE_NAME
+    override val fileComment = FILE_COMMENT
 
     var apiKey: String
         set(value) {
@@ -43,19 +42,14 @@ class PlaygroundPreference : PreferenceBase() {
         }
         get() = properties.getOrDefaultSecretProperty(API_KEY_KEY, "")
 
-    fun load() {
-        runCatching {
-            File(FILE_NAME).reader(Charsets.UTF_8).use { reader ->
-                properties.load(reader)
-            }
+    override fun load() {
+        loadInternal {
             apiKeyEnabled.value = apiKey.isNotEmpty()
-            messageFontSizeSp.value = properties.getIntProperty(MESSAGE_FONT_SIZE_KEY, DEFAULT_MESSAGE_FONT_SIZE)
-            windowLeft = properties.getIntProperty(WINDOW_LEFT_KEY, DEFAULT_WINDOW_LEFT)
-            windowTop = properties.getIntProperty(WINDOW_TOP_KEY, DEFAULT_WINDOW_TOP)
-            windowWidth = properties.getIntProperty(WINDOW_WIDTH_KEY, DEFAULT_WINDOW_WIDTH)
-            windowHeight = properties.getIntProperty(WINDOW_HEIGHT_KEY, DEFAULT_WINDOW_HEIGHT)
-        }.onFailure {
-            save()
+            messageFontSizeSp.value = getIntProperty(MESSAGE_FONT_SIZE_KEY, DEFAULT_MESSAGE_FONT_SIZE)
+            windowLeft = getIntProperty(WINDOW_LEFT_KEY, DEFAULT_WINDOW_LEFT)
+            windowTop = getIntProperty(WINDOW_TOP_KEY, DEFAULT_WINDOW_TOP)
+            windowWidth = getIntProperty(WINDOW_WIDTH_KEY, DEFAULT_WINDOW_WIDTH)
+            windowHeight = getIntProperty(WINDOW_HEIGHT_KEY, DEFAULT_WINDOW_HEIGHT)
         }
     }
 
@@ -70,18 +64,13 @@ class PlaygroundPreference : PreferenceBase() {
         apiKey = ""
     }
 
-    private fun save() {
-        properties.setProperty(MESSAGE_FONT_SIZE_KEY, messageFontSizeSp.value.toString())
-        properties.setProperty(WINDOW_LEFT_KEY, windowLeft.toString())
-        properties.setProperty(WINDOW_TOP_KEY, windowTop.toString())
-        properties.setProperty(WINDOW_WIDTH_KEY, windowWidth.toString())
-        properties.setProperty(WINDOW_HEIGHT_KEY, windowHeight.toString())
-        File(FILE_NAME).writer(Charsets.UTF_8).use { writer ->
-            properties.store(writer, FILE_COMMENT)
+    override fun save() {
+        saveInternal {
+            setProperty(MESSAGE_FONT_SIZE_KEY, messageFontSizeSp.value.toString())
+            setProperty(WINDOW_LEFT_KEY, windowLeft.toString())
+            setProperty(WINDOW_TOP_KEY, windowTop.toString())
+            setProperty(WINDOW_WIDTH_KEY, windowWidth.toString())
+            setProperty(WINDOW_HEIGHT_KEY, windowHeight.toString())
         }
-    }
-
-    override fun close() {
-        save()
     }
 }

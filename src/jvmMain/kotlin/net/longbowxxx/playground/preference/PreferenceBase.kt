@@ -8,13 +8,39 @@
 package net.longbowxxx.playground.preference
 
 import java.io.Closeable
+import java.io.File
 import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
+@OptIn(ExperimentalEncodingApi::class)
 abstract class PreferenceBase : Closeable {
+    protected val properties = Properties()
+    protected abstract val fileName: String
+    protected abstract val fileComment: String
+
+    abstract fun load()
+    protected fun loadInternal(block: Properties.() -> Unit) {
+        runCatching {
+            File(fileName).reader(Charsets.UTF_8).use { reader ->
+                properties.load(reader)
+                properties.block()
+            }
+        }.onFailure {
+            save()
+        }
+    }
+
+    abstract fun save()
+    protected fun saveInternal(block: Properties.() -> Unit) {
+        properties.block()
+        File(fileName).writer(Charsets.UTF_8).use { writer ->
+            properties.store(writer, fileComment)
+        }
+    }
+
     protected fun Properties.getFloatProperty(key: String, defaultValue: Float): Float {
         return if (containsKey(key)) {
             getProperty(key).toFloatOrNull() ?: defaultValue
@@ -69,7 +95,6 @@ abstract class PreferenceBase : Closeable {
         return String.format("%08x", this)
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
     private fun encrypt(data: String): String {
         val secretKey = SecretKeySpec(salt().toByteArray(Charsets.UTF_8), "AES")
         val cipher = Cipher.getInstance("AES")
@@ -77,12 +102,15 @@ abstract class PreferenceBase : Closeable {
         return Base64.encode(cipher.doFinal(data.toByteArray(Charsets.UTF_8)))
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
     private fun decrypt(strData: String): String {
         val data = Base64.decode(strData)
         val secretKey = SecretKeySpec(salt().toByteArray(Charsets.UTF_8), "AES")
         val cipher = Cipher.getInstance("AES")
         cipher.init(Cipher.DECRYPT_MODE, secretKey)
         return String(cipher.doFinal(data), Charsets.UTF_8)
+    }
+
+    override fun close() {
+        save()
     }
 }

@@ -14,8 +14,6 @@ import net.longbowxxx.openai.client.CHAT_PRESENCE_PENALTY_DEFAULT
 import net.longbowxxx.openai.client.CHAT_TEMPERATURE_DEFAULT
 import net.longbowxxx.openai.client.CHAT_TOP_P_DEFAULT
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO
-import java.io.File
-import java.util.*
 
 class ChatPreference : PreferenceBase() {
     companion object {
@@ -38,24 +36,20 @@ class ChatPreference : PreferenceBase() {
     val chatSystemPrompt = mutableStateOf("")
     val chatModel = mutableStateOf(OPENAI_CHAT_MODEL_GPT_35_TURBO)
 
-    private val properties = Properties()
+    override val fileName = FILE_NAME
+    override val fileComment = FILE_COMMENT
 
-    fun load() {
-        runCatching {
-            File(FILE_NAME).reader(Charsets.UTF_8).use { reader ->
-                properties.load(reader)
-            }
-            chatTemperature.value = properties.getFloatProperty(CHAT_REQUEST_TEMPERATURE_KEY, CHAT_TEMPERATURE_DEFAULT)
-            chatTopP.value = properties.getFloatProperty(CHAT_REQUEST_TOP_P_KEY, CHAT_TOP_P_DEFAULT)
-            chatMaxTokens.value = properties.getIntProperty(CHAT_REQUEST_MAX_TOKENS_KEY, CHAT_MAX_TOKENS_DEFAULT)
+    override fun load() {
+        loadInternal {
+            chatTemperature.value = getFloatProperty(CHAT_REQUEST_TEMPERATURE_KEY, CHAT_TEMPERATURE_DEFAULT)
+            chatTopP.value = getFloatProperty(CHAT_REQUEST_TOP_P_KEY, CHAT_TOP_P_DEFAULT)
+            chatMaxTokens.value = getIntProperty(CHAT_REQUEST_MAX_TOKENS_KEY, CHAT_MAX_TOKENS_DEFAULT)
             chatPresencePenalty.value =
-                properties.getFloatProperty(CHAT_REQUEST_PRESENCE_PENALTY_KEY, CHAT_PRESENCE_PENALTY_DEFAULT)
+                getFloatProperty(CHAT_REQUEST_PRESENCE_PENALTY_KEY, CHAT_PRESENCE_PENALTY_DEFAULT)
             chatFrequencyPenalty.value =
-                properties.getFloatProperty(CHAT_REQUEST_FREQUENCY_PENALTY_KEY, CHAT_FREQUENCY_PENALTY_DEFAULT)
-            chatSystemPrompt.value = properties.getProperty(CHAT_SYSTEM_PROMPT_KEY, "")
-            chatModel.value = properties.getProperty(CHAT_REQUEST_MODEL_KEY, OPENAI_CHAT_MODEL_GPT_35_TURBO)
-        }.onFailure {
-            save()
+                getFloatProperty(CHAT_REQUEST_FREQUENCY_PENALTY_KEY, CHAT_FREQUENCY_PENALTY_DEFAULT)
+            chatSystemPrompt.value = getProperty(CHAT_SYSTEM_PROMPT_KEY, "")
+            chatModel.value = getProperty(CHAT_REQUEST_MODEL_KEY, OPENAI_CHAT_MODEL_GPT_35_TURBO)
         }
     }
 
@@ -68,20 +62,15 @@ class ChatPreference : PreferenceBase() {
         chatFrequencyPenalty.value = CHAT_FREQUENCY_PENALTY_DEFAULT
     }
 
-    private fun save() {
-        properties.setProperty(CHAT_REQUEST_TEMPERATURE_KEY, chatTemperature.value.toString())
-        properties.setProperty(CHAT_REQUEST_TOP_P_KEY, chatTopP.value.toString())
-        properties.setProperty(CHAT_REQUEST_MAX_TOKENS_KEY, chatMaxTokens.value.toString())
-        properties.setProperty(CHAT_REQUEST_PRESENCE_PENALTY_KEY, chatPresencePenalty.value.toString())
-        properties.setProperty(CHAT_REQUEST_FREQUENCY_PENALTY_KEY, chatFrequencyPenalty.value.toString())
-        properties.setProperty(CHAT_SYSTEM_PROMPT_KEY, chatSystemPrompt.value)
-        properties.setProperty(CHAT_REQUEST_MODEL_KEY, chatModel.value)
-        File(FILE_NAME).writer(Charsets.UTF_8).use { writer ->
-            properties.store(writer, FILE_COMMENT)
+    override fun save() {
+        saveInternal {
+            setProperty(CHAT_REQUEST_TEMPERATURE_KEY, chatTemperature.value.toString())
+            setProperty(CHAT_REQUEST_TOP_P_KEY, chatTopP.value.toString())
+            setProperty(CHAT_REQUEST_MAX_TOKENS_KEY, chatMaxTokens.value.toString())
+            setProperty(CHAT_REQUEST_PRESENCE_PENALTY_KEY, chatPresencePenalty.value.toString())
+            setProperty(CHAT_REQUEST_FREQUENCY_PENALTY_KEY, chatFrequencyPenalty.value.toString())
+            setProperty(CHAT_SYSTEM_PROMPT_KEY, chatSystemPrompt.value)
+            setProperty(CHAT_REQUEST_MODEL_KEY, chatModel.value)
         }
-    }
-
-    override fun close() {
-        save()
     }
 }
