@@ -20,9 +20,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import net.longbowxxx.playground.ui.widget.AppParamsWidget
 import net.longbowxxx.playground.ui.widget.ChatParamsWidget
+import net.longbowxxx.playground.ui.widget.ImageParamsWidget
 
 private const val APP_CATEGORY_TEXT = "APP SETTINGS"
 private const val CHAT_CATEGORY_TEXT = "CHAT SETTINGS"
+private const val IMAGE_CATEGORY_TEXT = "IMAGE SETTINGS"
 
 @Suppress("FunctionName")
 @Composable
@@ -37,5 +39,7 @@ fun SettingsScreen() {
         AppParamsWidget()
         Text(CHAT_CATEGORY_TEXT, style = MaterialTheme.typography.headlineLarge)
         ChatParamsWidget()
+        Text(IMAGE_CATEGORY_TEXT, style = MaterialTheme.typography.headlineLarge)
+        ImageParamsWidget()
     }
 }

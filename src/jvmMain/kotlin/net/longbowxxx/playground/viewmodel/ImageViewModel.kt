@@ -44,10 +44,11 @@ class ImageViewModel(
             val logger = ImageLogger(LOG_DIR)
             runCatching {
                 requesting.value = true
+                clearImages()
                 val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
                 val request = OpenAiCreateImageRequest(
                     prompt.value,
-                    n = 3,
+                    n = imageProperties.numberOfCreate.value,
                 )
                 logger.logCreateRequest(request)
 
@@ -81,6 +82,10 @@ class ImageViewModel(
         val newList = responseImages.value.toMutableList()
         newList.add(image)
         responseImages.value = newList
+    }
+
+    private fun clearImages() {
+        responseImages.value = emptyList()
     }
 
     override fun close() {
