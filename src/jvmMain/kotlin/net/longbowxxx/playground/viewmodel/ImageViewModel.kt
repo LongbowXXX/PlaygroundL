@@ -52,10 +52,10 @@ class ImageViewModel(
 
                 val response = client.requestCreateImage(request)
                 response.data.first().url?.let { imageUrl ->
-                    val url = URL(imageUrl)
-                    val image = ImageIO.read(url)
+                    val imageUrl = URL(imageUrl)
+                    val image = ImageIO.read(imageUrl)
                     responseImage.value = image.toBitmap()
-                    logger.logResponseImage(listOf(image))
+                    logger.logResponseImage(listOf(imageUrl))
                 }
             }.onFailure {
                 errorMessage.value = it.toString()

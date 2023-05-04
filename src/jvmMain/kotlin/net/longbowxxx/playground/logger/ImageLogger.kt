@@ -11,9 +11,8 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import net.longbowxxx.openai.client.OpenAiCreateImageRequest
-import java.awt.image.BufferedImage
 import java.io.File
-import javax.imageio.ImageIO
+import java.net.URL
 
 class ImageLogger(
     parentDir: String,
@@ -31,20 +30,27 @@ class ImageLogger(
         }
     }
 
-    suspend fun logResponseImage(images: List<BufferedImage>) {
+    suspend fun logResponseImage(images: List<URL>) {
         withContext(Dispatchers.IO) {
             writer.write("# Response\n")
 
-            images.forEachIndexed { index, image ->
+            images.forEachIndexed { index, imageUrl ->
                 // 画像をファイルに保存する
                 val imageName = "image-$index.png"
                 val file = File(logDir, imageName)
-                ImageIO.write(image, "png", file)
-
+                imageUrl.copyTo(file)
                 // ログに画像表示
                 writer.write("![$imageName]($imageName \"$imageName\")\n")
             }
             writer.write(HORIZONTAL_LINE)
+        }
+    }
+
+    private fun URL.copyTo(outFile: File) {
+        openStream().use { input ->
+            outFile.outputStream().use { output ->
+                input.copyTo(output)
+            }
         }
     }
 }
