@@ -55,13 +55,9 @@ class ImageViewModel(
                 val response = client.requestCreateImage(request)
 
                 response.data.mapNotNull { imageData -> imageData.url?.toURL() }
-                    .also { urlList ->
-                        launch {
-                            logger.logResponseImage(urlList)
-                        }
-                    }
-                    .map { imageUrl ->
-                        val image = ImageIO.read(imageUrl)
+                    .mapIndexed { index, imageUrl ->
+                        val imageFile = logger.logImage(index, imageUrl)
+                        val image = ImageIO.read(imageFile)
                         addImage(image.toBitmap())
                     }
             }.onFailure {

@@ -30,19 +30,19 @@ class ImageLogger(
         }
     }
 
-    suspend fun logResponseImage(images: List<URL>) {
-        withContext(Dispatchers.IO) {
-            writer.write("# Response\n")
-
-            images.forEachIndexed { index, imageUrl ->
-                // 画像をファイルに保存する
-                val imageName = "image-$index.png"
-                val file = File(logDir, imageName)
-                imageUrl.copyTo(file)
-                // ログに画像表示
-                writer.write("![$imageName]($imageName \"$imageName\")\n")
+    suspend fun logImage(index: Int, imageUrl: URL): File {
+        return withContext(Dispatchers.IO) {
+            if (index == 0) {
+                writer.write("# Response\n")
             }
-            writer.write(HORIZONTAL_LINE)
+
+            // 画像をファイルに保存する
+            val imageName = "image-$index.png"
+            val file = File(logDir, imageName)
+            imageUrl.copyTo(file)
+            // ログに画像表示
+            writer.write("![$imageName]($imageName \"$imageName\")\n")
+            file
         }
     }
 
