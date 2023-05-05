@@ -9,9 +9,11 @@ package net.longbowxxx.playground.ui.view.image
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import net.longbowxxx.playground.viewmodel.imageViewModel
 
 private const val CREATE_VARIATION_TEXT = "CREATE VARIATION"
+private const val EDIT_IMAGE_TEXT = "EDIT IMAGE"
 
 @Suppress("FunctionName")
 @Composable
@@ -51,11 +54,19 @@ fun ColumnScope.ImageEditView() {
             }
             ImageCanvasView()
         }
-        Button(
-            { imageViewModel.requestImageVariation() },
-            enabled = activeImage != null && !requesting,
-        ) {
-            Text(CREATE_VARIATION_TEXT)
+        Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+            Button(
+                { imageViewModel.requestImageVariation() },
+                enabled = activeImage != null && !requesting,
+            ) {
+                Text(CREATE_VARIATION_TEXT)
+            }
+            Button(
+                { imageViewModel.requestEditImage() },
+                enabled = activeImage != null && !requesting,
+            ) {
+                Text(EDIT_IMAGE_TEXT)
+            }
         }
     }
 }

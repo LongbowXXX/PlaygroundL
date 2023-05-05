@@ -8,6 +8,7 @@
 package net.longbowxxx.playground.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.geometry.Offset
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -23,6 +24,7 @@ import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiCreateImageRequest
+import net.longbowxxx.openai.client.OpenAiEditImageRequest
 import net.longbowxxx.openai.client.OpenAiImageVariationRequest
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.playground.logger.ImageLogger
@@ -44,6 +46,7 @@ class ImageViewModel(
 
     companion object {
         private const val DEFAULT_SIZE = 1024
+        private const val DEFAULT_STROKE_WIDTH = 32f
     }
 
     val prompt = mutableStateOf("")
@@ -60,6 +63,8 @@ class ImageViewModel(
             BufferedImage.TYPE_INT_ARGB,
         ),
     )
+    val strokeWidth = mutableStateOf(DEFAULT_STROKE_WIDTH)
+    var drawLines = mutableStateOf(listOf<Pair<List<Offset>, Float>>())
 
     fun requestTranslation() {
         launch {
@@ -140,7 +145,7 @@ class ImageViewModel(
                 val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
                 val request = OpenAiImageVariationRequest(
                     image = requestImageFile,
-                    n = imageProperties.numberOfCreate.value,
+                    n = imageProperties.numberOfVariation.value,
                 )
                 logger.logVariationRequest(request)
 
@@ -157,6 +162,63 @@ class ImageViewModel(
             }.also {
                 requesting.value = false
                 logger.close()
+            }
+        }
+    }
+
+    fun requestEditImage() {
+        launch {
+            val logger = ImageLogger(LOG_DIR)
+            runCatching {
+                requesting.value = true
+
+                val maskFile = logger.logMaskImage(maskImage.value.toMaskImage())
+
+                val requestImageFile = requireNotNull(activeImage.value).second
+                clearImages()
+                val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
+                val request = OpenAiEditImageRequest(
+                    image = requestImageFile,
+                    mask = maskFile,
+                    prompt = prompt.value,
+                    n = imageProperties.numberOfEdit.value,
+                )
+                logger.logEditImageRequest(request)
+
+                val response = client.requestEditImage(request)
+                response.data.mapNotNull { imageData -> imageData.url?.toURL() }
+                    .mapIndexed { index, imageUrl ->
+                        val imageFile = logger.logImage(index, imageUrl)
+                        val image = ImageIO.read(imageFile)
+                        addImage(image.toBitmap(), imageFile)
+                    }
+            }.onFailure {
+                errorMessage.value = it.toString()
+                logger.logError(it)
+            }.also {
+                requesting.value = false
+                logger.close()
+            }
+        }
+    }
+
+    private fun BufferedImage.toMaskImage(): BufferedImage {
+        return BufferedImage(DEFAULT_SIZE, DEFAULT_SIZE, type).apply {
+            createGraphics().apply {
+                drawImage(this@toMaskImage, 0, 0, DEFAULT_SIZE, DEFAULT_SIZE, null)
+            }.dispose()
+        }.apply {
+            for (x in 0 until width) {
+                for (y in 0 until height) {
+                    val rgb = getRGB(x, y)
+                    if (rgb and 0xff000000.toInt() == 0x00000000) {
+                        // 透過の場合黒色に設定
+                        setRGB(x, y, 0xff000000.toInt())
+                    } else {
+                        // アルファ値を0に設定
+                        setRGB(x, y, 0x00000000)
+                    }
+                }
             }
         }
     }
@@ -178,6 +240,12 @@ class ImageViewModel(
     private fun clearImages() {
         activeImage.value = null
         responseImages.value = emptyList()
+        maskImage.value = BufferedImage(
+            maskImage.value.width,
+            maskImage.value.height,
+            BufferedImage.TYPE_INT_ARGB,
+        )
+        drawLines.value = emptyList()
     }
 
     override fun close() {

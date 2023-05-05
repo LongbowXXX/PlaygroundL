@@ -39,9 +39,10 @@ import kotlin.math.roundToInt
 @Suppress("FunctionName")
 @Composable
 fun ImageCanvasView() {
+    var drawLines by remember { imageViewModel.drawLines }
+    val strokeWidth by remember { imageViewModel.strokeWidth }
     var canvasSize by remember { mutableStateOf(IntSize(1024, 1024)) }
     var drawingLine by remember { mutableStateOf(listOf<Offset>()) }
-    var drawLines by remember { mutableStateOf(listOf<List<Offset>>()) }
 
     var maskImage by remember {
         imageViewModel.maskImage
@@ -51,12 +52,13 @@ fun ImageCanvasView() {
     maskImage.createGraphics().apply {
         // 描画設定
         color = java.awt.Color.BLACK
-        stroke = BasicStroke(12f, CAP_ROUND, JOIN_ROUND)
 
         // 線を描画
+        stroke = BasicStroke(strokeWidth, CAP_ROUND, JOIN_ROUND)
         drawLine(drawingLine)
         drawLines.forEach {
-            drawLine(it)
+            stroke = BasicStroke(it.second, CAP_ROUND, JOIN_ROUND)
+            drawLine(it.first)
         }
     }.dispose()
 
@@ -77,7 +79,7 @@ fun ImageCanvasView() {
                         drawingLine = drawingLine.addOffset(startOffset)
                     },
                     onDragEnd = {
-                        drawLines = drawLines.addLine(drawingLine)
+                        drawLines = drawLines.addLine(drawingLine to strokeWidth)
                         drawingLine = emptyList()
                     },
                 ) { change, dragAmount ->
@@ -110,7 +112,7 @@ private fun List<Offset>.addOffset(offset: Offset): List<Offset> {
     }
 }
 
-private fun List<List<Offset>>.addLine(line: List<Offset>): List<List<Offset>> {
+private fun List<Pair<List<Offset>, Float>>.addLine(line: Pair<List<Offset>, Float>): List<Pair<List<Offset>, Float>> {
     return this.toMutableList().apply {
         add(line)
     }
