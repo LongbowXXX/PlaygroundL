@@ -73,3 +73,11 @@ data class OpenAiEditImageRequest(
     val responseFormat: OpenAiImageResponseFormatTypes = OpenAiImageResponseFormatTypes.URL,
     val user: String? = null,
 )
+
+data class OpenAiImageVariationRequest(
+    val image: File,
+    val n: Int = 1,
+    val size: OpenAiSizeTypes = OpenAiSizeTypes.SIZE_1024,
+    val responseFormat: OpenAiImageResponseFormatTypes = OpenAiImageResponseFormatTypes.URL,
+    val user: String? = null,
+)

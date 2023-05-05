@@ -11,6 +11,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import net.longbowxxx.openai.client.OpenAiCreateImageRequest
+import net.longbowxxx.openai.client.OpenAiImageVariationRequest
 import java.io.File
 import java.net.URL
 
@@ -19,13 +20,25 @@ class ImageLogger(
 ) : LoggerBase(parentDir) {
     suspend fun logCreateRequest(request: OpenAiCreateImageRequest) {
         withContext(Dispatchers.IO) {
-            writer.write("Playground Image Log $dateTimeStr\n")
+            writer.write("Playground Create Image Log $dateTimeStr\n")
             writer.write("===\n")
             writer.write("# Request Parameters\n")
             writer.write("```json\n")
             val json = encodeJson.encodeToString(request)
             writer.write("$json\n")
             writer.write("```\n")
+            writer.write(HORIZONTAL_LINE)
+        }
+    }
+
+    suspend fun logVariationRequest(request: OpenAiImageVariationRequest) {
+        withContext(Dispatchers.IO) {
+            val orgImage = request.image.copyTo(File(logDir, "original-image.png"))
+            val imageName = orgImage.name
+            writer.write("Playground Image Variation Log $dateTimeStr\n")
+            writer.write("===\n")
+            writer.write("# Request Parameters\n")
+            writer.write("![$imageName]($imageName \"$imageName\")\n")
             writer.write(HORIZONTAL_LINE)
         }
     }

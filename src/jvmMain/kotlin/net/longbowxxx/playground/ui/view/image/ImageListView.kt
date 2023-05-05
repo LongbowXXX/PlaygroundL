@@ -54,7 +54,7 @@ fun ColumnScope.ImageListView() {
         ) {
             itemsIndexed(responseImages) { index, image ->
                 Image(
-                    bitmap = image.asComposeImageBitmap(),
+                    bitmap = image.first.asComposeImageBitmap(),
                     contentDescription = "Image-$index",
                     modifier = Modifier.fillMaxSize().padding(10.dp).clickable { selectedImageIndex = index },
                     // 画像のサイズを指定する

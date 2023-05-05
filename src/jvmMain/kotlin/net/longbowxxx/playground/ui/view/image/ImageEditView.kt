@@ -10,9 +10,10 @@ package net.longbowxxx.playground.ui.view.image
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -21,6 +22,8 @@ import androidx.compose.ui.graphics.asComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import net.longbowxxx.playground.viewmodel.imageViewModel
+
+private const val CREATE_VARIATION_TEXT = "CREATE VARIATION"
 
 @Suppress("FunctionName")
 @Composable
@@ -32,12 +35,17 @@ fun ColumnScope.ImageEditView() {
         if (selectedImageIndex >= 0) {
             val image = responseImages[selectedImageIndex]
             Image(
-                bitmap = image.asComposeImageBitmap(),
+                bitmap = image.first.asComposeImageBitmap(),
                 contentDescription = "Image-$selectedImageIndex",
-                modifier = Modifier.fillMaxSize().padding(10.dp),
+                modifier = Modifier.fillMaxWidth().padding(10.dp).weight(1f),
                 // 画像のサイズを指定する
                 contentScale = ContentScale.Fit,
             )
+            Button(
+                { imageViewModel.requestImageVariation() },
+            ) {
+                Text(CREATE_VARIATION_TEXT)
+            }
         }
     }
 }

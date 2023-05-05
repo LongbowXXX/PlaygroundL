@@ -23,6 +23,7 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import okhttp3.ResponseBody
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 class OpenAiClientImpl(
     private val settings: OpenAiSettings,
@@ -38,10 +39,12 @@ class OpenAiClientImpl(
         }
         private const val CREATE_IMAGE_URL = "https://api.openai.com/v1/images/generations"
         private const val EDIT_IMAGE_URL = "https://api.openai.com/v1/images/edits"
+        private const val IMAGE_VARIATION_URL = "https://api.openai.com/v1/images/variations"
         private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
         private val imagePngMediaType = "image/png".toMediaType()
         private const val DATA_PREFIX = "data: "
         private const val DATA_DONE = "[DONE]"
+        private const val TIMEOUT_SECONDS = 30L
     }
 
     override fun requestChatWithStreaming(request: OpenAiChatRequest): Flow<OpenAiChatStreamResponse> {
@@ -55,7 +58,7 @@ class OpenAiClientImpl(
             .header("Authorization", "Bearer ${settings.apiKey}")
             .build()
 
-        return OkHttpClient().newCall(httpRequest)
+        return httpClient().newCall(httpRequest)
             .execute()
             .successfulBodyOrThrow { responseBody ->
                 responseBody.toFlow()
@@ -74,7 +77,7 @@ class OpenAiClientImpl(
                 .header("Authorization", "Bearer ${settings.apiKey}")
                 .build()
 
-            OkHttpClient().newCall(httpRequest)
+            httpClient().newCall(httpRequest)
                 .execute()
                 .successfulBodyOrThrow { responseBody ->
                     decodeJson.decodeFromString<OpenAiImageResponse>(responseBody.string())
@@ -101,12 +104,43 @@ class OpenAiClientImpl(
                 .header("Authorization", "Bearer ${settings.apiKey}")
                 .build()
 
-            OkHttpClient().newCall(httpRequest)
+            httpClient().newCall(httpRequest)
                 .execute()
                 .successfulBodyOrThrow { responseBody ->
                     decodeJson.decodeFromString<OpenAiImageResponse>(responseBody.string())
                 }
         }
+    }
+
+    override suspend fun requestImageVariation(request: OpenAiImageVariationRequest): OpenAiImageResponse {
+        return withContext(Dispatchers.IO) {
+            val requestBody = MultipartBody.Builder().apply {
+                setType(MultipartBody.FORM)
+                addFormDataPart("image", request.image.name, request.image.asRequestBody(imagePngMediaType))
+                addFormDataPart("n", request.n.toString())
+                addFormDataPart("size", request.size.requestValue)
+            }.build()
+
+            val httpRequest = Request.Builder()
+                .url(IMAGE_VARIATION_URL)
+                .post(requestBody)
+                .header("Authorization", "Bearer ${settings.apiKey}")
+                .build()
+
+            httpClient().newCall(httpRequest)
+                .execute()
+                .successfulBodyOrThrow { responseBody ->
+                    decodeJson.decodeFromString<OpenAiImageResponse>(responseBody.string())
+                }
+        }
+    }
+
+    private fun httpClient(): OkHttpClient {
+        return OkHttpClient.Builder().apply {
+            connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        }.build()
     }
 
     private inline fun <T> Response.successfulBodyOrThrow(block: (ResponseBody) -> T): T {

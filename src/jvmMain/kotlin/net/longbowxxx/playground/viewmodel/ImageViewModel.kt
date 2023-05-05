@@ -23,12 +23,14 @@ import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiCreateImageRequest
+import net.longbowxxx.openai.client.OpenAiImageVariationRequest
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.playground.logger.ImageLogger
 import net.longbowxxx.playground.logger.LOG_DIR
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skiko.toBitmap
 import java.io.Closeable
+import java.io.File
 import java.net.URL
 import javax.imageio.ImageIO
 import kotlin.coroutines.CoroutineContext
@@ -41,7 +43,7 @@ class ImageViewModel(
 
     val prompt = mutableStateOf("")
     val promptJa = mutableStateOf("")
-    val responseImages = mutableStateOf<List<Bitmap>>(emptyList())
+    val responseImages = mutableStateOf<List<Pair<Bitmap, File>>>(emptyList())
     val selectedImageIndex = mutableStateOf(-1)
     val requesting = mutableStateOf(false)
     val requestingTranslation = mutableStateOf(false)
@@ -104,7 +106,38 @@ class ImageViewModel(
                     .mapIndexed { index, imageUrl ->
                         val imageFile = logger.logImage(index, imageUrl)
                         val image = ImageIO.read(imageFile)
-                        addImage(image.toBitmap())
+                        addImage(image.toBitmap(), imageFile)
+                    }
+            }.onFailure {
+                errorMessage.value = it.toString()
+                logger.logError(it)
+            }.also {
+                requesting.value = false
+                logger.close()
+            }
+        }
+    }
+
+    fun requestImageVariation() {
+        launch {
+            val logger = ImageLogger(LOG_DIR)
+            runCatching {
+                requesting.value = true
+                val requestImageFile = responseImages.value[selectedImageIndex.value].second
+                clearImages()
+                val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
+                val request = OpenAiImageVariationRequest(
+                    image = requestImageFile,
+                    n = imageProperties.numberOfCreate.value,
+                )
+                logger.logVariationRequest(request)
+
+                val response = client.requestImageVariation(request)
+                response.data.mapNotNull { imageData -> imageData.url?.toURL() }
+                    .mapIndexed { index, imageUrl ->
+                        val imageFile = logger.logImage(index, imageUrl)
+                        val image = ImageIO.read(imageFile)
+                        addImage(image.toBitmap(), imageFile)
                     }
             }.onFailure {
                 errorMessage.value = it.toString()
@@ -120,9 +153,9 @@ class ImageViewModel(
         return URL(this)
     }
 
-    private fun addImage(image: Bitmap) {
+    private fun addImage(image: Bitmap, file: File) {
         val newList = responseImages.value.toMutableList()
-        newList.add(image)
+        newList.add(image to file)
         responseImages.value = newList
         if (selectedImageIndex.value <= 0) {
             selectedImageIndex.value = 0
