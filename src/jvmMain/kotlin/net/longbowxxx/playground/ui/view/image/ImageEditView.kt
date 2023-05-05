@@ -8,13 +8,16 @@
 package net.longbowxxx.playground.ui.view.image
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -34,18 +37,19 @@ fun ColumnScope.ImageEditView() {
     val requesting by remember { imageViewModel.requesting }
 
     Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
-        Box(modifier = Modifier.fillMaxWidth().padding(10.dp).weight(1f)) {
+        Box(
+            modifier = Modifier.fillMaxWidth().padding(10.dp).weight(1f)
+                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp)),
+        ) {
             activeImage?.let { image ->
                 Image(
                     bitmap = image.first.asComposeImageBitmap(),
                     contentDescription = image.second.name,
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxSize().padding(10.dp),
                     contentScale = ContentScale.Fit,
                 )
             }
-            // Canvas へ描画したデータをBitmapなどの画像データに変換する方法が見つからないのでコメントアウト
-            // Canvas に描画するのではなく、Bitmap を直接編集する？
-            // ImageCanvasView()
+            ImageCanvasView()
         }
         Button(
             { imageViewModel.requestImageVariation() },

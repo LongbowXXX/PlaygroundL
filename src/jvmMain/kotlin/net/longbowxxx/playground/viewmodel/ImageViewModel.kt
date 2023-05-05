@@ -29,6 +29,7 @@ import net.longbowxxx.playground.logger.ImageLogger
 import net.longbowxxx.playground.logger.LOG_DIR
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skiko.toBitmap
+import java.awt.image.BufferedImage
 import java.io.Closeable
 import java.io.File
 import java.net.URL
@@ -41,6 +42,10 @@ class ImageViewModel(
     private val job = Job()
     override val coroutineContext: CoroutineContext = dispatcher + job
 
+    companion object {
+        private const val DEFAULT_SIZE = 1024
+    }
+
     val prompt = mutableStateOf("")
     val promptJa = mutableStateOf("")
     val responseImages = mutableStateOf<List<Pair<Bitmap, File>>>(emptyList())
@@ -48,6 +53,13 @@ class ImageViewModel(
     val requesting = mutableStateOf(false)
     val requestingTranslation = mutableStateOf(false)
     val errorMessage = mutableStateOf("")
+    val maskImage = mutableStateOf(
+        BufferedImage(
+            DEFAULT_SIZE,
+            DEFAULT_SIZE,
+            BufferedImage.TYPE_INT_ARGB,
+        ),
+    )
 
     fun requestTranslation() {
         launch {
