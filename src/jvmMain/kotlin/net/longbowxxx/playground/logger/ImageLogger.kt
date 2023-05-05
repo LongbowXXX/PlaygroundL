@@ -30,7 +30,7 @@ class ImageLogger(
             write("===\n")
             write("# Request Parameters\n")
             write("${request.prompt}\n")
-            write(HORIZONTAL_LINE)
+            appendHorizontalLine()
         }
     }
 
@@ -42,7 +42,7 @@ class ImageLogger(
             write("===\n")
             write("# Request Parameters\n")
             write("![$imageName]($imageName \"$imageName\")\n")
-            write(HORIZONTAL_LINE)
+            appendHorizontalLine()
         }
     }
 
@@ -56,7 +56,7 @@ class ImageLogger(
             write("${request.prompt}\n")
             write("![$imageName]($imageName \"$imageName\")\n")
             write("![$MASK_FILE_NAME]($MASK_FILE_NAME \"$MASK_FILE_NAME\")\n")
-            write(HORIZONTAL_LINE)
+            appendHorizontalLine()
         }
     }
 

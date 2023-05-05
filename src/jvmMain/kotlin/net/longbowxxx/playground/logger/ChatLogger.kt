@@ -24,7 +24,7 @@ class ChatLogger(
             val json = encodeJson.encodeToString(request.extractSettings())
             write("$json\n")
             write("```\n")
-            write(HORIZONTAL_LINE)
+            appendHorizontalLine()
         }
     }
 
@@ -33,7 +33,7 @@ class ChatLogger(
             messages.forEach { message ->
                 write("# ${message.role.name}\n")
                 write("${message.content}\n")
-                write(HORIZONTAL_LINE)
+                appendHorizontalLine()
             }
         }
     }

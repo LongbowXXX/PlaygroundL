@@ -21,7 +21,7 @@ open class LoggerBase(
 ) : Closeable {
     companion object {
         const val LOG_DIR = "log"
-        const val HORIZONTAL_LINE = "\n----------------------------------------\n\n"
+        private const val HORIZONTAL_LINE = "\n----------------------------------------\n\n"
         private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
     }
 
@@ -36,8 +36,9 @@ open class LoggerBase(
     init {
         val now = LocalDateTime.now()
         dateTimeStr = now.format(dateTimeFormatter)
-        logDir = File(parentDir, dateTimeStr)
-        logDir.mkdirs()
+        logDir = File(parentDir, dateTimeStr).apply {
+            mkdirs()
+        }
         val outFile = File(logDir, "logFile_$dateTimeStr.md")
         writer = outFile.bufferedWriter(Charsets.UTF_8)
     }
@@ -54,8 +55,12 @@ open class LoggerBase(
         writeLog {
             write("# ERROR\n")
             write("$throwable\n")
-            write(HORIZONTAL_LINE)
+            appendHorizontalLine()
         }
+    }
+
+    protected fun BufferedWriter.appendHorizontalLine() {
+        write(HORIZONTAL_LINE)
     }
 
     override fun close() {
