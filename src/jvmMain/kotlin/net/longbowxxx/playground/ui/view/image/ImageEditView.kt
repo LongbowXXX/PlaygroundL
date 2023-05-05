@@ -31,7 +31,6 @@ private const val CREATE_VARIATION_TEXT = "CREATE VARIATION"
 @Composable
 fun ColumnScope.ImageEditView() {
     val activeImage by remember { imageViewModel.activeImage }
-    val responseImages by remember { imageViewModel.responseImages }
     val requesting by remember { imageViewModel.requesting }
 
     Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
@@ -44,7 +43,9 @@ fun ColumnScope.ImageEditView() {
                     contentScale = ContentScale.Fit,
                 )
             }
-            ImageCanvasView()
+            // Canvas へ描画したデータをBitmapなどの画像データに変換する方法が見つからないのでコメントアウト
+            // Canvas に描画するのではなく、Bitmap を直接編集する？
+            // ImageCanvasView()
         }
         Button(
             { imageViewModel.requestImageVariation() },
