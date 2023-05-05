@@ -44,7 +44,7 @@ class ImageViewModel(
     val prompt = mutableStateOf("")
     val promptJa = mutableStateOf("")
     val responseImages = mutableStateOf<List<Pair<Bitmap, File>>>(emptyList())
-    val selectedImageIndex = mutableStateOf(-1)
+    val activeImage = mutableStateOf<Pair<Bitmap, File>?>(null)
     val requesting = mutableStateOf(false)
     val requestingTranslation = mutableStateOf(false)
     val errorMessage = mutableStateOf("")
@@ -123,7 +123,7 @@ class ImageViewModel(
             val logger = ImageLogger(LOG_DIR)
             runCatching {
                 requesting.value = true
-                val requestImageFile = responseImages.value[selectedImageIndex.value].second
+                val requestImageFile = requireNotNull(activeImage.value).second
                 clearImages()
                 val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
                 val request = OpenAiImageVariationRequest(
@@ -157,13 +157,14 @@ class ImageViewModel(
         val newList = responseImages.value.toMutableList()
         newList.add(image to file)
         responseImages.value = newList
-        if (selectedImageIndex.value <= 0) {
-            selectedImageIndex.value = 0
+
+        if (activeImage.value == null) {
+            activeImage.value = image to file
         }
     }
 
     private fun clearImages() {
-        selectedImageIndex.value = -1
+        activeImage.value = null
         responseImages.value = emptyList()
     }
 

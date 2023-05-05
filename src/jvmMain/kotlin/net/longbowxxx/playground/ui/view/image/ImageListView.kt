@@ -39,7 +39,7 @@ import net.longbowxxx.playground.viewmodel.imageViewModel
 @Composable
 fun ColumnScope.ImageListView() {
     val responseImages by remember { imageViewModel.responseImages }
-    var selectedImageIndex by remember { imageViewModel.selectedImageIndex }
+    var activeImage by remember { imageViewModel.activeImage }
     val listState = rememberLazyListState()
 
     // 画像を表示する
@@ -56,7 +56,7 @@ fun ColumnScope.ImageListView() {
                 Image(
                     bitmap = image.first.asComposeImageBitmap(),
                     contentDescription = "Image-$index",
-                    modifier = Modifier.fillMaxSize().padding(10.dp).clickable { selectedImageIndex = index },
+                    modifier = Modifier.fillMaxSize().padding(10.dp).clickable { activeImage = responseImages[index] },
                     // 画像のサイズを指定する
                     contentScale = ContentScale.Fit,
                 )

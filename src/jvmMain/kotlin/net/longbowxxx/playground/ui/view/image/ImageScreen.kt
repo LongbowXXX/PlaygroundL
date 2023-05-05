@@ -10,6 +10,7 @@ package net.longbowxxx.playground.ui.view.image
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -26,7 +27,7 @@ import net.longbowxxx.playground.viewmodel.imageViewModel
 fun ImageScreen() {
     var errorMessage by remember { imageViewModel.errorMessage }
 
-    Row(modifier = Modifier.padding(10.dp), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+    Row(modifier = Modifier.padding(10.dp).fillMaxHeight(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         ImagePromptView()
         ImageView()
     }
