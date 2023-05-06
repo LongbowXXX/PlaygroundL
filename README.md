@@ -11,7 +11,9 @@ The application has been tested in an environment where Amazon Corretto 17 JDK i
 https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 
 # How to use the app
-Please refer to [HowToUse-en.md](documents/HowToUse-en.md).
+Please refer to [HowToUse-en.md](documents/HowToUse-en.md).  
+
+[PLAYGROUND-Movie.mp4](PLAYGROUND-Movie.mp4)  
 
 # OSS
 The following OSS is used in this application.
