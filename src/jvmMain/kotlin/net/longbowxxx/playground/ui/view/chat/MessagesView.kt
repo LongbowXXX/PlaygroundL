@@ -11,7 +11,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
@@ -40,6 +42,7 @@ fun ColumnScope.MessagesView() {
     val listState = rememberLazyListState()
     val messages by remember { chatViewModel.messages }
     val requesting by remember { chatViewModel.requesting }
+    val lastMessageSize = messages.lastOrNull()?.content?.length ?: 0
 
     LazyColumn(
         modifier = Modifier.weight(1f).padding(10.dp)
@@ -50,13 +53,24 @@ fun ColumnScope.MessagesView() {
         itemsIndexed(messages) { index, message ->
             MessageItemView(index, message)
         }
-    }
-    LaunchedEffect(messages.size) {
-        if (messages.isNotEmpty()) {
-            // リストに要素が追加された場合に末尾にスクロール
-            listState.scrollToItem(index = messages.size - 1)
+        item {
+            // 最後のアイテムの後に最下部までスクロールするための余白を追加します。
+            Spacer(modifier = Modifier.height(1.dp))
         }
     }
+
+    LaunchedEffect(messages.size) {
+        // リストに要素が追加された場合に末尾にスクロール
+        // 末尾の余白を考慮したIndexを指定
+        listState.scrollToItem(index = messages.size)
+    }
+
+    LaunchedEffect(lastMessageSize) {
+        // 最後のメッセージが更新された際に、末尾にスクロール
+        // 末尾の余白を考慮したIndexを指定
+        listState.scrollToItem(index = messages.size)
+    }
+
     Row(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
