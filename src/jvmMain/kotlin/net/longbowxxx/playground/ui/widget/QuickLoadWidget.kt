@@ -21,16 +21,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import net.longbowxxx.playground.viewmodel.chatProperties
-import net.longbowxxx.playground.viewmodel.chatViewModel
+import java.io.File
 
 private const val QUICK_LOAD_TEXT = "QUICK LOAD…"
 
 @Suppress("FunctionName")
 @Composable
-fun QuickLoadWidget() {
+fun QuickLoadWidget(fileList: List<File>, onSelected: (file: File) -> Unit) {
     var showModelDropdown by remember { mutableStateOf(false) }
-    var systemPrompt by remember { chatProperties.chatSystemPrompt }
 
     Box(modifier = Modifier.width(200.dp)) {
         Button(
@@ -47,11 +45,11 @@ fun QuickLoadWidget() {
             },
             modifier = Modifier.width(200.dp),
         ) {
-            chatViewModel.chatPromptFileList.forEach { file ->
+            fileList.forEach { file ->
                 DropdownMenuItem(
                     { Text(file.name) },
                     onClick = {
-                        systemPrompt = file.readText(Charsets.UTF_8)
+                        onSelected(file)
                         showModelDropdown = false
                     },
                 )

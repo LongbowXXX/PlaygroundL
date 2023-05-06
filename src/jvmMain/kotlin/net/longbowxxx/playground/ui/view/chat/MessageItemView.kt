@@ -23,7 +23,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.key.KeyEventType
-import androidx.compose.ui.input.key.isShiftPressed
+import androidx.compose.ui.input.key.isAltPressed
 import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onKeyEvent
@@ -34,6 +34,7 @@ import androidx.compose.ui.unit.sp
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import net.longbowxxx.playground.ui.tertiaryButtonColors
+import net.longbowxxx.playground.ui.widget.QuickLoadWidget
 import net.longbowxxx.playground.viewmodel.appProperties
 import net.longbowxxx.playground.viewmodel.chatViewModel
 import java.awt.event.KeyEvent
@@ -47,6 +48,7 @@ private const val REMOVE_TEXT = "REMOVE"
 fun MessageItemView(index: Int, message: OpenAiChatMessage) {
     val requesting by remember { chatViewModel.requesting }
     val messageFontSizeSp by remember { appProperties.messageFontSizeSp }
+    val chatMessageFileList = chatViewModel.chatMessageFileList
 
     Column(
         modifier = Modifier.padding(10.dp),
@@ -63,6 +65,12 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
             ) {
                 Text(message.role.toDisplayText())
             }
+
+            QuickLoadWidget(chatMessageFileList) {
+                val newContent = it.readText(Charsets.UTF_8)
+                chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, newContent, message.name))
+            }
+
             Button(
                 { chatViewModel.removeMessage(index) },
                 colors = tertiaryButtonColors(),
@@ -81,10 +89,10 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
             },
             modifier = Modifier.fillMaxWidth()
                 .onKeyEvent {
-                    // Shift + Enter を押すと、request
+                    // Alt + Enter を押すと、request
                     if (it.type == KeyEventType.KeyUp &&
                         it.key.nativeKeyCode == KeyEvent.VK_ENTER &&
-                        it.isShiftPressed
+                        it.isAltPressed
                     ) {
                         chatViewModel.requestChat()
                         true

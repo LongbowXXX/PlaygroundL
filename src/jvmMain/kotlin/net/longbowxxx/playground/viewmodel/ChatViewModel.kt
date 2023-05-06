@@ -50,6 +50,13 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             }.toList()
         }
 
+    val chatMessageFileList: List<File>
+        get() {
+            return File("chatMessage").walkTopDown().filter {
+                it.isFile && (it.name.endsWith(".md") || it.name.endsWith(".txt"))
+            }.toList()
+        }
+
     fun updateMessage(index: Int, message: OpenAiChatMessage) {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)

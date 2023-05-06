@@ -52,7 +52,9 @@ fun ColumnScope.SystemPromptView() {
                 systemMessage = File(it).readText(Charsets.UTF_8)
             }
         }
-        QuickLoadWidget()
+        QuickLoadWidget(chatViewModel.chatPromptFileList) {
+            systemPrompt = it.readText(Charsets.UTF_8)
+        }
     }
 
     TextField(
