@@ -61,6 +61,7 @@ fun ApplicationScope.PlaygroundWindow() {
         },
         title = TITLE_TEXT,
         state = windowState,
+        icon = appLogoMini,
     ) {
         PlaygroundScreen()
     }
