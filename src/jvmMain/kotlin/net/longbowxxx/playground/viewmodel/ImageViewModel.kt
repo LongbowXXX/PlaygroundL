@@ -28,7 +28,6 @@ import net.longbowxxx.openai.client.OpenAiEditImageRequest
 import net.longbowxxx.openai.client.OpenAiImageVariationRequest
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.playground.logger.ImageLogger
-import net.longbowxxx.playground.logger.LoggerBase
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skiko.toBitmap
 import java.awt.image.BufferedImage
@@ -106,7 +105,7 @@ class ImageViewModel(
 
     fun requestCreateImage() {
         launch {
-            val logger = ImageLogger(LoggerBase.LOG_DIR)
+            val logger = ImageLogger()
             runCatching {
                 requesting.value = true
                 clearImages()
@@ -137,7 +136,7 @@ class ImageViewModel(
 
     fun requestImageVariation() {
         launch {
-            val logger = ImageLogger(LoggerBase.LOG_DIR)
+            val logger = ImageLogger()
             runCatching {
                 requesting.value = true
                 val requestImageFile = requireNotNull(activeImage.value).second
@@ -168,7 +167,7 @@ class ImageViewModel(
 
     fun requestEditImage() {
         launch {
-            val logger = ImageLogger(LoggerBase.LOG_DIR)
+            val logger = ImageLogger()
             runCatching {
                 requesting.value = true
 

@@ -12,8 +12,12 @@ import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRequest
 
 class ChatLogger(
-    parentDir: String,
+    parentDir: String = CHAT_LOG_DIR,
 ) : LoggerBase(parentDir) {
+
+    companion object {
+        const val CHAT_LOG_DIR = "$LOG_DIR/chat"
+    }
 
     suspend fun logRequest(request: OpenAiChatRequest) {
         writeLog {

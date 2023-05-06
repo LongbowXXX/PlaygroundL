@@ -26,7 +26,6 @@ import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.playground.logger.ChatLogger
-import net.longbowxxx.playground.logger.LoggerBase
 import java.io.Closeable
 import java.io.File
 import kotlin.coroutines.CoroutineContext
@@ -99,7 +98,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             errorMessage.value = ""
 
             requesting.value = true
-            val logger = ChatLogger(LoggerBase.LOG_DIR)
+            val logger = ChatLogger()
             runCatching {
                 val request = OpenAiChatRequest(
                     chatProperties.chatModel.value,
