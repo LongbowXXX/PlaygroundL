@@ -26,9 +26,16 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
   アプリ本体の jar ファイル。  
 - playgroundApp.properties  
   アプリの設定ファイル。アプリにより自動生成されます。  
+- chat.properties  
+  CHAT 関連の設定ファイル。アプリにより自動生成されます。
+- image.properties  
+  IMAGE 関連の設定ファイル。アプリにより自動生成されます。
 - chatPrompt ディレクトリ  
   プロンプトのサンプルです。  
-  ここに置かれたファイルは CHAT の QUICK LOAD から呼び出せます。  
+  ここに置かれたファイルは CHAT SYSTEM の QUICK LOAD から呼び出せます。  
+- chatMessage ディレクトリ  
+  ユーザメッセージのテンプレートサンプルです。  
+  ここに置かれたファイルは CHAT MESSAGE の QUICK LOAD から呼び出せます。
 - log ディレクトリ  
   アプリのログファイル。アプリにより自動生成されます。   
 
@@ -47,10 +54,24 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 4. SUBMIT を押下すると ASSISTANT の応答が表示されます  
 
 ## IMAGE 機能の使い方
+
+### 画像生成
 1. BottomBar で IMAGE を選択します  
 2. PROMPT を英語で入力します  
-3. SUBMIT を押下して数秒待つと、画像が表示されます  
+3. CREATE を押下して数秒待つと、画像が表示されます  
 4. 生成された画像はログに出力されています  
+
+### 画像編集
+1. 生成された画像のリストから編集したい画像を選択します
+2. 編集したい画像の上をドラッグすることで、AIに編集してほしい領域を塗りつぶします
+3. 編集してほしい内容を PROMPT に英語で入力します
+4. EDIT を押下して数秒待つと、画像が表示されます
+5. 生成された画像はログに出力されています
+
+### 画像バリエーション作成
+1. 生成された画像のリストから編集したい画像を選択します
+2. VARIATION を押下して数秒待つと、画像が表示されます
+3. 生成された画像はログに出力されています
 
 # GPT-4
 OpenAI の API で GPT-4 は限定メンバーのみ公開されています。  
