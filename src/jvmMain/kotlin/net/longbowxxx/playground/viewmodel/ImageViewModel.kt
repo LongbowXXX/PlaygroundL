@@ -37,6 +37,12 @@ import java.net.URL
 import javax.imageio.ImageIO
 import kotlin.coroutines.CoroutineContext
 
+typealias ImageData = Pair<Bitmap, File>
+
+typealias Line = List<Offset>
+
+typealias LineWithStroke = Pair<Line, Float>
+
 class ImageViewModel(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : CoroutineScope, Closeable {
@@ -50,8 +56,8 @@ class ImageViewModel(
 
     val prompt = mutableStateOf("")
     val promptJa = mutableStateOf("")
-    val responseImages = mutableStateOf<List<Pair<Bitmap, File>>>(emptyList())
-    val activeImage = mutableStateOf<Pair<Bitmap, File>?>(null)
+    val responseImages = mutableStateOf<List<ImageData>>(emptyList())
+    val activeImage = mutableStateOf<ImageData?>(null)
     val requesting = mutableStateOf(false)
     val requestingTranslation = mutableStateOf(false)
     val errorMessage = mutableStateOf("")
@@ -62,8 +68,8 @@ class ImageViewModel(
             BufferedImage.TYPE_INT_ARGB,
         ),
     )
-    val strokeWidth = mutableStateOf(DEFAULT_STROKE_WIDTH)
-    var drawLines = mutableStateOf(listOf<Pair<List<Offset>, Float>>())
+    val maskStrokeWidth = mutableStateOf(DEFAULT_STROKE_WIDTH)
+    var maskLines = mutableStateOf(listOf<LineWithStroke>())
 
     fun requestTranslation() {
         launch {
@@ -201,6 +207,15 @@ class ImageViewModel(
         }
     }
 
+    fun clearMaskImage() {
+        maskLines.value = emptyList()
+        maskImage.value = BufferedImage(
+            maskImage.value.width,
+            maskImage.value.height,
+            BufferedImage.TYPE_INT_ARGB,
+        )
+    }
+
     private fun BufferedImage.toMaskImage(): BufferedImage {
         return BufferedImage(DEFAULT_SIZE, DEFAULT_SIZE, type).apply {
             createGraphics().apply {
@@ -239,12 +254,7 @@ class ImageViewModel(
     private fun clearImages() {
         activeImage.value = null
         responseImages.value = emptyList()
-        maskImage.value = BufferedImage(
-            maskImage.value.width,
-            maskImage.value.height,
-            BufferedImage.TYPE_INT_ARGB,
-        )
-        drawLines.value = emptyList()
+        clearMaskImage()
     }
 
     override fun close() {

@@ -27,6 +27,8 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import net.longbowxxx.playground.viewmodel.Line
+import net.longbowxxx.playground.viewmodel.LineWithStroke
 import net.longbowxxx.playground.viewmodel.imageViewModel
 import org.jetbrains.skiko.toImage
 import java.awt.BasicStroke
@@ -39,8 +41,8 @@ import kotlin.math.roundToInt
 @Suppress("FunctionName")
 @Composable
 fun ImageCanvasView() {
-    var drawLines by remember { imageViewModel.drawLines }
-    val strokeWidth by remember { imageViewModel.strokeWidth }
+    var maskLines by remember { imageViewModel.maskLines }
+    val strokeWidth by remember { imageViewModel.maskStrokeWidth }
     var canvasSize by remember { mutableStateOf(IntSize(1024, 1024)) }
     var drawingLine by remember { mutableStateOf(listOf<Offset>()) }
 
@@ -56,13 +58,11 @@ fun ImageCanvasView() {
         // 線を描画
         stroke = BasicStroke(strokeWidth, CAP_ROUND, JOIN_ROUND)
         drawLine(drawingLine)
-        drawLines.forEach {
+        maskLines.forEach {
             stroke = BasicStroke(it.second, CAP_ROUND, JOIN_ROUND)
             drawLine(it.first)
         }
     }.dispose()
-
-    // ImageIO.write(bufferedImage, "png", File("tmpImage.png"))
 
     Image(
         bitmap = maskImage.toImage().toComposeImageBitmap(),
@@ -79,7 +79,7 @@ fun ImageCanvasView() {
                         drawingLine = drawingLine.addOffset(startOffset)
                     },
                     onDragEnd = {
-                        drawLines = drawLines.addLine(drawingLine to strokeWidth)
+                        maskLines = maskLines.addLine(drawingLine to strokeWidth)
                         drawingLine = emptyList()
                     },
                 ) { change, dragAmount ->
@@ -91,7 +91,7 @@ fun ImageCanvasView() {
     )
 }
 
-private fun Graphics2D.drawLine(line: List<Offset>) {
+private fun Graphics2D.drawLine(line: Line) {
     if (line.size >= 2) {
         line.reduce { acc, offset ->
             val endPoint = acc + offset
@@ -106,13 +106,13 @@ private fun Graphics2D.drawLine(line: List<Offset>) {
     }
 }
 
-private fun List<Offset>.addOffset(offset: Offset): List<Offset> {
+private fun Line.addOffset(offset: Offset): Line {
     return this.toMutableList().apply {
         add(offset)
     }
 }
 
-private fun List<Pair<List<Offset>, Float>>.addLine(line: Pair<List<Offset>, Float>): List<Pair<List<Offset>, Float>> {
+private fun List<LineWithStroke>.addLine(line: LineWithStroke): List<LineWithStroke> {
     return this.toMutableList().apply {
         add(line)
     }

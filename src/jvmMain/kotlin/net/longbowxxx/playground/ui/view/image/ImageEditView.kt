@@ -24,20 +24,27 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import net.longbowxxx.playground.ui.widget.TextSlider
 import net.longbowxxx.playground.viewmodel.imageViewModel
+import kotlin.math.roundToInt
 
 private const val CREATE_VARIATION_TEXT = "CREATE VARIATION"
 private const val EDIT_IMAGE_TEXT = "EDIT IMAGE"
+private const val CLEAR_MASK_TEXT = "CLEAR MASK"
+
+private const val STROKE_WIDTH_TEXT = "STROKE WIDTH"
 
 @Suppress("FunctionName")
 @Composable
 fun ColumnScope.ImageEditView() {
     val activeImage by remember { imageViewModel.activeImage }
     val requesting by remember { imageViewModel.requesting }
+    var maskStrokeWidth by remember { imageViewModel.maskStrokeWidth }
 
     Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
         Box(
@@ -66,6 +73,20 @@ fun ColumnScope.ImageEditView() {
                 enabled = activeImage != null && !requesting,
             ) {
                 Text(EDIT_IMAGE_TEXT)
+            }
+            Button(
+                { imageViewModel.clearMaskImage() },
+                enabled = !requesting,
+            ) {
+                Text(CLEAR_MASK_TEXT)
+            }
+
+            TextSlider(
+                "$STROKE_WIDTH_TEXT : $maskStrokeWidth",
+                maskStrokeWidth,
+                6f..32f,
+            ) {
+                maskStrokeWidth = it.roundToInt().toFloat()
             }
         }
     }

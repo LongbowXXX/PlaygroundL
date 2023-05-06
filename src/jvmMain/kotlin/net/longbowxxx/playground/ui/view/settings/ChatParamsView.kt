@@ -9,20 +9,17 @@ package net.longbowxxx.playground.ui.view.settings
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import net.longbowxxx.playground.ui.widget.ModelSelectorWidget
+import net.longbowxxx.playground.ui.widget.TextSlider
+import net.longbowxxx.playground.ui.widget.roundToSecond
 import net.longbowxxx.playground.viewmodel.chatProperties
 import kotlin.math.roundToInt
 
@@ -88,32 +85,4 @@ fun ChatParamsView() {
             Text(RESET_TEXT)
         }
     }
-}
-
-@Composable
-fun TextSlider(
-    title: String,
-    value: Float,
-    valueRange: ClosedFloatingPointRange<Float>,
-    onChanged: (Float) -> Unit,
-) {
-    Row(
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Text(
-            title,
-            fontSize = 12.sp,
-            modifier = Modifier.width(200.dp),
-        )
-        Slider(
-            value,
-            { onChanged(it) },
-            valueRange = valueRange,
-            steps = 100,
-        )
-    }
-}
-
-private fun Float.roundToSecond(): Float {
-    return (this * 100.0f).roundToInt() / 100.0f
 }

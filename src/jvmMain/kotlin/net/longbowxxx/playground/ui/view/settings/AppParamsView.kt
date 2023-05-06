@@ -14,6 +14,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import net.longbowxxx.playground.ui.widget.SecretTextInputWidget
+import net.longbowxxx.playground.ui.widget.TextSlider
 import net.longbowxxx.playground.viewmodel.appProperties
 import kotlin.math.roundToInt
 

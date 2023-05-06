@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import net.longbowxxx.playground.ui.widget.TextSlider
 import net.longbowxxx.playground.viewmodel.imageProperties
 import kotlin.math.roundToInt
 
