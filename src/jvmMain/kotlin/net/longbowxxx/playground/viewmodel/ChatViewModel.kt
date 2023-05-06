@@ -48,6 +48,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                 it.isFile && (it.name.endsWith(".md") || it.name.endsWith(".txt"))
             }.toList()
         }
+    private var currentRequestJob: Job? = null
 
     val chatMessageFileList: List<File>
         get() {
@@ -93,7 +94,10 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     }
 
     fun requestChat() {
-        launch {
+        val lastJob = currentRequestJob
+        lastJob?.cancel()
+        currentRequestJob = launch {
+            lastJob?.join()
             // 古いエラーを消す
             errorMessage.value = ""
 

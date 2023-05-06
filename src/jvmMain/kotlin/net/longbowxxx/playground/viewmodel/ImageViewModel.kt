@@ -70,6 +70,7 @@ class ImageViewModel(
     )
     val maskStrokeWidth = mutableStateOf(DEFAULT_STROKE_WIDTH)
     var maskLines = mutableStateOf(listOf<LineWithStroke>())
+    private var currentRequestJob: Job? = null
 
     fun requestTranslation() {
         launch {
@@ -110,7 +111,11 @@ class ImageViewModel(
     }
 
     fun requestCreateImage() {
-        launch {
+        val lastJob = currentRequestJob
+        lastJob?.cancel()
+
+        currentRequestJob = launch {
+            lastJob?.join()
             val logger = ImageLogger()
             runCatching {
                 requesting.value = true
@@ -141,7 +146,12 @@ class ImageViewModel(
     }
 
     fun requestImageVariation() {
-        launch {
+        val lastJob = currentRequestJob
+        lastJob?.cancel()
+
+        currentRequestJob = launch {
+            lastJob?.join()
+
             val logger = ImageLogger()
             runCatching {
                 requesting.value = true
@@ -172,7 +182,12 @@ class ImageViewModel(
     }
 
     fun requestEditImage() {
-        launch {
+        val lastJob = currentRequestJob
+        lastJob?.cancel()
+
+        currentRequestJob = launch {
+            lastJob?.join()
+
             val logger = ImageLogger()
             runCatching {
                 requesting.value = true
