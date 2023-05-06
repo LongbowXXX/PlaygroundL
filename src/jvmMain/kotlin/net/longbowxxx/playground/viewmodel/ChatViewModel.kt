@@ -89,7 +89,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         return newList.size - 1
     }
 
-    fun clearMessages() {
+    fun newSession() {
         messages.value = INITIAL_MESSAGES
     }
 

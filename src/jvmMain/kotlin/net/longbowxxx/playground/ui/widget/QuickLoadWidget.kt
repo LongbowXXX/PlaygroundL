@@ -10,10 +10,10 @@ package net.longbowxxx.playground.ui.widget
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,7 +31,7 @@ fun QuickLoadWidget(fileList: List<File>, onSelected: (file: File) -> Unit) {
     var showModelDropdown by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.width(200.dp)) {
-        Button(
+        TextButton(
             { showModelDropdown = true },
             modifier = Modifier.fillMaxWidth(),
         ) {

@@ -11,17 +11,20 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,11 +32,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import net.longbowxxx.playground.ui.tertiaryButtonColors
 import net.longbowxxx.playground.viewmodel.chatViewModel
 
-private const val ADD_MESSAGE_TEXT = "ADD MESSAGE"
-private const val CLEAR_MESSAGES_TEXT = "CLEAR MESSAGES"
+private const val NEW_SESSION_TEXT = "NEW SESSION"
 private const val SUBMIT_TEXT = "SUBMIT"
 
 @Suppress("FunctionName")
@@ -54,20 +55,25 @@ fun ColumnScope.MessagesView() {
             MessageItemView(index, message)
         }
         item {
-            // 最後のアイテムの後に最下部までスクロールするための余白を追加します。
-            Spacer(modifier = Modifier.height(1.dp))
+            // メッセージ追加用ボタン
+            IconButton(
+                { chatViewModel.addMessage() },
+                enabled = !requesting,
+            ) {
+                Icon(Icons.Default.Add, null)
+            }
         }
     }
 
     LaunchedEffect(messages.size) {
         // リストに要素が追加された場合に末尾にスクロール
-        // 末尾の余白を考慮したIndexを指定
+        // 末尾の追加ボタンを考慮したIndexを指定
         listState.scrollToItem(index = messages.size)
     }
 
     LaunchedEffect(lastMessageSize) {
         // 最後のメッセージが更新された際に、末尾にスクロール
-        // 末尾の余白を考慮したIndexを指定
+        // 末尾の追加ボタンを考慮したIndexを指定
         listState.scrollToItem(index = messages.size)
     }
 
@@ -77,23 +83,17 @@ fun ColumnScope.MessagesView() {
         modifier = Modifier.fillMaxWidth().padding(10.dp),
     ) {
         Button(
-            { chatViewModel.addMessage() },
-            enabled = !requesting,
-        ) {
-            Text(ADD_MESSAGE_TEXT)
-        }
-        Button(
             { chatViewModel.requestChat() },
             enabled = !requesting,
         ) {
             Text(SUBMIT_TEXT)
         }
-        Button(
-            { chatViewModel.clearMessages() },
-            colors = tertiaryButtonColors(),
+        TextButton(
+            { chatViewModel.newSession() },
             enabled = !requesting,
         ) {
-            Text(CLEAR_MESSAGES_TEXT)
+            Icon(Icons.Default.Add, null)
+            Text(NEW_SESSION_TEXT)
         }
     }
 }

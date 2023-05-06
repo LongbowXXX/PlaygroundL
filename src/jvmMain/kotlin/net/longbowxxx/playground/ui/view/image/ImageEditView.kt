@@ -18,9 +18,13 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -74,10 +78,11 @@ fun ColumnScope.ImageEditView() {
             ) {
                 Text(EDIT_IMAGE_TEXT)
             }
-            Button(
+            TextButton(
                 { imageViewModel.clearMaskImage() },
                 enabled = !requesting,
             ) {
+                Icon(Icons.Default.Delete, null)
                 Text(CLEAR_MASK_TEXT)
             }
 

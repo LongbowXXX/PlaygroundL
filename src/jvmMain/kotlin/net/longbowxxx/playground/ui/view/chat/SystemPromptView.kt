@@ -34,7 +34,7 @@ import net.longbowxxx.playground.viewmodel.chatViewModel
 import java.io.File
 
 private const val SYSTEM_PROMPT_LABEL_TEXT = "SYSTEM"
-private const val LOAD_SYSTEM_TEXT = "LOAD SYSTEM PROMPT"
+private const val LOAD_SYSTEM_TEXT = "LOAD SYSTEM PROMPT…"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")

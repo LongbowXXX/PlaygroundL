@@ -13,9 +13,14 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -33,14 +38,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
-import net.longbowxxx.playground.ui.tertiaryButtonColors
 import net.longbowxxx.playground.ui.widget.QuickLoadWidget
 import net.longbowxxx.playground.viewmodel.appProperties
 import net.longbowxxx.playground.viewmodel.chatViewModel
 import java.awt.event.KeyEvent
 
 private const val CONTENT_TEXT = "CONTENT"
-private const val REMOVE_TEXT = "REMOVE"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
@@ -50,59 +53,64 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
     val messageFontSizeSp by remember { appProperties.messageFontSizeSp }
     val chatMessageFileList = chatViewModel.chatMessageFileList
 
-    Column(
-        modifier = Modifier.padding(10.dp),
+    ElevatedCard(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(5.dp, 5.dp, 5.dp, 0.dp),
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth(),
+        Column(
+            modifier = Modifier.padding(10.dp),
         ) {
-            Button(
-                { chatViewModel.toggleRole(index) },
-                enabled = !requesting,
-                modifier = Modifier.width(150.dp),
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+                modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(message.role.toDisplayText())
-            }
+                TextButton(
+                    { chatViewModel.toggleRole(index) },
+                    enabled = !requesting,
+                    modifier = Modifier.width(150.dp),
+                ) {
+                    Text(message.role.toDisplayText())
+                }
 
-            QuickLoadWidget(chatMessageFileList) {
-                val newContent = it.readText(Charsets.UTF_8)
-                chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, newContent, message.name))
-            }
+                QuickLoadWidget(chatMessageFileList) {
+                    val newContent = it.readText(Charsets.UTF_8)
+                    chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, newContent, message.name))
+                }
 
-            Button(
-                { chatViewModel.removeMessage(index) },
-                colors = tertiaryButtonColors(),
-                enabled = !requesting,
-            ) {
-                Text(REMOVE_TEXT)
+                IconButton(
+                    { chatViewModel.removeMessage(index) },
+                    enabled = !requesting,
+                ) {
+                    Icon(Icons.Default.Clear, null)
+                }
             }
-        }
-        TextField(
-            message.content,
-            {
-                chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, it))
-            },
-            label = {
-                Text(CONTENT_TEXT)
-            },
-            modifier = Modifier.fillMaxWidth()
-                .onKeyEvent {
-                    // Alt + Enter を押すと、request
-                    if (it.type == KeyEventType.KeyUp &&
-                        it.key.nativeKeyCode == KeyEvent.VK_ENTER &&
-                        it.isAltPressed
-                    ) {
-                        chatViewModel.requestChat()
-                        true
-                    } else {
-                        false
-                    }
+            TextField(
+                message.content,
+                {
+                    chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, it))
                 },
-            readOnly = requesting,
-            textStyle = TextStyle(fontSize = messageFontSizeSp.sp),
-        )
+                label = {
+                    Text(CONTENT_TEXT)
+                },
+                modifier = Modifier.fillMaxWidth()
+                    .onKeyEvent {
+                        // Alt + Enter を押すと、request
+                        if (it.type == KeyEventType.KeyUp &&
+                            it.key.nativeKeyCode == KeyEvent.VK_ENTER &&
+                            it.isAltPressed
+                        ) {
+                            chatViewModel.requestChat()
+                            true
+                        } else {
+                            false
+                        }
+                    },
+                readOnly = requesting,
+                textStyle = TextStyle(fontSize = messageFontSizeSp.sp),
+            )
+        }
     }
 }
 
