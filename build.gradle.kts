@@ -128,6 +128,12 @@ tasks.register<Copy>("copyChatPrompt") {
     into("$buildDir/tmp/release/chatPrompt")
 }
 
+tasks.register<Copy>("copyChatMessage") {
+    group = "release"
+    from("$rootDir/chatMessage")
+    into("$buildDir/tmp/release/chatMessage")
+}
+
 tasks.register<Zip>("zipArtifacts") {
     group = "release"
     from("$buildDir/tmp/release")
@@ -138,4 +144,5 @@ tasks.register<Zip>("zipArtifacts") {
     dependsOn("copyArtifacts")
     dependsOn("copyDocuments")
     dependsOn("copyChatPrompt")
+    dependsOn("copyChatMessage")
 }
