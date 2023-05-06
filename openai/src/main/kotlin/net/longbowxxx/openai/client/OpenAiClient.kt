@@ -18,6 +18,8 @@ interface OpenAiClient {
 
     fun requestChatWithStreaming(request: OpenAiChatRequest): Flow<OpenAiChatStreamResponse>
     suspend fun requestCreateImage(request: OpenAiCreateImageRequest): OpenAiImageResponse
+    suspend fun requestEditImage(request: OpenAiEditImageRequest): OpenAiImageResponse
+    suspend fun requestImageVariation(request: OpenAiImageVariationRequest): OpenAiImageResponse
 }
 
 data class OpenAiSettings(

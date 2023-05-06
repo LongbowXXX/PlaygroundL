@@ -7,8 +7,8 @@
 
 package net.longbowxxx.playground.ui.widget
 
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import java.io.File
 import javax.swing.JFileChooser
@@ -17,7 +17,7 @@ import javax.swing.filechooser.FileNameExtensionFilter
 @Suppress("FunctionName")
 @Composable
 fun FileChooseWidget(label: String, onSelected: (String?) -> Unit) {
-    Button({
+    TextButton({
         val filePath = showFileChooserDialog()
         onSelected(filePath)
     }) {

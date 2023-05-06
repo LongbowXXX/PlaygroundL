@@ -15,11 +15,15 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
+import okhttp3.RequestBody.Companion.asRequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import okhttp3.ResponseBody
 import java.io.IOException
+import java.util.concurrent.TimeUnit
 
 class OpenAiClientImpl(
     private val settings: OpenAiSettings,
@@ -34,15 +38,19 @@ class OpenAiClientImpl(
             ignoreUnknownKeys = true
         }
         private const val CREATE_IMAGE_URL = "https://api.openai.com/v1/images/generations"
-        private val mediaType = "application/json; charset=utf-8".toMediaType()
+        private const val EDIT_IMAGE_URL = "https://api.openai.com/v1/images/edits"
+        private const val IMAGE_VARIATION_URL = "https://api.openai.com/v1/images/variations"
+        private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
+        private val imagePngMediaType = "image/png".toMediaType()
         private const val DATA_PREFIX = "data: "
         private const val DATA_DONE = "[DONE]"
+        private const val TIMEOUT_SECONDS = 30L
     }
 
     override fun requestChatWithStreaming(request: OpenAiChatRequest): Flow<OpenAiChatStreamResponse> {
         val requestBody = encodeJson.encodeToString(request).also { requestJson ->
             logOpenAiRequest { requestJson }
-        }.toRequestBody(mediaType)
+        }.toRequestBody(jsonMediaType)
         val httpRequest = Request.Builder()
             .url(settings.baseUrl)
             .post(requestBody)
@@ -50,18 +58,18 @@ class OpenAiClientImpl(
             .header("Authorization", "Bearer ${settings.apiKey}")
             .build()
 
-        val client = OkHttpClient()
-
-        val response = client.newCall(httpRequest).execute()
-
-        return response.toFlow()
+        return httpClient().newCall(httpRequest)
+            .execute()
+            .successfulBodyOrThrow { responseBody ->
+                responseBody.toFlow()
+            }
     }
 
     override suspend fun requestCreateImage(request: OpenAiCreateImageRequest): OpenAiImageResponse {
         return withContext(Dispatchers.IO) {
             val requestBody = encodeJson.encodeToString(request).also { requestJson ->
                 logOpenAiRequest { requestJson }
-            }.toRequestBody(mediaType)
+            }.toRequestBody(jsonMediaType)
             val httpRequest = Request.Builder()
                 .url(CREATE_IMAGE_URL)
                 .post(requestBody)
@@ -69,42 +77,95 @@ class OpenAiClientImpl(
                 .header("Authorization", "Bearer ${settings.apiKey}")
                 .build()
 
-            val client = OkHttpClient()
-
-            val response = client.newCall(httpRequest).execute()
-            if (response.isSuccessful) {
-                response.body?.let { responseBody ->
-                    responseBody.byteStream().bufferedReader(Charsets.UTF_8).use { reader ->
-                        val allData = reader.readText()
-                        decodeJson.decodeFromString<OpenAiImageResponse>(allData)
-                    }
-                } ?: throw IOException("Create image request failed. Response body is null.")
-            } else {
-                throw IOException("Create image request failed. ${response.code}")
-            }
+            httpClient().newCall(httpRequest)
+                .execute()
+                .successfulBodyOrThrow { responseBody ->
+                    decodeJson.decodeFromString<OpenAiImageResponse>(responseBody.string())
+                }
         }
     }
 
-    private fun Response.toFlow(): Flow<OpenAiChatStreamResponse> = flow {
-        val response = this@toFlow
-        if (response.isSuccessful) {
-            response.body?.let { responseBody ->
-                responseBody.byteStream().use { inputStream ->
-                    inputStream.bufferedReader(Charsets.UTF_8).use { reader ->
-                        var line: String? = reader.readLine()
-
-                        while (line != null) {
-                            logOpenAiResponse { line.orEmpty() }
-                            line.toStreamResponse()?.let {
-                                emit(it)
-                            }
-                            line = reader.readLine()
-                        }
-                    }
+    override suspend fun requestEditImage(request: OpenAiEditImageRequest): OpenAiImageResponse {
+        return withContext(Dispatchers.IO) {
+            val requestBody = MultipartBody.Builder().apply {
+                setType(MultipartBody.FORM)
+                addFormDataPart("image", request.image.name, request.image.asRequestBody(imagePngMediaType))
+                request.mask?.let { mask ->
+                    addFormDataPart("mask", mask.name, mask.asRequestBody(imagePngMediaType))
                 }
-            } ?: throw IOException("response body is null.")
+                addFormDataPart("prompt", request.prompt)
+                addFormDataPart("n", request.n.toString())
+                addFormDataPart("size", request.size.requestValue)
+            }.build()
+
+            val httpRequest = Request.Builder()
+                .url(EDIT_IMAGE_URL)
+                .post(requestBody)
+                .header("Authorization", "Bearer ${settings.apiKey}")
+                .build()
+
+            httpClient().newCall(httpRequest)
+                .execute()
+                .successfulBodyOrThrow { responseBody ->
+                    decodeJson.decodeFromString<OpenAiImageResponse>(responseBody.string())
+                }
+        }
+    }
+
+    override suspend fun requestImageVariation(request: OpenAiImageVariationRequest): OpenAiImageResponse {
+        return withContext(Dispatchers.IO) {
+            val requestBody = MultipartBody.Builder().apply {
+                setType(MultipartBody.FORM)
+                addFormDataPart("image", request.image.name, request.image.asRequestBody(imagePngMediaType))
+                addFormDataPart("n", request.n.toString())
+                addFormDataPart("size", request.size.requestValue)
+            }.build()
+
+            val httpRequest = Request.Builder()
+                .url(IMAGE_VARIATION_URL)
+                .post(requestBody)
+                .header("Authorization", "Bearer ${settings.apiKey}")
+                .build()
+
+            httpClient().newCall(httpRequest)
+                .execute()
+                .successfulBodyOrThrow { responseBody ->
+                    decodeJson.decodeFromString<OpenAiImageResponse>(responseBody.string())
+                }
+        }
+    }
+
+    private fun httpClient(): OkHttpClient {
+        return OkHttpClient.Builder().apply {
+            connectTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+            readTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
+        }.build()
+    }
+
+    private inline fun <T> Response.successfulBodyOrThrow(block: (ResponseBody) -> T): T {
+        return if (isSuccessful) {
+            body?.let { responseBody ->
+                block(responseBody)
+            } ?: throw IOException("Request failed. Response body is null.")
         } else {
-            throw IOException("response failed. ${response.code}")
+            throw IOException("Request failed. $code, ${body?.string()}, $message")
+        }
+    }
+
+    private fun ResponseBody.toFlow(): Flow<OpenAiChatStreamResponse> = flow {
+        byteStream().use { inputStream ->
+            inputStream.bufferedReader(Charsets.UTF_8).use { reader ->
+                var line: String? = reader.readLine()
+
+                while (line != null) {
+                    logOpenAiResponse { line.orEmpty() }
+                    line.toStreamResponse()?.let {
+                        emit(it)
+                    }
+                    line = reader.readLine()
+                }
+            }
         }
     }
 

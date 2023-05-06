@@ -8,6 +8,7 @@
 package net.longbowxxx.playground.viewmodel
 
 import net.longbowxxx.playground.preference.ChatPreference
+import net.longbowxxx.playground.preference.ImagePreference
 import net.longbowxxx.playground.preference.PlaygroundPreference
 
 val appProperties: PlaygroundPreference by lazy {
@@ -18,6 +19,12 @@ val appProperties: PlaygroundPreference by lazy {
 
 val chatProperties: ChatPreference by lazy {
     ChatPreference().apply {
+        load()
+    }
+}
+
+val imageProperties: ImagePreference by lazy {
+    ImagePreference().apply {
         load()
     }
 }
@@ -34,5 +41,6 @@ fun closeViewModelAndProperties() {
     chatViewModel.close()
     imageViewModel.close()
     chatProperties.close()
+    imageProperties.close()
     appProperties.close()
 }

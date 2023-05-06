@@ -26,7 +26,6 @@ import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.playground.logger.ChatLogger
-import net.longbowxxx.playground.logger.LOG_DIR
 import java.io.Closeable
 import java.io.File
 import kotlin.coroutines.CoroutineContext
@@ -46,6 +45,14 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     val chatPromptFileList: List<File>
         get() {
             return File("chatPrompt").walkTopDown().filter {
+                it.isFile && (it.name.endsWith(".md") || it.name.endsWith(".txt"))
+            }.toList()
+        }
+    private var currentRequestJob: Job? = null
+
+    val chatMessageFileList: List<File>
+        get() {
+            return File("chatMessage").walkTopDown().filter {
                 it.isFile && (it.name.endsWith(".md") || it.name.endsWith(".txt"))
             }.toList()
         }
@@ -82,17 +89,20 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         return newList.size - 1
     }
 
-    fun clearMessages() {
+    fun newSession() {
         messages.value = INITIAL_MESSAGES
     }
 
     fun requestChat() {
-        launch {
+        val lastJob = currentRequestJob
+        lastJob?.cancel()
+        currentRequestJob = launch {
+            lastJob?.join()
             // 古いエラーを消す
             errorMessage.value = ""
 
             requesting.value = true
-            val logger = ChatLogger(LOG_DIR)
+            val logger = ChatLogger()
             runCatching {
                 val request = OpenAiChatRequest(
                     chatProperties.chatModel.value,

@@ -20,7 +20,8 @@ open class LoggerBase(
     parentDir: String,
 ) : Closeable {
     companion object {
-
+        const val LOG_DIR = "log"
+        private const val HORIZONTAL_LINE = "\n----------------------------------------\n\n"
         private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
     }
 
@@ -28,31 +29,41 @@ open class LoggerBase(
         encodeDefaults = false
         prettyPrint = true
     }
-    protected val writer: BufferedWriter
+    private val writer: BufferedWriter
     protected val dateTimeStr: String
     protected val logDir: File
 
     init {
         val now = LocalDateTime.now()
         dateTimeStr = now.format(dateTimeFormatter)
-        logDir = File(parentDir, dateTimeStr)
-        logDir.mkdirs()
+        logDir = File(parentDir, dateTimeStr).apply {
+            mkdirs()
+        }
         val outFile = File(logDir, "logFile_$dateTimeStr.md")
         writer = outFile.bufferedWriter(Charsets.UTF_8)
     }
 
-    suspend fun logError(throwable: Throwable) {
-        withContext(Dispatchers.IO) {
-            writer.write("# ERROR\n")
-            writer.write("$throwable\n")
-            writer.write(HORIZONTAL_LINE)
+    protected suspend fun <T> writeLog(block: BufferedWriter.() -> T): T {
+        return withContext(Dispatchers.IO) {
+            writer.block().also {
+                writer.flush()
+            }
         }
+    }
+
+    suspend fun logError(throwable: Throwable) {
+        writeLog {
+            write("# ERROR\n")
+            write("$throwable\n")
+            appendHorizontalLine()
+        }
+    }
+
+    protected fun BufferedWriter.appendHorizontalLine() {
+        write(HORIZONTAL_LINE)
     }
 
     override fun close() {
         writer.close()
     }
 }
-
-const val LOG_DIR = "log"
-const val HORIZONTAL_LINE = "\n----------------------------------------\n\n"

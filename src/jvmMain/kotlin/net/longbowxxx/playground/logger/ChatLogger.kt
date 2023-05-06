@@ -7,35 +7,37 @@
 
 package net.longbowxxx.playground.logger
 
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import kotlinx.serialization.encodeToString
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRequest
 
 class ChatLogger(
-    parentDir: String,
+    parentDir: String = CHAT_LOG_DIR,
 ) : LoggerBase(parentDir) {
 
+    companion object {
+        const val CHAT_LOG_DIR = "$LOG_DIR/chat"
+    }
+
     suspend fun logRequest(request: OpenAiChatRequest) {
-        withContext(Dispatchers.IO) {
-            writer.write("Playground Chat Log $dateTimeStr\n")
-            writer.write("===\n")
-            writer.write("# Request Parameters\n")
-            writer.write("```json\n")
+        writeLog {
+            write("Playground Chat Log $dateTimeStr\n")
+            write("===\n")
+            write("# Request Parameters\n")
+            write("```json\n")
             val json = encodeJson.encodeToString(request.extractSettings())
-            writer.write("$json\n")
-            writer.write("```\n")
-            writer.write(HORIZONTAL_LINE)
+            write("$json\n")
+            write("```\n")
+            appendHorizontalLine()
         }
     }
 
     suspend fun logMessages(messages: List<OpenAiChatMessage>) {
-        withContext(Dispatchers.IO) {
+        writeLog {
             messages.forEach { message ->
-                writer.write("# ${message.role.name}\n")
-                writer.write("${message.content}\n")
-                writer.write(HORIZONTAL_LINE)
+                write("# ${message.role.name}\n")
+                write("${message.content}\n")
+                appendHorizontalLine()
             }
         }
     }
