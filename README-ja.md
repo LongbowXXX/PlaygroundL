@@ -13,6 +13,10 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 # アプリの使い方
 [HowToUse-ja.md](documents/HowToUse-ja.md)を参照してください。  
 
+<video width="320" height="240" controls>
+  <source src="./PLAYGROUND-Movie.mp4" type="video/mp4">
+</video>
+
 # OSS
 このアプリケーションで使用されているOSS。  
 
