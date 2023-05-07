@@ -43,8 +43,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     val errorMessage = mutableStateOf("")
     val requesting = mutableStateOf(false)
     val models = listOf(OPENAI_CHAT_MODEL_GPT_35_TURBO, OPENAI_CHAT_MODEL_GPT_4)
-    var currentChatSession = ChatHistory.ChatHistorySession()
-        private set
+    private var currentChatSession = ChatHistory.ChatHistorySession()
 
     val chatPromptFileList: List<File>
         get() {
@@ -114,6 +113,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             errorMessage.value = ""
 
             requesting.value = true
+            val session = currentChatSession
             val logger = ChatLogger()
             runCatching {
                 val request = OpenAiChatRequest(
@@ -129,8 +129,13 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                 val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
                 client.requestChatWithStreaming(request).correctStreamResponse()
 
+                val latestMessages = createMessages()
+                session.messages = latestMessages
                 logger.logRequest(request)
-                logger.logMessages(createMessages())
+                logger.logMessages(latestMessages)
+                launch {
+                    updateChatSessionTitle(latestMessages, session)
+                }
                 // レスポンスが終わったら、次の入力用のメッセージ追加
                 addMessage()
             }.onFailure {
