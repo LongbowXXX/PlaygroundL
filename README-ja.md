@@ -32,3 +32,5 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - com.squareup.okhttp3:okhttp  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+- realm/realm-kotlin  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)

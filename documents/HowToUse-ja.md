@@ -36,6 +36,8 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 - chatMessage ディレクトリ  
   ユーザメッセージのテンプレートサンプルです。  
   ここに置かれたファイルは CHAT MESSAGE の QUICK LOAD から呼び出せます。
+- db ディレクトリ  
+  アプリが利用する DataBase ファイル。アプリにより自動生成されます。
 - log ディレクトリ  
   アプリのログファイル。アプリにより自動生成されます。   
 
@@ -47,11 +49,20 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
    セキュリティのため、Saveすると入力欄は消えます。  
 
 ## CHAT 機能の使い方
+
+### ASSISTANT との対話
 1. BottomBar で CHAT を選択します  
 2. SYSTEM に プロンプト を入力します  
    LOAD SYSTEM PROMPT を押下することで、ファイルから読み込むこともできます。  
 3. USER の CONTENT に ユーザのメッセージを入力します  
 4. SUBMIT を押下すると ASSISTANT の応答が表示されます  
+
+### 新しいセッションの開始
+1. NEW SESSION を押下します  
+
+### 過去のセッションを復元
+1. RESTORE OLD CHAT… を押下します  
+2. 一覧の中から復元したいセッションを選択します  
 
 ## IMAGE 機能の使い方
 
@@ -94,3 +105,5 @@ GPT-4 を使うためには [waitlist](https://openai.com/waitlist/gpt-4-api) �
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - com.squareup.okhttp3:okhttp  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)  
+- realm/realm-kotlin  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)

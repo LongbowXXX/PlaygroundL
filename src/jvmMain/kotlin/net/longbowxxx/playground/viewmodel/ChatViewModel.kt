@@ -25,6 +25,7 @@ import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
+import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.logger.ChatLogger
 import java.io.Closeable
 import java.io.File
@@ -41,7 +42,10 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     val messages = mutableStateOf(INITIAL_MESSAGES)
     val errorMessage = mutableStateOf("")
     val requesting = mutableStateOf(false)
+    val history = mutableStateOf<List<ChatHistory.ChatHistorySession>>(emptyList())
     val models = listOf(OPENAI_CHAT_MODEL_GPT_35_TURBO, OPENAI_CHAT_MODEL_GPT_4)
+    private var currentChatSession = ChatHistory.ChatHistorySession()
+
     val chatPromptFileList: List<File>
         get() {
             return File("chatPrompt").walkTopDown().filter {
@@ -57,6 +61,20 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             }.toList()
         }
 
+    fun updateHistory() {
+        launch {
+            val newHistory = chatHistory.getHistory()
+            history.value = newHistory
+        }
+    }
+
+    fun removeHistory(session: ChatHistory.ChatHistorySession) {
+        launch {
+            chatHistory.removeHistory(session)
+            history.value = chatHistory.getHistory()
+        }
+    }
+
     fun updateMessage(index: Int, message: OpenAiChatMessage) {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)
@@ -71,6 +89,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         require(index < newList.size)
         newList[index] = newList[index].toggleRole()
         messages.value = newList
+        currentChatSession.messages = newList
     }
 
     fun removeMessage(index: Int) {
@@ -79,6 +98,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         require(index < newList.size)
         newList.removeAt(index)
         messages.value = newList
+        currentChatSession.messages = newList
     }
 
     fun addMessage(): Int {
@@ -86,11 +106,17 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         newList.addAll(messages.value)
         newList.add(OpenAiChatMessage(OpenAiChatRoleTypes.USER, ""))
         messages.value = newList
+        currentChatSession.messages = newList
         return newList.size - 1
     }
 
     fun newSession() {
         messages.value = INITIAL_MESSAGES
+        val lastSession = currentChatSession
+        launch {
+            chatHistory.saveSession(lastSession)
+        }
+        currentChatSession = ChatHistory.ChatHistorySession()
     }
 
     fun requestChat() {
@@ -102,6 +128,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             errorMessage.value = ""
 
             requesting.value = true
+            val session = currentChatSession
             val logger = ChatLogger()
             runCatching {
                 val request = OpenAiChatRequest(
@@ -117,8 +144,13 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                 val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
                 client.requestChatWithStreaming(request).correctStreamResponse()
 
+                val latestMessages = createMessages()
+                session.messages = latestMessages
                 logger.logRequest(request)
-                logger.logMessages(createMessages())
+                logger.logMessages(latestMessages)
+                launch {
+                    updateChatSessionTitle(latestMessages, session)
+                }
                 // レスポンスが終わったら、次の入力用のメッセージ追加
                 addMessage()
             }.onFailure {
@@ -129,6 +161,15 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                 requesting.value = false
             }
         }
+    }
+
+    fun restoreOldSession(session: ChatHistory.ChatHistorySession) {
+        val lastSession = currentChatSession
+        launch {
+            chatHistory.saveSession(lastSession)
+        }
+        currentChatSession = session
+        messages.value = session.messages
     }
 
     private suspend fun Flow<OpenAiChatStreamResponse>.correctStreamResponse() {
@@ -169,6 +210,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     override fun close() {
         runBlocking {
             job.cancelAndJoin()
+            chatHistory.saveSession(currentChatSession)
         }
     }
 }

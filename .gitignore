@@ -46,3 +46,4 @@ bin/
 /playgroundApp.properties
 /chat.properties
 /image.properties
+/db/
