@@ -94,3 +94,5 @@ GPT-4 を使うためには [waitlist](https://openai.com/waitlist/gpt-4-api) �
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - com.squareup.okhttp3:okhttp  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)  
+- realm/realm-kotlin  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)

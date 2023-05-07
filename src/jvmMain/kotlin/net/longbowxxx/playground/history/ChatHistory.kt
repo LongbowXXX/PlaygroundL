@@ -7,129 +7,126 @@
 
 package net.longbowxxx.playground.history
 
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.DelicateCoroutinesApi
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.cancelAndJoin
-import kotlinx.coroutines.newSingleThreadContext
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
-import kotlinx.serialization.Serializable
+import io.realm.kotlin.ext.query
+import io.realm.kotlin.ext.realmListOf
+import io.realm.kotlin.ext.toRealmList
+import io.realm.kotlin.types.RealmList
+import io.realm.kotlin.types.RealmObject
+import io.realm.kotlin.types.annotations.PrimaryKey
 import net.longbowxxx.openai.client.OpenAiChatMessage
-import java.io.Closeable
-import java.sql.Connection
-import java.sql.DriverManager
-import java.sql.ResultSet
-import java.sql.Statement
+import net.longbowxxx.openai.client.OpenAiChatRoleTypes
+import org.mongodb.kbson.ObjectId
 
-class ChatHistory : Closeable, CoroutineScope {
+class ChatHistory : RealmBase() {
     companion object {
-        private const val DB_FILE_NAME = "chat-database.db"
-        private const val HISTORY_TABLE_NAME = "history-table"
-        private const val ID_KEY = "id"
-        private const val TITLE_KEY = "title"
-        private const val CATEGORIES_KEY = "categories"
-        private const val MESSAGES_KEY = "messages"
+        private const val DB_DIR = "db"
+        private const val DB_FILE_NAME = "chat-history.realm"
     }
 
-    @OptIn(DelicateCoroutinesApi::class)
-    private val dispatcher = newSingleThreadContext("sqlite-thread")
-    private var connection: Connection? = null
-    private val job = Job()
-    override val coroutineContext = job + dispatcher
+    override val schema = setOf(ChatHistoryData::class, ChatMessageData::class)
+    override val realmDirectory = DB_DIR
+    override val realmFileName = DB_FILE_NAME
+
+    data class ChatHistoryItem(
+        val id: ObjectId? = null,
+        var title: String,
+        var categories: List<String>,
+        var messages: List<OpenAiChatMessage>,
+    ) {
+        companion object {
+            operator fun invoke(
+                title: String,
+                categories: List<String>,
+                messages: List<OpenAiChatMessage>,
+            ): ChatHistoryItem {
+                return ChatHistoryItem(null, title, categories, messages)
+            }
+        }
+    }
 
     suspend fun addHistory(item: ChatHistoryItem) {
-        createTableIfNeeded()
-        dbStatement {
-            // executeUpdate("INSERT INTO your_table (data) VALUES ('$data')")
+        writeToRealm {
+            copyToRealm(item.toData())
+        }
+    }
+
+    suspend fun updateHistory(item: ChatHistoryItem) {
+        requireNotNull(item.id) { "ChatHistoryItem id must not be null." }
+        writeToRealm {
+            val newData = item.toData()
+            query<ChatHistoryData>("id == $0", newData.id).first().find()?.also { data ->
+                findLatest(data)?.title = newData.title
+                findLatest(data)?.categories = newData.categories
+                findLatest(data)?.messages = newData.messages
+            }
+        }
+    }
+
+    suspend fun removeHistory(item: ChatHistoryItem) {
+        requireNotNull(item.id) { "ChatHistoryItem id must not be null." }
+        writeToRealm {
+            val deleteData = item.toData()
+            val deleteQuery = query<ChatHistoryData>("id == $0", deleteData.id)
+            delete(deleteQuery)
+        }
+    }
+
+    suspend fun clearHistory() {
+        writeToRealm {
+            deleteAll()
         }
     }
 
     suspend fun getHistory(): List<ChatHistoryItem> {
-        createTableIfNeeded()
-        return runQuery("SELECT * FROM $HISTORY_TABLE_NAME") { resultSet ->
-            resultSet.toChatHistoryItem()
-        }
-    }
-
-    private fun ResultSet.toChatHistoryItem() = ChatHistoryItem(
-        getString(TITLE_KEY),
-        getString(CATEGORIES_KEY),
-        getString(MESSAGES_KEY)
-    )
-
-    private suspend fun createTableIfNeeded() {
-        runUpdate {
-            """
-                CREATE TABLE IF NOT EXISTS $HISTORY_TABLE_NAME (
-                    $ID_KEY INTEGER PRIMARY KEY AUTOINCREMENT,
-                    $TITLE_KEY TEXT NOT NULL
-                    $CATEGORIES_KEY TEXT NOT NULL
-                    $MESSAGES_KEY TEXT NOT NULL
-                )
-            """.trimIndent()
-        }
-    }
-
-    private suspend fun <T> runQuery(sql: String, transform: (ResultSet) -> T): List<T> {
-        return dbStatement {
-            executeQuery(sql)
-                .map(transform)
-        }
-    }
-
-    private suspend fun runUpdate(sqlBlock: () -> String): Int {
-        return dbStatement {
-            executeUpdate(sqlBlock())
-        }
-    }
-
-    private inline fun <T> ResultSet.map(transform: (ResultSet) -> T): List<T> {
-        use { resultSet ->
-            val resultList = mutableListOf<T>()
-            while (resultSet.next()) {
-                resultList.add(transform(resultSet))
-            }
-            return resultList
-        }
-    }
-
-    private suspend fun <T> dbStatement(block: Statement.() -> T): T {
-        return withContext(coroutineContext) {
-            val url = "jdbc:sqlite:$DB_FILE_NAME"
-            val con = connection ?: DriverManager.getConnection(url)
-            con.createStatement().run {
-                block()
-            }.also {
-                close()
+        return readFromRealm {
+            query<ChatHistoryData>().find().toList().map {
+                it.toItem()
             }
         }
     }
 
-    override fun close() {
-        runBlocking {
-            connection?.close()
-            job.cancelAndJoin()
-            dispatcher.close()
+    private fun ChatHistoryItem.toData(): ChatHistoryData {
+        return ChatHistoryData().apply {
+            id = this@toData.id ?: ObjectId()
+            title = this@toData.title
+            categories = this@toData.categories.toRealmList()
+            messages = this@toData.messages.map { it.toData() }.toRealmList()
         }
     }
-}
 
-@Serializable
-data class ChatHistoryItem(
-    val title: String,
-    val categories: List<String>,
-    val messages: List<OpenAiChatMessage>,
-) {
-    companion object {
-        private const val CATEGORY_DELIMITER=","
-        operator fun invoke(title: String, categories: String, messages: String): ChatHistoryItem {
+    private fun ChatHistoryData.toItem(): ChatHistoryItem {
+        return ChatHistoryItem(
+            id,
+            title,
+            categories.toList(),
+            messages.map { it.toItem() }.toList(),
+        )
+    }
 
-            ChatHistoryItem(
-                title,
-                categories.split(CATEGORY_DELIMITER),
-
-            )
+    private fun OpenAiChatMessage.toData(): ChatMessageData {
+        return ChatMessageData().apply {
+            role = this@toData.role.toInt()
+            content = this@toData.content
+            name = this@toData.name
         }
     }
+
+    private fun ChatMessageData.toItem() = OpenAiChatMessage(role.toOpenAiChatRoleTypes(), content, name)
+
+    class ChatHistoryData : RealmObject {
+        @PrimaryKey
+        var id: ObjectId = ObjectId()
+        var title: String = ""
+        var categories: RealmList<String> = realmListOf()
+        var messages: RealmList<ChatMessageData> = realmListOf()
+    }
+
+    class ChatMessageData : RealmObject {
+        var role: Int = 0
+        var content: String = ""
+        var name: String? = null
+    }
+
+    private fun OpenAiChatRoleTypes.toInt(): Int = this.ordinal
+    private fun Int.toOpenAiChatRoleTypes(): OpenAiChatRoleTypes = OpenAiChatRoleTypes.values()[this]
 }

@@ -94,5 +94,7 @@ OSS used by this application.
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - com.squareup.okhttp3:okhttp  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+- realm/realm-kotlin  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 **This document was translated using OpenAI.**

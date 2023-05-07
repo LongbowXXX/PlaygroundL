@@ -4,6 +4,7 @@ plugins {
     kotlin("multiplatform")
     kotlin("plugin.serialization")
     id("org.jetbrains.compose")
+    id("io.realm.kotlin")
 }
 
 group = "net.longbowxxx.playground"
@@ -72,10 +73,21 @@ kotlin {
                 implementation("org.jetbrains.compose.material3:material3-desktop:${property("compose.version")}")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlinx.coroutine.core.version")}")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${property("kotlinx.serialization.version")}")
-                implementation("org.xerial:sqlite-jdbc:${property("sqlite.jdbc.version")}")
+                implementation("io.realm.kotlin:library-base:${property("realm.version")}")
             }
         }
-        val jvmTest by getting
+        val jvmTest by getting {
+            dependencies {
+                implementation("org.jetbrains.kotlin:kotlin-test-junit5")
+                implementation("org.junit.jupiter:junit-jupiter")
+            }
+        }
+    }
+}
+
+tasks.withType<Test>().configureEach {
+    if (name == "jvmTest") {
+        useJUnitPlatform()
     }
 }
 
