@@ -42,6 +42,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     val messages = mutableStateOf(INITIAL_MESSAGES)
     val errorMessage = mutableStateOf("")
     val requesting = mutableStateOf(false)
+    val history = mutableStateOf<List<ChatHistory.ChatHistorySession>>(emptyList())
     val models = listOf(OPENAI_CHAT_MODEL_GPT_35_TURBO, OPENAI_CHAT_MODEL_GPT_4)
     private var currentChatSession = ChatHistory.ChatHistorySession()
 
@@ -59,6 +60,13 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                 it.isFile && (it.name.endsWith(".md") || it.name.endsWith(".txt"))
             }.toList()
         }
+
+    fun updateHistory() {
+        launch {
+            val newHistory = chatHistory.getHistory()
+            history.value = newHistory
+        }
+    }
 
     fun updateMessage(index: Int, message: OpenAiChatMessage) {
         val newList = mutableListOf<OpenAiChatMessage>()
@@ -146,6 +154,15 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                 requesting.value = false
             }
         }
+    }
+
+    fun restoreOldSession(session: ChatHistory.ChatHistorySession) {
+        val lastSession = currentChatSession
+        launch {
+            chatHistory.saveSession(lastSession)
+        }
+        currentChatSession = session
+        messages.value = session.messages
     }
 
     private suspend fun Flow<OpenAiChatStreamResponse>.correctStreamResponse() {

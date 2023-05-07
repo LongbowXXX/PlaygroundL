@@ -29,7 +29,7 @@ class ChatHistory : RealmBase() {
     override val realmFileName = DB_FILE_NAME
 
     data class ChatHistorySession(
-        val id: ObjectId? = null,
+        val id: ObjectId,
         var title: String,
         var categories: List<String>,
         var messages: List<OpenAiChatMessage>,
@@ -40,37 +40,30 @@ class ChatHistory : RealmBase() {
                 categories: List<String>,
                 messages: List<OpenAiChatMessage>,
             ): ChatHistorySession {
-                return ChatHistorySession(null, title, categories, messages)
+                return ChatHistorySession(ObjectId(), title, categories, messages)
             }
 
             operator fun invoke(): ChatHistorySession {
-                return ChatHistorySession(null, DEFAULT_SESSION_TITLE, emptyList(), emptyList())
+                return ChatHistorySession(ObjectId(), DEFAULT_SESSION_TITLE, emptyList(), emptyList())
             }
         }
     }
 
     suspend fun saveSession(session: ChatHistorySession) {
-        when (session.id) {
-            null -> addNewSession(session)
-            else -> updateSession(session)
+        // 一度も対話していないものは記録しない
+        val hasAssistantMessage = session.messages.any { it.role == OpenAiChatRoleTypes.ASSISTANT }
+        if (!hasAssistantMessage) {
+            return
         }
-    }
 
-    private suspend fun addNewSession(session: ChatHistorySession) {
-        writeToRealm {
-            copyToRealm(session.toData())
-        }
-    }
-
-    private suspend fun updateSession(session: ChatHistorySession) {
-        requireNotNull(session.id) { "ChatHistoryItem id must not be null." }
         writeToRealm {
             val newData = session.toData()
-            query<ChatHistoryData>("id == $0", newData.id).first().find()?.also { data ->
-                findLatest(data)?.title = newData.title
-                findLatest(data)?.categories = newData.categories
-                findLatest(data)?.messages = newData.messages
-            }
+            query<ChatHistoryData>("id == $0", newData.id).first().find()
+                ?.also { data ->
+                    findLatest(data)?.title = newData.title
+                    findLatest(data)?.categories = newData.categories
+                    findLatest(data)?.messages = newData.messages
+                } ?: copyToRealm(session.toData())
         }
     }
 
@@ -99,7 +92,7 @@ class ChatHistory : RealmBase() {
 
     private fun ChatHistorySession.toData(): ChatHistoryData {
         return ChatHistoryData().apply {
-            id = this@toData.id ?: ObjectId()
+            id = this@toData.id
             title = this@toData.title
             categories = this@toData.categories.toRealmList()
             messages = this@toData.messages.map { it.toData() }.toRealmList()

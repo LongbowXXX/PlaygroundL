@@ -18,7 +18,7 @@ class ChatHistoryTest {
                     listOf("category1"),
                     listOf(
                         OpenAiChatMessage(
-                            OpenAiChatRoleTypes.USER,
+                            OpenAiChatRoleTypes.ASSISTANT,
                             "content",
                         ),
                     ),
