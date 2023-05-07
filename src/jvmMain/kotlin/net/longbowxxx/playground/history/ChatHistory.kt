@@ -10,12 +10,15 @@ package net.longbowxxx.playground.history
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
+import io.realm.kotlin.query.Sort
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
+import io.realm.kotlin.types.annotations.Index
 import io.realm.kotlin.types.annotations.PrimaryKey
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import org.mongodb.kbson.ObjectId
+import java.util.*
 
 class ChatHistory : RealmBase() {
     companion object {
@@ -33,6 +36,7 @@ class ChatHistory : RealmBase() {
         var title: String,
         var categories: List<String>,
         var messages: List<OpenAiChatMessage>,
+        var updateAt: Long = System.currentTimeMillis(),
     ) {
         companion object {
             operator fun invoke(
@@ -68,7 +72,6 @@ class ChatHistory : RealmBase() {
     }
 
     suspend fun removeHistory(item: ChatHistorySession) {
-        requireNotNull(item.id) { "ChatHistoryItem id must not be null." }
         writeToRealm {
             val deleteData = item.toData()
             val deleteQuery = query<ChatHistoryData>("id == $0", deleteData.id)
@@ -84,7 +87,10 @@ class ChatHistory : RealmBase() {
 
     suspend fun getHistory(): List<ChatHistorySession> {
         return readFromRealm {
-            query<ChatHistoryData>().find().toList().map {
+//            query<ChatHistoryData>().find().toList().map {
+//                it.toSession()
+//            }
+            query<ChatHistoryData>().sort("updateAt", Sort.DESCENDING).find().toList().map {
                 it.toSession()
             }
         }
@@ -96,6 +102,7 @@ class ChatHistory : RealmBase() {
             title = this@toData.title
             categories = this@toData.categories.toRealmList()
             messages = this@toData.messages.map { it.toData() }.toRealmList()
+            updateAt = this@toData.updateAt
         }
     }
 
@@ -105,6 +112,7 @@ class ChatHistory : RealmBase() {
             title,
             categories.toList(),
             messages.map { it.toSession() }.toList(),
+            updateAt,
         )
     }
 
@@ -121,6 +129,9 @@ class ChatHistory : RealmBase() {
     class ChatHistoryData : RealmObject {
         @PrimaryKey
         var id: ObjectId = ObjectId()
+
+        @Index
+        var updateAt: Long = System.currentTimeMillis()
         var title: String = ""
         var categories: RealmList<String> = realmListOf()
         var messages: RealmList<ChatMessageData> = realmListOf()

@@ -68,6 +68,13 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         }
     }
 
+    fun removeHistory(session: ChatHistory.ChatHistorySession) {
+        launch {
+            chatHistory.removeHistory(session)
+            history.value = chatHistory.getHistory()
+        }
+    }
+
     fun updateMessage(index: Int, message: OpenAiChatMessage) {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)
