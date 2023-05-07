@@ -1,6 +1,10 @@
 PlaygroundL Change Log
 ===
 
+## [1.2.0]
+### Added
+- Add chat session history.
+
 ## [1.1.0]
 ### Added
 - Support edit image
