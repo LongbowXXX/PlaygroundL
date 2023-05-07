@@ -32,10 +32,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import net.longbowxxx.playground.ui.widget.ChatHistorySelectorWidget
 import net.longbowxxx.playground.viewmodel.chatViewModel
 
 private const val NEW_SESSION_TEXT = "NEW SESSION"
 private const val SUBMIT_TEXT = "SUBMIT"
+private const val CHAT_HISTORY_TEXT = "RESTORE OLD CHAT"
 
 @Suppress("FunctionName")
 @Composable
@@ -56,11 +58,13 @@ fun ColumnScope.MessagesView() {
         }
         item {
             // メッセージ追加用ボタン
-            IconButton(
-                { chatViewModel.addMessage() },
-                enabled = !requesting,
-            ) {
-                Icon(Icons.Default.Add, null)
+            Row(modifier = Modifier.fillMaxWidth()) {
+                IconButton(
+                    { chatViewModel.addMessage() },
+                    enabled = !requesting,
+                ) {
+                    Icon(Icons.Default.Add, null)
+                }
             }
         }
     }
@@ -87,6 +91,9 @@ fun ColumnScope.MessagesView() {
             enabled = !requesting,
         ) {
             Text(SUBMIT_TEXT)
+        }
+        ChatHistorySelectorWidget(CHAT_HISTORY_TEXT) {
+            chatViewModel.restoreOldSession(it)
         }
         TextButton(
             { chatViewModel.newSession() },
