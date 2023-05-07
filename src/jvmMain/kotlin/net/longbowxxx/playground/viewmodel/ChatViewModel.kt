@@ -25,6 +25,7 @@ import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
+import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.logger.ChatLogger
 import java.io.Closeable
 import java.io.File
@@ -42,6 +43,9 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     val errorMessage = mutableStateOf("")
     val requesting = mutableStateOf(false)
     val models = listOf(OPENAI_CHAT_MODEL_GPT_35_TURBO, OPENAI_CHAT_MODEL_GPT_4)
+    var currentChatSession = ChatHistory.ChatHistorySession()
+        private set
+
     val chatPromptFileList: List<File>
         get() {
             return File("chatPrompt").walkTopDown().filter {
@@ -71,6 +75,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         require(index < newList.size)
         newList[index] = newList[index].toggleRole()
         messages.value = newList
+        currentChatSession.messages = newList
     }
 
     fun removeMessage(index: Int) {
@@ -79,6 +84,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         require(index < newList.size)
         newList.removeAt(index)
         messages.value = newList
+        currentChatSession.messages = newList
     }
 
     fun addMessage(): Int {
@@ -86,11 +92,17 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         newList.addAll(messages.value)
         newList.add(OpenAiChatMessage(OpenAiChatRoleTypes.USER, ""))
         messages.value = newList
+        currentChatSession.messages = newList
         return newList.size - 1
     }
 
     fun newSession() {
         messages.value = INITIAL_MESSAGES
+        val lastSession = currentChatSession
+        launch {
+            chatHistory.saveSession(lastSession)
+        }
+        currentChatSession = ChatHistory.ChatHistorySession()
     }
 
     fun requestChat() {
@@ -169,6 +181,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     override fun close() {
         runBlocking {
             job.cancelAndJoin()
+            chatHistory.saveSession(currentChatSession)
         }
     }
 }

@@ -21,13 +21,14 @@ class ChatHistory : RealmBase() {
     companion object {
         private const val DB_DIR = "db"
         private const val DB_FILE_NAME = "chat-history.realm"
+        private const val DEFAULT_SESSION_TITLE = "New chat"
     }
 
     override val schema = setOf(ChatHistoryData::class, ChatMessageData::class)
     override val realmDirectory = DB_DIR
     override val realmFileName = DB_FILE_NAME
 
-    data class ChatHistoryItem(
+    data class ChatHistorySession(
         val id: ObjectId? = null,
         var title: String,
         var categories: List<String>,
@@ -38,22 +39,33 @@ class ChatHistory : RealmBase() {
                 title: String,
                 categories: List<String>,
                 messages: List<OpenAiChatMessage>,
-            ): ChatHistoryItem {
-                return ChatHistoryItem(null, title, categories, messages)
+            ): ChatHistorySession {
+                return ChatHistorySession(null, title, categories, messages)
+            }
+
+            operator fun invoke(): ChatHistorySession {
+                return ChatHistorySession(null, DEFAULT_SESSION_TITLE, emptyList(), emptyList())
             }
         }
     }
 
-    suspend fun addHistory(item: ChatHistoryItem) {
-        writeToRealm {
-            copyToRealm(item.toData())
+    suspend fun saveSession(session: ChatHistorySession) {
+        when (session.id) {
+            null -> addNewSession(session)
+            else -> updateSession(session)
         }
     }
 
-    suspend fun updateHistory(item: ChatHistoryItem) {
-        requireNotNull(item.id) { "ChatHistoryItem id must not be null." }
+    private suspend fun addNewSession(session: ChatHistorySession) {
         writeToRealm {
-            val newData = item.toData()
+            copyToRealm(session.toData())
+        }
+    }
+
+    private suspend fun updateSession(session: ChatHistorySession) {
+        requireNotNull(session.id) { "ChatHistoryItem id must not be null." }
+        writeToRealm {
+            val newData = session.toData()
             query<ChatHistoryData>("id == $0", newData.id).first().find()?.also { data ->
                 findLatest(data)?.title = newData.title
                 findLatest(data)?.categories = newData.categories
@@ -62,7 +74,7 @@ class ChatHistory : RealmBase() {
         }
     }
 
-    suspend fun removeHistory(item: ChatHistoryItem) {
+    suspend fun removeHistory(item: ChatHistorySession) {
         requireNotNull(item.id) { "ChatHistoryItem id must not be null." }
         writeToRealm {
             val deleteData = item.toData()
@@ -77,15 +89,15 @@ class ChatHistory : RealmBase() {
         }
     }
 
-    suspend fun getHistory(): List<ChatHistoryItem> {
+    suspend fun getHistory(): List<ChatHistorySession> {
         return readFromRealm {
             query<ChatHistoryData>().find().toList().map {
-                it.toItem()
+                it.toSession()
             }
         }
     }
 
-    private fun ChatHistoryItem.toData(): ChatHistoryData {
+    private fun ChatHistorySession.toData(): ChatHistoryData {
         return ChatHistoryData().apply {
             id = this@toData.id ?: ObjectId()
             title = this@toData.title
@@ -94,12 +106,12 @@ class ChatHistory : RealmBase() {
         }
     }
 
-    private fun ChatHistoryData.toItem(): ChatHistoryItem {
-        return ChatHistoryItem(
+    private fun ChatHistoryData.toSession(): ChatHistorySession {
+        return ChatHistorySession(
             id,
             title,
             categories.toList(),
-            messages.map { it.toItem() }.toList(),
+            messages.map { it.toSession() }.toList(),
         )
     }
 
@@ -111,7 +123,7 @@ class ChatHistory : RealmBase() {
         }
     }
 
-    private fun ChatMessageData.toItem() = OpenAiChatMessage(role.toOpenAiChatRoleTypes(), content, name)
+    private fun ChatMessageData.toSession() = OpenAiChatMessage(role.toOpenAiChatRoleTypes(), content, name)
 
     class ChatHistoryData : RealmObject {
         @PrimaryKey

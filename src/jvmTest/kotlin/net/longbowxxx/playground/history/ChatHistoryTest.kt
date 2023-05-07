@@ -12,8 +12,8 @@ class ChatHistoryTest {
     fun basicFlow() = runBlocking {
         ChatHistory().use { history ->
             history.clearHistory()
-            history.addHistory(
-                ChatHistory.ChatHistoryItem(
+            history.saveSession(
+                ChatHistory.ChatHistorySession(
                     "title",
                     listOf("category1"),
                     listOf(
@@ -27,7 +27,7 @@ class ChatHistoryTest {
 
             val items = history.getHistory()
             assertEquals(items.size, 1)
-            history.updateHistory(items.first())
+            history.saveSession(items.first())
             history.removeHistory(items.first())
             val items2 = history.getHistory()
             assertEquals(items2.size, 0)
