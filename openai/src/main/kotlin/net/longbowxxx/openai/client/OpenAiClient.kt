@@ -20,9 +20,12 @@ interface OpenAiClient {
     suspend fun requestCreateImage(request: OpenAiCreateImageRequest): OpenAiImageResponse
     suspend fun requestEditImage(request: OpenAiEditImageRequest): OpenAiImageResponse
     suspend fun requestImageVariation(request: OpenAiImageVariationRequest): OpenAiImageResponse
+
+    suspend fun requestAudioTranscription(request: OpenAiAudioRequest): OpenAiAudioResponse
+
+    suspend fun requestAudioTranslation(request: OpenAiAudioRequest): OpenAiAudioResponse
 }
 
 data class OpenAiSettings(
-    val baseUrl: String,
     val apiKey: String,
 )
