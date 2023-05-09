@@ -11,7 +11,6 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO
-import net.longbowxxx.openai.client.OPENAI_CHAT_URL
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRequest
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
@@ -61,7 +60,7 @@ suspend fun updateChatSessionTitle(messages: List<OpenAiChatMessage>, session: C
             stream = true,
             temperature = 0f,
         )
-        val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
+        val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
         var responseString = ""
         client.requestChatWithStreaming(request).collect { streamResponse ->
             streamResponse.choices.firstOrNull()?.delta?.content?.let { contentDelta ->

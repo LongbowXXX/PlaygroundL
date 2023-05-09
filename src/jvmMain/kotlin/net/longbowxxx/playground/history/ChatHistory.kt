@@ -10,6 +10,7 @@ package net.longbowxxx.playground.history
 import io.realm.kotlin.ext.query
 import io.realm.kotlin.ext.realmListOf
 import io.realm.kotlin.ext.toRealmList
+import io.realm.kotlin.migration.AutomaticSchemaMigration
 import io.realm.kotlin.query.Sort
 import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
@@ -17,19 +18,30 @@ import io.realm.kotlin.types.annotations.Index
 import io.realm.kotlin.types.annotations.PrimaryKey
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
+import net.longbowxxx.playground.utils.DebugLoggable
+import net.longbowxxx.playground.utils.logInfo
 import org.mongodb.kbson.ObjectId
-import java.util.*
 
-class ChatHistory : RealmBase() {
+class ChatHistory(dbFileDir: String = DB_DIR, dbFileName: String = DB_FILE_NAME) : RealmBase() {
     companion object {
         private const val DB_DIR = "db"
         private const val DB_FILE_NAME = "chat-history.realm"
         private const val DEFAULT_SESSION_TITLE = "New chat"
+        private const val SCHEME_VERSION = 0L
     }
 
     override val schema = setOf(ChatHistoryData::class, ChatMessageData::class)
-    override val realmDirectory = DB_DIR
-    override val realmFileName = DB_FILE_NAME
+    override val realmDirectory = dbFileDir
+    override val realmFileName = dbFileName
+    override val schemeVersion = SCHEME_VERSION
+    override val migration = ChatMigration()
+
+    class ChatMigration : AutomaticSchemaMigration, DebugLoggable {
+        override fun migrate(migrationContext: AutomaticSchemaMigration.MigrationContext) {
+            // schemaのバージョンが上がったら、マイグレーションコードを実装すること
+            logInfo { "migrate() migrationContext=$migrationContext" }
+        }
+    }
 
     data class ChatHistorySession(
         val id: ObjectId,
@@ -87,9 +99,6 @@ class ChatHistory : RealmBase() {
 
     suspend fun getHistory(): List<ChatHistorySession> {
         return readFromRealm {
-//            query<ChatHistoryData>().find().toList().map {
-//                it.toSession()
-//            }
             query<ChatHistoryData>().sort("updateAt", Sort.DESCENDING).find().toList().map {
                 it.toSession()
             }

@@ -10,7 +10,6 @@ package net.longbowxxx.openai.client
 import java.io.PrintStream
 
 private const val ENV_OPENAI_API_KEY = "OPENAI_API_KEY"
-const val OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions"
 
 val openAiApiKey: String by lazy {
     requireNotNull(System.getenv(ENV_OPENAI_API_KEY)) { "Needs $ENV_OPENAI_API_KEY on system envelopment." }
@@ -21,7 +20,7 @@ val openAiApiKeyEnvEnabled: Boolean by lazy {
 }
 
 val openAiSettings: OpenAiSettings by lazy {
-    OpenAiSettings(OPENAI_CHAT_URL, openAiApiKey)
+    OpenAiSettings(openAiApiKey)
 }
 
 inline fun logOpenAiRequest(lazyMessage: () -> Any?) {

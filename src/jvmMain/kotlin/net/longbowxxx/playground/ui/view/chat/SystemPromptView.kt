@@ -26,15 +26,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import net.longbowxxx.playground.ui.widget.AudioTransWidget
 import net.longbowxxx.playground.ui.widget.FileChooseWidget
 import net.longbowxxx.playground.ui.widget.QuickLoadWidget
 import net.longbowxxx.playground.viewmodel.appProperties
 import net.longbowxxx.playground.viewmodel.chatProperties
 import net.longbowxxx.playground.viewmodel.chatViewModel
+import net.longbowxxx.playground.viewmodel.createAudioViewModel
 import java.io.File
 
 private const val SYSTEM_PROMPT_LABEL_TEXT = "SYSTEM"
 private const val LOAD_SYSTEM_TEXT = "LOAD SYSTEM PROMPT…"
+private val audioViewModel = createAudioViewModel()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
@@ -54,6 +57,9 @@ fun ColumnScope.SystemPromptView() {
         }
         QuickLoadWidget(chatViewModel.chatPromptFileList) {
             systemPrompt = it.readText(Charsets.UTF_8)
+        }
+        AudioTransWidget(audioViewModel, true) {
+            systemPrompt = it
         }
     }
 

@@ -1,6 +1,11 @@
 PlaygroundL Change Log
 ===
 
+## [1.3.0]
+### Added
+- Add audio transcription. (Chat prompt)
+- Add audio translation. (Image prompt)
+
 ## [1.2.0]
 ### Added
 - Add chat session history.

@@ -17,7 +17,6 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
-import net.longbowxxx.openai.client.OPENAI_CHAT_URL
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRequest
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
@@ -85,7 +84,7 @@ class ImageViewModel(
                     stream = true,
                     temperature = 0f,
                 )
-                val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
+                val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
                 client.requestChatWithStreaming(request).correctStreamResponse()
             }.onFailure {
                 errorMessage.value = it.message ?: it.toString()
@@ -120,7 +119,7 @@ class ImageViewModel(
             runCatching {
                 requesting.value = true
                 clearImages()
-                val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
+                val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
                 val request = OpenAiCreateImageRequest(
                     prompt.value,
                     n = imageProperties.numberOfCreate.value,
@@ -157,7 +156,7 @@ class ImageViewModel(
                 requesting.value = true
                 val requestImageFile = requireNotNull(activeImage.value).second
                 clearImages()
-                val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
+                val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
                 val request = OpenAiImageVariationRequest(
                     image = requestImageFile,
                     n = imageProperties.numberOfVariation.value,
@@ -196,7 +195,7 @@ class ImageViewModel(
 
                 val requestImageFile = requireNotNull(activeImage.value).second
                 clearImages()
-                val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
+                val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
                 val request = OpenAiEditImageRequest(
                     image = requestImageFile,
                     mask = maskFile,
