@@ -33,6 +33,8 @@ import net.longbowxxx.playground.ui.widget.BottomBar
 import net.longbowxxx.playground.ui.widget.CHAT_TAB
 import net.longbowxxx.playground.ui.widget.IMAGE_TAB
 import net.longbowxxx.playground.ui.widget.SETTING_TAB
+import net.longbowxxx.playground.utils.DebugLogLevel
+import net.longbowxxx.playground.utils.log
 import net.longbowxxx.playground.viewmodel.appProperties
 import net.longbowxxx.playground.viewmodel.closeViewModelAndProperties
 import kotlin.math.roundToInt
@@ -50,6 +52,7 @@ fun ApplicationScope.PlaygroundWindow() {
 
     Window(
         onCloseRequest = {
+            log(DebugLogLevel.TRACE, "PlaygroundWindow") { "onCloseRequest" }
             appProperties.updateWindowState(
                 windowState.position.x.value.roundToInt(),
                 windowState.position.y.value.roundToInt(),

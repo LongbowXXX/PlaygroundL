@@ -10,7 +10,7 @@ class ChatHistoryTest {
 
     @Test
     fun basicFlow() = runBlocking {
-        ChatHistory().use { history ->
+        ChatHistory("build/tmp/db", "testFile.realm").use { history ->
             history.clearHistory()
             history.saveSession(
                 ChatHistory.ChatHistorySession(
