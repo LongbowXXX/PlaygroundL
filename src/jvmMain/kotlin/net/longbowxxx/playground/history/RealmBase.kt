@@ -31,6 +31,7 @@ abstract class RealmBase : Closeable, CoroutineScope {
     protected abstract val schema: Set<KClass<out BaseRealmObject>>
     protected abstract val realmDirectory: String
     protected abstract val realmFileName: String
+    protected abstract val schemeVersion: Long
 
     protected suspend fun <R> readFromRealm(block: Realm.() -> R): R {
         return withContext(coroutineContext) {
@@ -48,7 +49,7 @@ abstract class RealmBase : Closeable, CoroutineScope {
 
     private fun openRealm(): Realm {
         val configuration = RealmConfiguration.Builder(schema)
-            .deleteRealmIfMigrationNeeded()
+            .schemaVersion(schemeVersion)
             .directory(realmDirectory)
             .name(realmFileName)
             .build()

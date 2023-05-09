@@ -25,17 +25,31 @@ import kotlin.math.abs
 
 class Recorder {
     companion object {
+        private const val DEFAULT_RECORD_MAX_DURATION_MILLIS = 60_000L
+        private const val DEFAULT_SILENCE_DURATION_THRESHOLD_MILLIS = 1_000L
         private const val SAMPLE_RATE = 16000f
         private const val SAMPLE_SIZE_BITS = 16
         private const val CHANNELS = 1
         private const val BUFFER_SIZE = 1024
         private const val SILENCE_AMP_THRESHOLD = 30
         private const val NOISY_DURATION_THRESHOLD = 20
+
+        fun isMicAvailable(): Boolean {
+            return runCatching {
+                val format = AudioFormat(SAMPLE_RATE, SAMPLE_SIZE_BITS, CHANNELS, true, false)
+                val info = DataLine.Info(TargetDataLine::class.java, format)
+                // 対応デバイスがないと例外を投げる
+                AudioSystem.getLine(info)
+            }.isSuccess
+        }
     }
 
     private val stopRequested = AtomicBoolean(false)
 
-    suspend fun recordAudio(maxDurationMillis: Long, silenceThresholdMillis: Long): ByteArray {
+    suspend fun recordAudio(
+        maxDurationMillis: Long = DEFAULT_RECORD_MAX_DURATION_MILLIS,
+        silenceThresholdMillis: Long = DEFAULT_SILENCE_DURATION_THRESHOLD_MILLIS,
+    ): ByteArray {
         stopRequested.set(false)
         return withContext(Dispatchers.IO) {
             val format = AudioFormat(SAMPLE_RATE, SAMPLE_SIZE_BITS, CHANNELS, true, false)

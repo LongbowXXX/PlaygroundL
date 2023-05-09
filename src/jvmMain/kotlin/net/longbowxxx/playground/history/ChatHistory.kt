@@ -18,18 +18,19 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import org.mongodb.kbson.ObjectId
-import java.util.*
 
 class ChatHistory : RealmBase() {
     companion object {
         private const val DB_DIR = "db"
         private const val DB_FILE_NAME = "chat-history.realm"
         private const val DEFAULT_SESSION_TITLE = "New chat"
+        private const val SCHEME_VERSION = 0L
     }
 
     override val schema = setOf(ChatHistoryData::class, ChatMessageData::class)
     override val realmDirectory = DB_DIR
     override val realmFileName = DB_FILE_NAME
+    override val schemeVersion = SCHEME_VERSION
 
     data class ChatHistorySession(
         val id: ObjectId,
@@ -87,9 +88,6 @@ class ChatHistory : RealmBase() {
 
     suspend fun getHistory(): List<ChatHistorySession> {
         return readFromRealm {
-//            query<ChatHistoryData>().find().toList().map {
-//                it.toSession()
-//            }
             query<ChatHistoryData>().sort("updateAt", Sort.DESCENDING).find().toList().map {
                 it.toSession()
             }
