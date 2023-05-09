@@ -30,7 +30,7 @@ private const val QUICK_LOAD_TEXT = "QUICK LOAD…"
 fun QuickLoadWidget(fileList: List<File>, onSelected: (file: File) -> Unit) {
     var showModelDropdown by remember { mutableStateOf(false) }
 
-    Box(modifier = Modifier.width(200.dp)) {
+    Box(modifier = Modifier.width(140.dp)) {
         TextButton(
             { showModelDropdown = true },
             modifier = Modifier.fillMaxWidth(),
