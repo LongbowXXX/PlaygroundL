@@ -42,9 +42,14 @@ val imageViewModel: ImageViewModel by lazy {
     ImageViewModel()
 }
 
+fun createAudioViewModel() = AudioViewModel().also { audioViewModels.add(it) }
+
+private val audioViewModels = mutableListOf<AudioViewModel>()
+
 fun closeViewModelAndProperties() {
     chatViewModel.close()
     imageViewModel.close()
+    audioViewModels.forEach { it.close() }
     chatProperties.close()
     imageProperties.close()
     appProperties.close()

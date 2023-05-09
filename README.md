@@ -13,7 +13,7 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 # How to use the app
 Please refer to [HowToUse-en.md](documents/HowToUse-en.md).  
 
-[PLAYGROUND-Movie.mp4](PLAYGROUND-Movie.mp4)  
+[PLAYGROUND-Movie.mp4](releaseArchive/PLAYGROUND-Movie.mp4)  
 
 # OSS
 The following OSS is used in this application.

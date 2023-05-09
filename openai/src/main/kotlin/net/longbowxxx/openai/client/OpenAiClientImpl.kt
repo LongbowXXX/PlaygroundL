@@ -37,11 +37,15 @@ class OpenAiClientImpl(
             encodeDefaults = false
             ignoreUnknownKeys = true
         }
+        private const val OPENAI_CHAT_URL = "https://api.openai.com/v1/chat/completions"
         private const val CREATE_IMAGE_URL = "https://api.openai.com/v1/images/generations"
         private const val EDIT_IMAGE_URL = "https://api.openai.com/v1/images/edits"
         private const val IMAGE_VARIATION_URL = "https://api.openai.com/v1/images/variations"
+        private const val AUDIO_TRANSCRIPTION_URL = "https://api.openai.com/v1/audio/transcriptions"
+        private const val AUDIO_TRANSLATION_URL = "https://api.openai.com/v1/audio/translations"
         private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
         private val imagePngMediaType = "image/png".toMediaType()
+        private val audioWavType = "audio/wav".toMediaType()
         private const val DATA_PREFIX = "data: "
         private const val DATA_DONE = "[DONE]"
         private const val TIMEOUT_SECONDS = 30L
@@ -52,7 +56,7 @@ class OpenAiClientImpl(
             logOpenAiRequest { requestJson }
         }.toRequestBody(jsonMediaType)
         val httpRequest = Request.Builder()
-            .url(settings.baseUrl)
+            .url(OPENAI_CHAT_URL)
             .post(requestBody)
             .header("Content-Type", "application/json")
             .header("Authorization", "Bearer ${settings.apiKey}")
@@ -131,6 +135,45 @@ class OpenAiClientImpl(
                 .execute()
                 .successfulBodyOrThrow { responseBody ->
                     decodeJson.decodeFromString<OpenAiImageResponse>(responseBody.string())
+                }
+        }
+    }
+
+    override suspend fun requestAudioTranscription(request: OpenAiAudioRequest): OpenAiAudioResponse {
+        return requestAudio(request, AUDIO_TRANSCRIPTION_URL)
+    }
+
+    override suspend fun requestAudioTranslation(request: OpenAiAudioRequest): OpenAiAudioResponse {
+        return requestAudio(request, AUDIO_TRANSLATION_URL)
+    }
+
+    private suspend fun requestAudio(request: OpenAiAudioRequest, endpoint: String): OpenAiAudioResponse {
+        return withContext(Dispatchers.IO) {
+            val requestBody = MultipartBody.Builder().apply {
+                setType(MultipartBody.FORM)
+                addFormDataPart("file", "file.wav", request.wavData.toRequestBody(audioWavType))
+                addFormDataPart("model", request.model)
+                request.prompt?.let {
+                    addFormDataPart("prompt", it)
+                }
+                request.responseFormat?.let {
+                    addFormDataPart("response_format", it.requestValue)
+                }
+                request.temperature?.let {
+                    addFormDataPart("temperature", it.toString())
+                }
+            }.build()
+
+            val httpRequest = Request.Builder()
+                .url(endpoint)
+                .post(requestBody)
+                .header("Authorization", "Bearer ${settings.apiKey}")
+                .build()
+
+            httpClient().newCall(httpRequest)
+                .execute()
+                .successfulBodyOrThrow { responseBody ->
+                    decodeJson.decodeFromString<OpenAiAudioResponse.Json>(responseBody.string())
                 }
         }
     }

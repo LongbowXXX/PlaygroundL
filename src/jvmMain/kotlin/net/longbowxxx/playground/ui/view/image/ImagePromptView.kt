@@ -9,6 +9,7 @@ package net.longbowxxx.playground.ui.view.image
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -27,13 +28,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import net.longbowxxx.playground.ui.widget.AudioTransWidget
 import net.longbowxxx.playground.viewmodel.appProperties
+import net.longbowxxx.playground.viewmodel.createAudioViewModel
 import net.longbowxxx.playground.viewmodel.imageViewModel
 
 private const val PROMPT_LABEL_TEXT = "PROMPT IN ENGLISH"
 private const val PROMPT_WILL_BE_TRANSLATED_LABEL_TEXT = "PROMPT WILL BE TRANSLATED"
 private const val TRANSLATE_TO_ENGLISH_LABEL_TEXT = "TRANSLATE TO ENGLISH"
 private const val CREATE_IMAGE_LABEL_TEXT = "CREATE IMAGE"
+private val audioViewModelForTranslation = createAudioViewModel()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
@@ -66,10 +70,16 @@ fun RowScope.ImagePromptView() {
         LaunchedEffect(promptJa.length) {
             verticalScrollStateJa.scrollTo(verticalScrollStateJa.maxValue)
         }
-        Button(
-            { imageViewModel.requestTranslation() },
-        ) {
-            Text(TRANSLATE_TO_ENGLISH_LABEL_TEXT)
+        Row {
+            Button(
+                { imageViewModel.requestTranslation() },
+            ) {
+                Text(TRANSLATE_TO_ENGLISH_LABEL_TEXT)
+            }
+
+            AudioTransWidget(audioViewModelForTranslation, false) {
+                prompt = it
+            }
         }
 
         TextField(

@@ -18,7 +18,6 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_4
-import net.longbowxxx.openai.client.OPENAI_CHAT_URL
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRequest
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
@@ -141,7 +140,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                     presencePenalty = chatProperties.chatPresencePenalty.value,
                     frequencyPenalty = chatProperties.chatFrequencyPenalty.value,
                 )
-                val client = OpenAiClient(OpenAiSettings(OPENAI_CHAT_URL, appProperties.apiKey))
+                val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
                 client.requestChatWithStreaming(request).correctStreamResponse()
 
                 val latestMessages = createMessages()
