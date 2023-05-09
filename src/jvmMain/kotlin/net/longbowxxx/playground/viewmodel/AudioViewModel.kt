@@ -16,6 +16,7 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.longbowxxx.openai.client.OpenAiAudioRequest
+import net.longbowxxx.openai.client.OpenAiAudioResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.playground.recorder.Recorder
@@ -33,22 +34,38 @@ class AudioViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Co
     }
 
     val state = mutableStateOf(State.STOPPED)
+    val transText = mutableStateOf("")
+    private var transJob: Job? = null
+    private val recorder = Recorder()
 
-    fun startRecording() {
-        launch {
-            val recorder = Recorder()
-            val audioData = recorder.recordAudio(5_000)
-            val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
+    fun startTranscription() {
+        val lastTransJob = transJob
 
-            val request = OpenAiAudioRequest(
-                audioData,
-            )
-            val response = client.requestAudioTranscription(request)
-            println("startRecording $response")
+        lastTransJob?.cancel()
+
+        transJob = launch {
+            lastTransJob?.join()
+            state.value = State.RECORDING
+            runCatching {
+                val audioData = recorder.recordAudio(30_000, 1_000)
+                state.value = State.REQUESTING
+
+                val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
+                val request = OpenAiAudioRequest(
+                    audioData,
+                )
+                val response = client.requestAudioTranscription(request)
+                println("$response")
+                transText.value = (response as OpenAiAudioResponse.Json).text
+            }.also {
+                recorder.stopRecord()
+                state.value = State.STOPPED
+            }
         }
     }
 
     fun stopRecording() {
+        recorder.stopRecord()
     }
 
     override fun close() {

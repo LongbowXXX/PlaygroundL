@@ -16,10 +16,12 @@ import kotlinx.coroutines.withTimeout
 import java.io.ByteArrayOutputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
+import java.util.concurrent.atomic.AtomicBoolean
 import javax.sound.sampled.AudioFormat
 import javax.sound.sampled.AudioSystem
 import javax.sound.sampled.DataLine
 import javax.sound.sampled.TargetDataLine
+import kotlin.math.abs
 
 class Recorder {
     companion object {
@@ -27,9 +29,14 @@ class Recorder {
         private const val SAMPLE_SIZE_BITS = 16
         private const val CHANNELS = 1
         private const val BUFFER_SIZE = 1024
+        private const val SILENCE_AMP_THRESHOLD = 30
+        private const val NOISY_DURATION_THRESHOLD = 20
     }
 
-    suspend fun recordAudio(maxDurationMillis: Long): ByteArray {
+    private val stopRequested = AtomicBoolean(false)
+
+    suspend fun recordAudio(maxDurationMillis: Long, silenceThresholdMillis: Long): ByteArray {
+        stopRequested.set(false)
         return withContext(Dispatchers.IO) {
             val format = AudioFormat(SAMPLE_RATE, SAMPLE_SIZE_BITS, CHANNELS, true, false)
             val info = DataLine.Info(TargetDataLine::class.java, format)
@@ -43,11 +50,33 @@ class Recorder {
                         line.start()
 
                         withTimeout(maxDurationMillis) {
-                            while (isActive) {
+                            var silenceDurationMillis = 0
+                            var soundDurationMillis = 0
+                            var soundDetected = false
+                            while (isActive && !stopRequested.get() && silenceDurationMillis < silenceThresholdMillis) {
                                 ensureActive()
                                 val count = line.read(buffer, 0, buffer.size)
                                 if (count > 0) {
                                     outputStream.write(buffer, 0, count)
+
+                                    // Check if the amplitude is below a certain threshold
+                                    val amplitude = buffer.maxOfOrNull { abs(it.toInt()) } ?: 0
+                                    val deltaMillis = count * 1000 / format.frameSize / format.sampleRate.toInt()
+                                    if (amplitude < SILENCE_AMP_THRESHOLD) {
+                                        if (soundDetected) {
+                                            // 無音区間の計測は、一度以上音の入力があった後
+                                            silenceDurationMillis += deltaMillis
+                                        }
+                                        soundDurationMillis = 0
+                                    } else {
+                                        soundDurationMillis += deltaMillis
+                                        // 一瞬ノイズが入ることもあるので、一定区間音の入力があってはじめて
+                                        // 音声入力があったと判断して無音区間をリセット
+                                        if (soundDurationMillis > NOISY_DURATION_THRESHOLD) {
+                                            silenceDurationMillis = 0
+                                            soundDetected = true
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -65,6 +94,10 @@ class Recorder {
                 addWaveHeader(outputStream.toByteArray(), format)
             }
         }
+    }
+
+    fun stopRecord() {
+        stopRequested.set(true)
     }
 
     private fun addWaveHeader(audioData: ByteArray, format: AudioFormat): ByteArray {

@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -27,10 +26,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import net.longbowxxx.playground.ui.widget.AudioTransWidget
 import net.longbowxxx.playground.ui.widget.FileChooseWidget
 import net.longbowxxx.playground.ui.widget.QuickLoadWidget
 import net.longbowxxx.playground.viewmodel.appProperties
-import net.longbowxxx.playground.viewmodel.audioViewModel
 import net.longbowxxx.playground.viewmodel.chatProperties
 import net.longbowxxx.playground.viewmodel.chatViewModel
 import java.io.File
@@ -57,10 +56,8 @@ fun ColumnScope.SystemPromptView() {
         QuickLoadWidget(chatViewModel.chatPromptFileList) {
             systemPrompt = it.readText(Charsets.UTF_8)
         }
-        Button(
-            { audioViewModel.startRecording() },
-        ) {
-            Text("Record")
+        AudioTransWidget {
+            systemPrompt = it
         }
     }
 
