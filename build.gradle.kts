@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import java.net.URL
 
 plugins {
     kotlin("multiplatform")
@@ -98,6 +99,33 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "PlaygroundL"
             packageVersion = property("package.version") as String
+        }
+    }
+}
+
+tasks.register("downloadPalm2") {
+    group = "build"
+    dependsOn(emptyArray<String>())
+    doLast {
+        val baseName = "google-cloud-ai-generativelanguage-v1beta2-java"
+        val outFileName = "$baseName.tar.gz"
+        val palm2WorkDir = "${rootProject.rootDir}/palm2"
+        File(palm2WorkDir).mkdirs()
+        val outFile = File("$palm2WorkDir/$outFileName")
+        val url = URL("https://storage.googleapis.com/generativeai-downloads/clients/$outFileName")
+        outFile.outputStream().use { out ->
+            url.openStream().use {
+                it.copyTo(out)
+            }
+        }
+        copy {
+            from(tarTree(resources.gzip(outFile)))
+            into(palm2WorkDir)
+        }
+        exec {
+            workingDir = File("$palm2WorkDir/$baseName")
+            executable("./gradlew.bat")
+            args("publishToMavenLocal")
         }
     }
 }
