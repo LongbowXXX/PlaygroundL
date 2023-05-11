@@ -15,6 +15,8 @@ repositories {
     google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    // for Palm2 SDK (Beta)
+    mavenLocal()
 }
 
 allprojects {
@@ -103,8 +105,9 @@ compose.desktop {
     }
 }
 
-tasks.register("downloadPalm2") {
+tasks.register("downloadPalm2BetaSDK") {
     group = "build"
+    description = "Since the SDK for PaLM2 is a Beta version, download the file and install it on mavenLocal"
     dependsOn(emptyArray<String>())
     doLast {
         val baseName = "google-cloud-ai-generativelanguage-v1beta2-java"
@@ -122,6 +125,8 @@ tasks.register("downloadPalm2") {
             from(tarTree(resources.gzip(outFile)))
             into(palm2WorkDir)
         }
+        // TODO: gradle.properties の引数に -Dfile.encoding=UTF-8 を追加
+        // org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
         exec {
             workingDir = File("$palm2WorkDir/$baseName")
             executable("./gradlew.bat")
