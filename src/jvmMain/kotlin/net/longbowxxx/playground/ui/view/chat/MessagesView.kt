@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import net.longbowxxx.playground.ui.widget.ChatHistorySelectorWidget
 import net.longbowxxx.playground.viewmodel.chatViewModel
 
@@ -60,7 +61,7 @@ fun ColumnScope.MessagesView() {
             // メッセージ追加用ボタン
             Row(modifier = Modifier.fillMaxWidth()) {
                 IconButton(
-                    { chatViewModel.addMessage() },
+                    { chatViewModel.addMessage(OpenAiChatRoleTypes.USER) },
                     enabled = !requesting,
                 ) {
                     Icon(Icons.Default.Add, null)

@@ -16,6 +16,7 @@ import io.realm.kotlin.types.RealmList
 import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.Index
 import io.realm.kotlin.types.annotations.PrimaryKey
+import net.longbowxxx.openai.client.OpenAiChatFunctionCallMessage
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import net.longbowxxx.playground.utils.DebugLoggable
@@ -27,10 +28,10 @@ class ChatHistory(dbFileDir: String = DB_DIR, dbFileName: String = DB_FILE_NAME)
         private const val DB_DIR = "db"
         private const val DB_FILE_NAME = "chat-history.realm"
         private const val DEFAULT_SESSION_TITLE = "New chat"
-        private const val SCHEME_VERSION = 0L
+        private const val SCHEME_VERSION = 2L
     }
 
-    override val schema = setOf(ChatHistoryData::class, ChatMessageData::class)
+    override val schema = setOf(ChatHistoryData::class, ChatMessageData::class, ChatFunctionCallData::class)
     override val realmDirectory = dbFileDir
     override val realmFileName = dbFileName
     override val schemeVersion = SCHEME_VERSION
@@ -129,11 +130,13 @@ class ChatHistory(dbFileDir: String = DB_DIR, dbFileName: String = DB_FILE_NAME)
         return ChatMessageData().apply {
             role = this@toData.role.toInt()
             content = this@toData.content
+            functionCall = this@toData.functionCall?.toChatFunctionCallData()
             name = this@toData.name
         }
     }
 
-    private fun ChatMessageData.toSession() = OpenAiChatMessage(role.toOpenAiChatRoleTypes(), content, name)
+    private fun ChatMessageData.toSession() =
+        OpenAiChatMessage(role.toOpenAiChatRoleTypes(), content, functionCall?.toOpenAiChatFunctionCall(), name)
 
     class ChatHistoryData : RealmObject {
         @PrimaryKey
@@ -148,10 +151,24 @@ class ChatHistory(dbFileDir: String = DB_DIR, dbFileName: String = DB_FILE_NAME)
 
     class ChatMessageData : RealmObject {
         var role: Int = 0
-        var content: String = ""
+        var content: String? = null
+        var functionCall: ChatFunctionCallData? = null
         var name: String? = null
+    }
+
+    class ChatFunctionCallData : RealmObject {
+        var name: String = ""
+        var arguments: String = ""
     }
 
     private fun OpenAiChatRoleTypes.toInt(): Int = this.ordinal
     private fun Int.toOpenAiChatRoleTypes(): OpenAiChatRoleTypes = OpenAiChatRoleTypes.values()[this]
+
+    private fun ChatFunctionCallData.toOpenAiChatFunctionCall(): OpenAiChatFunctionCallMessage =
+        OpenAiChatFunctionCallMessage(name, arguments)
+
+    private fun OpenAiChatFunctionCallMessage.toChatFunctionCallData() = ChatFunctionCallData().apply {
+        name = this@toChatFunctionCallData.name
+        arguments = this@toChatFunctionCallData.arguments
+    }
 }
