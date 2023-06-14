@@ -86,10 +86,13 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
                     Icon(Icons.Default.Clear, null)
                 }
             }
+            val content = message.content ?: message.functionCall?.toString() ?: ""
             TextField(
-                message.content.orEmpty(),
+                content,
                 {
-                    chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, it))
+                    if (message.functionCall == null) {
+                        chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, it))
+                    }
                 },
                 label = {
                     Text(CONTENT_TEXT)
@@ -101,7 +104,7 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
                             it.key.nativeKeyCode == KeyEvent.VK_ENTER &&
                             it.isAltPressed
                         ) {
-                            chatViewModel.requestChat()
+                            chatViewModel.requestChat(true)
                             true
                         } else {
                             false

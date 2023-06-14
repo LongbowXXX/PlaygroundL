@@ -20,12 +20,16 @@ import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO_0613
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_4
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_4_0613
+import net.longbowxxx.openai.client.OpenAiChatFunctionCallMessage
+import net.longbowxxx.openai.client.OpenAiChatFunctionCallMessageDelta
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRequest
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
+import net.longbowxxx.openai.client.OpenAiChatStreamDelta
 import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
+import net.longbowxxx.playground.function.ChatFunctionLoader
 import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.logger.ChatLogger
 import java.io.Closeable
@@ -33,6 +37,7 @@ import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : CoroutineScope, Closeable {
+    private val functionLoader = ChatFunctionLoader()
     private val job = Job()
     override val coroutineContext: CoroutineContext = dispatcher + job
 
@@ -107,10 +112,10 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         currentChatSession.messages = newList
     }
 
-    fun addMessage(): Int {
+    fun addMessage(role: OpenAiChatRoleTypes): Int {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)
-        newList.add(OpenAiChatMessage(OpenAiChatRoleTypes.USER, ""))
+        newList.add(OpenAiChatMessage(role))
         messages.value = newList
         currentChatSession.messages = newList
         return newList.size - 1
@@ -125,7 +130,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         currentChatSession = ChatHistory.ChatHistorySession()
     }
 
-    fun requestChat() {
+    fun requestChat(functionEnabled: Boolean) {
         val lastJob = currentRequestJob
         lastJob?.cancel()
         currentRequestJob = launch {
@@ -136,10 +141,16 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             requesting.value = true
             val session = currentChatSession
             val logger = ChatLogger()
+            val functions = if (functionEnabled) {
+                functionLoader.loadFunctions(File("functions"))
+            } else {
+                null
+            }
             runCatching {
                 val request = OpenAiChatRequest(
                     chatProperties.chatModel.value,
                     messages = createMessages(),
+                    functions = functions,
                     stream = true,
                     temperature = chatProperties.chatTemperature.value,
                     topP = chatProperties.chatTopP.value,
@@ -158,7 +169,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                     updateChatSessionTitle(latestMessages, session)
                 }
                 // レスポンスが終わったら、次の入力用のメッセージ追加
-                addMessage()
+                addMessage(OpenAiChatRoleTypes.USER)
             }.onFailure {
                 errorMessage.value = it.message ?: it.toString()
                 logger.logError(it)
@@ -184,15 +195,41 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         this.collect { streamResponse ->
             if (firstTime) {
                 firstTime = false
-                itemIndex = addMessage()
+                itemIndex = addMessage(OpenAiChatRoleTypes.ASSISTANT)
             }
 
-            streamResponse.choices.firstOrNull()?.delta?.content?.let { contentDelta ->
+            streamResponse.choices.firstOrNull()?.delta?.let { contentDelta ->
                 val oldMessage = messages.value[itemIndex]
-                val newContent = oldMessage.content + contentDelta
-                updateMessage(itemIndex, OpenAiChatMessage(OpenAiChatRoleTypes.ASSISTANT, newContent))
+                val newMessage = oldMessage.add(contentDelta)
+                updateMessage(itemIndex, newMessage)
             }
         }
+    }
+
+    private fun OpenAiChatMessage.add(delta: OpenAiChatStreamDelta): OpenAiChatMessage {
+        val newRole = delta.role ?: this.role
+        val newContent = delta.content?.let {
+            this.content?.let {
+                it + delta.content
+            } ?: delta.content
+        } ?: this.content
+        val newFunction = this.functionCall.add(delta.functionCall)
+        return OpenAiChatMessage(newRole, newContent, newFunction)
+    }
+
+    private fun OpenAiChatFunctionCallMessage?.add(
+        delta: OpenAiChatFunctionCallMessageDelta?,
+    ): OpenAiChatFunctionCallMessage? {
+        if (this == null && delta == null) {
+            return null
+        }
+        val newName = delta?.name ?: this?.name
+        val newArguments = delta?.arguments?.let { deltaArguments ->
+            this?.arguments?.let { thisArguments ->
+                thisArguments + deltaArguments
+            } ?: deltaArguments
+        } ?: this?.arguments
+        return OpenAiChatFunctionCallMessage(newName.orEmpty(), newArguments.orEmpty())
     }
 
     private fun createMessages(): List<OpenAiChatMessage> {
