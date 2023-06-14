@@ -27,7 +27,7 @@ inline fun logOpenAiRequest(lazyMessage: () -> Any?) {
     logOpenAiRequestStream?.println("${lazyMessage()}")
 }
 
-var logOpenAiRequestStream: PrintStream? = System.out
+var logOpenAiRequestStream: PrintStream? = null
 
 inline fun logOpenAiResponse(lazyMessage: () -> Any?) {
     logOpenAiResponseStream?.println("${lazyMessage()}")
