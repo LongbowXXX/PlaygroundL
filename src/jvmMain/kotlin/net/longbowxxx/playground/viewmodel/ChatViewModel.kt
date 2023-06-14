@@ -142,7 +142,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             val session = currentChatSession
             val logger = ChatLogger()
             val functions = if (functionEnabled) {
-                functionLoader.loadFunctions(File("functions"))
+                functionLoader.loadFunctions(File("chatFunction"))
             } else {
                 null
             }
