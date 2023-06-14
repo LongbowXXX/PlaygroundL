@@ -48,6 +48,14 @@ const val OPENAI_CHAT_MODEL_GPT_4 = "gpt-4"
 const val OPENAI_CHAT_MODEL_GPT_35_TURBO_0613 = "gpt-3.5-turbo-0613"
 const val OPENAI_CHAT_MODEL_GPT_4_0613 = "gpt-4-0613"
 
+fun String.isFunctionAvailable(): Boolean {
+    return when (this) {
+        OPENAI_CHAT_MODEL_GPT_35_TURBO_0613 -> true
+        OPENAI_CHAT_MODEL_GPT_4_0613 -> true
+        else -> false
+    }
+}
+
 fun ofFunctionCallNone() = JsonPrimitive("none")
 fun ofFunctionCallAuto() = JsonPrimitive("auto")
 fun ofFunctionCallForce(name: String) = JsonObject(mapOf("name" to JsonPrimitive(name)))

@@ -104,7 +104,7 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
                             it.key.nativeKeyCode == KeyEvent.VK_ENTER &&
                             it.isAltPressed
                         ) {
-                            chatViewModel.requestChat(true)
+                            chatViewModel.requestChat()
                             true
                         } else {
                             false

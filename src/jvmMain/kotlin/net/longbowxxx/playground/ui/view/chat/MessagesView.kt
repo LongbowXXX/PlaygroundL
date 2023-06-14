@@ -88,7 +88,7 @@ fun ColumnScope.MessagesView() {
         modifier = Modifier.fillMaxWidth().padding(10.dp),
     ) {
         Button(
-            { chatViewModel.requestChat(true) },
+            { chatViewModel.requestChat() },
             enabled = !requesting,
         ) {
             Text(SUBMIT_TEXT)

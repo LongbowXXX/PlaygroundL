@@ -11,14 +11,19 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO
+import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO_0613
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRequest
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.playground.history.ChatHistory
+import net.longbowxxx.playground.utils.DebugLogLevel
+import net.longbowxxx.playground.utils.debugLogErrorOut
+import net.longbowxxx.playground.utils.log
 
 suspend fun updateChatSessionTitle(messages: List<OpenAiChatMessage>, session: ChatHistory.ChatHistorySession) {
+    var responseString = ""
     runCatching {
         val requestMessages = mutableListOf<OpenAiChatMessage>().apply {
             // 解析するときに古いSystemプロンプトが邪魔をするのでそれ以外を採用
@@ -27,10 +32,11 @@ suspend fun updateChatSessionTitle(messages: List<OpenAiChatMessage>, session: C
                 OpenAiChatMessage(
                     OpenAiChatRoleTypes.SYSTEM,
                     """
-                        会話を解析し、タイトルとカテゴリ分類を作成してください。  
-                        今ある情報だけで出力を作成してください。例外はありません。
+                        ## 命令:
+                        今までの user と assistant の会話を解析し、タイトルとカテゴリ分類を作成してください。  
+                        出力フォーマットを必ず守ってください。例外はありません。
                         
-                        ## 出力フォーマット
+                        ## 出力フォーマット:
                         {
                           "title":"タイトル",
                           "categories":[
@@ -40,7 +46,7 @@ suspend fun updateChatSessionTitle(messages: List<OpenAiChatMessage>, session: C
                           "reason":"この結果になった理由"
                         }
                         
-                        ## 出力例
+                        ## 出力例:
                         {
                           "title":"パスワード入力について",
                           "categories":[
@@ -57,13 +63,12 @@ suspend fun updateChatSessionTitle(messages: List<OpenAiChatMessage>, session: C
             )
         }
         val request = OpenAiChatRequest(
-            OPENAI_CHAT_MODEL_GPT_35_TURBO,
+            OPENAI_CHAT_MODEL_GPT_35_TURBO_0613,
             messages = requestMessages,
             stream = true,
             temperature = 0f,
         )
         val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
-        var responseString = ""
         client.requestChatWithStreaming(request).collect { streamResponse ->
             streamResponse.choices.firstOrNull()?.delta?.content?.let { contentDelta ->
                 responseString += contentDelta
@@ -72,6 +77,10 @@ suspend fun updateChatSessionTitle(messages: List<OpenAiChatMessage>, session: C
         val summary = decodeJson.decodeFromString<ChatSessionSummary>(responseString)
         session.title = summary.title
         session.categories = summary.categories
+    }.onFailure {
+        log(DebugLogLevel.WARN, "TitleAnalyzer", it,) {
+            "updateChatSessionTitle failed. responseString=$responseString"
+        }
     }.also {
         chatHistory.saveSession(session)
     }

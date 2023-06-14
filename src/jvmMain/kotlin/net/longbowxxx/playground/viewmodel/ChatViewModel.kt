@@ -29,6 +29,7 @@ import net.longbowxxx.openai.client.OpenAiChatStreamDelta
 import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
+import net.longbowxxx.openai.client.isFunctionAvailable
 import net.longbowxxx.playground.function.ChatFunctionLoader
 import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.logger.ChatLogger
@@ -130,13 +131,16 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         currentChatSession = ChatHistory.ChatHistorySession()
     }
 
-    fun requestChat(functionEnabled: Boolean) {
+    fun requestChat() {
         val lastJob = currentRequestJob
         lastJob?.cancel()
         currentRequestJob = launch {
             lastJob?.join()
             // 古いエラーを消す
             errorMessage.value = ""
+
+            val currentModel = chatProperties.chatModel.value
+            val functionEnabled = currentModel.isFunctionAvailable()
 
             requesting.value = true
             val session = currentChatSession
@@ -148,7 +152,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             }
             runCatching {
                 val request = OpenAiChatRequest(
-                    chatProperties.chatModel.value,
+                    currentModel,
                     messages = createMessages(),
                     functions = functions,
                     stream = true,
