@@ -36,6 +36,9 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 - chatMessage ディレクトリ  
   ユーザメッセージのテンプレートサンプルです。  
   ここに置かれたファイルは CHAT MESSAGE の QUICK LOAD から呼び出せます。
+- chatFunction ディレクトリ
+  function 定義のサンプルです。
+  ここで置かれたファイルに定義された function は CHAT から呼び出されます。
 - db ディレクトリ  
   アプリが利用する DataBase ファイル。アプリにより自動生成されます。
 - log ディレクトリ  
