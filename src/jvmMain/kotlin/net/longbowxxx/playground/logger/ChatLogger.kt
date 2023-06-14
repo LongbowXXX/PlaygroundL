@@ -46,6 +46,8 @@ class ChatLogger(
         return OpenAiChatRequest(
             model,
             emptyList(),
+            functions,
+            functionCall,
             temperature,
             topP,
             n,

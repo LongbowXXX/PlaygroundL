@@ -76,7 +76,7 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
 
                 QuickLoadWidget(chatMessageFileList) {
                     val newContent = it.readText(Charsets.UTF_8)
-                    chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, newContent, message.name))
+                    chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, newContent, null, message.name))
                 }
 
                 IconButton(
@@ -87,7 +87,7 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
                 }
             }
             TextField(
-                message.content,
+                message.content.orEmpty(),
                 {
                     chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, it))
                 },
@@ -118,6 +118,7 @@ fun OpenAiChatRoleTypes.toDisplayText(): String {
     return when (this) {
         OpenAiChatRoleTypes.USER -> "USER"
         OpenAiChatRoleTypes.ASSISTANT -> "ASSISTANT"
+        OpenAiChatRoleTypes.FUNCTION -> "FUNCTION"
         OpenAiChatRoleTypes.SYSTEM -> error("Invalid type SYSTEM selected.")
     }
 }

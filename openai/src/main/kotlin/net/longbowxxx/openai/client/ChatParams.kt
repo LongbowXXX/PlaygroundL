@@ -9,6 +9,12 @@ package net.longbowxxx.openai.client
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.jsonPrimitive
 
 const val CHAT_TEMPERATURE_DEFAULT = 1.0f
 const val CHAT_TOP_P_DEFAULT = 1.0f
@@ -19,7 +25,10 @@ const val CHAT_FREQUENCY_PENALTY_DEFAULT = 0.0f
 @Serializable
 data class OpenAiChatRequest(
     val model: String,
-    val messages: List<OpenAiChatMessage> = emptyList(),
+    val messages: List<OpenAiChatMessage>,
+    val functions: List<OpenAiChatFunction>? = null,
+    @SerialName("function_call")
+    val functionCall: OpenAiChatFunctionCall? = null,
     val temperature: Float = CHAT_TEMPERATURE_DEFAULT,
     @SerialName("top_p")
     val topP: Float = CHAT_TOP_P_DEFAULT,
@@ -39,12 +48,74 @@ data class OpenAiChatRequest(
 
 const val OPENAI_CHAT_MODEL_GPT_35_TURBO = "gpt-3.5-turbo"
 const val OPENAI_CHAT_MODEL_GPT_4 = "gpt-4"
+const val OPENAI_CHAT_MODEL_GPT_35_TURBO_0613 = "gpt-3.5-turbo-0613"
+const val OPENAI_CHAT_MODEL_GPT_4_0613 = "gpt-4-0613"
+
+// この JsonElementWrapper は JsonElement をラップし、任意の型を保持します。
+@Serializable
+data class OpenAiChatFunctionCall(val element: JsonElement) {
+    companion object {
+        fun ofNone() = OpenAiChatFunctionCall(JsonPrimitive("none"))
+        fun ofAuto() = OpenAiChatFunctionCall(JsonPrimitive("auto"))
+        fun ofForceCall(name: String) = OpenAiChatFunctionCall(
+            JsonObject(mapOf("name" to JsonPrimitive(name))),
+        )
+    }
+
+    // JsonElement を具体的な型（String または YourObject）に変換します。
+    fun toActualType(): Any {
+        return when (element) {
+            // 文字列として解析
+            is JsonPrimitive -> element.jsonPrimitive.content
+            // オブジェクトとして解析
+            is JsonObject -> Json.decodeFromString<OpenAiChatFunctionForceCall>(element.toString())
+            else -> throw IllegalStateException("Unexpected JsonElement type")
+        }
+    }
+}
+
+@Serializable
+data class OpenAiChatFunctionForceCall(
+    val name: String,
+)
+
+@Serializable
+data class OpenAiChatFunction(
+    val name: String,
+    val description: String? = null,
+    val parameters: OpenAiChatParameter,
+)
+
+@Serializable
+sealed class OpenAiChatParameter {
+    @Serializable
+    @SerialName("object")
+    data class OpenAiChatParameterObject(
+        val properties: Map<String, OpenAiChatProperty>,
+        val required: List<String>,
+    )
+}
+
+@Serializable
+data class OpenAiChatProperty(
+    val type: String,
+    val description: String? = null,
+    val enum: List<String>? = null,
+)
 
 @Serializable
 data class OpenAiChatMessage(
     val role: OpenAiChatRoleTypes,
-    val content: String,
+    val content: String? = null,
+    @SerialName("function_call")
+    val functionCall: OpenAiChatFunctionCallMessage? = null,
     val name: String? = null,
+)
+
+@Serializable
+data class OpenAiChatFunctionCallMessage(
+    val name: String,
+    val arguments: String,
 )
 
 @Serializable
@@ -57,6 +128,9 @@ enum class OpenAiChatRoleTypes {
 
     @SerialName("user")
     USER,
+
+    @SerialName("function")
+    FUNCTION,
 }
 
 @Serializable
