@@ -91,7 +91,7 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
                 content,
                 {
                     if (message.functionCall == null) {
-                        chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, it))
+                        chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, it, null, message.name))
                     }
                 },
                 label = {

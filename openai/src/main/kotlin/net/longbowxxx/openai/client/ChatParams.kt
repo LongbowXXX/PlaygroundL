@@ -79,7 +79,7 @@ data class OpenAiChatProperty(
 @Serializable
 data class OpenAiChatMessage(
     val role: OpenAiChatRoleTypes,
-    val content: String? = null,
+    val content: String? = "null",
     @SerialName("function_call")
     val functionCall: OpenAiChatFunctionCallMessage? = null,
     val name: String? = null,

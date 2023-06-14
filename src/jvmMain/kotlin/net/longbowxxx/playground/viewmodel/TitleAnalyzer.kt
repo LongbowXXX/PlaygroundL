@@ -51,6 +51,8 @@ suspend fun updateChatSessionTitle(messages: List<OpenAiChatMessage>, session: C
                           "reason":"パスワード入力について質問されているため"
                         }
                     """.trimIndent(),
+                    null,
+                    null,
                 ),
             )
         }

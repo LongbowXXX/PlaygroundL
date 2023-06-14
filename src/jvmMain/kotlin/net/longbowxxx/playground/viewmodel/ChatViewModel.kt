@@ -42,7 +42,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     override val coroutineContext: CoroutineContext = dispatcher + job
 
     companion object {
-        private val INITIAL_MESSAGES = listOf(OpenAiChatMessage(OpenAiChatRoleTypes.USER, ""))
+        private val INITIAL_MESSAGES = listOf(OpenAiChatMessage(OpenAiChatRoleTypes.USER, "", null, null))
     }
 
     val messages = mutableStateOf(INITIAL_MESSAGES)
@@ -112,10 +112,10 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         currentChatSession.messages = newList
     }
 
-    fun addMessage(role: OpenAiChatRoleTypes): Int {
+    fun addMessage(role: OpenAiChatRoleTypes, name: String? = null): Int {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)
-        newList.add(OpenAiChatMessage(role))
+        newList.add(OpenAiChatMessage(role, null, null, name))
         messages.value = newList
         currentChatSession.messages = newList
         return newList.size - 1
@@ -169,7 +169,12 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                     updateChatSessionTitle(latestMessages, session)
                 }
                 // レスポンスが終わったら、次の入力用のメッセージ追加
-                addMessage(OpenAiChatRoleTypes.USER)
+                val lastFunctionCall = latestMessages.last().functionCall
+                if (lastFunctionCall != null) {
+                    addMessage(OpenAiChatRoleTypes.FUNCTION, lastFunctionCall.name)
+                } else {
+                    addMessage(OpenAiChatRoleTypes.USER)
+                }
             }.onFailure {
                 errorMessage.value = it.message ?: it.toString()
                 logger.logError(it)
@@ -236,7 +241,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         val messageList = mutableListOf<OpenAiChatMessage>()
         val system = chatProperties.chatSystemPrompt.value
         if (system.isNotEmpty()) {
-            messageList.add(OpenAiChatMessage(OpenAiChatRoleTypes.SYSTEM, system))
+            messageList.add(OpenAiChatMessage(OpenAiChatRoleTypes.SYSTEM, system, null, null))
         }
         messageList.addAll(messages.value)
         return messageList
@@ -244,8 +249,27 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
 
     private fun OpenAiChatMessage.toggleRole(): OpenAiChatMessage {
         return when (this.role) {
-            OpenAiChatRoleTypes.ASSISTANT -> OpenAiChatMessage(OpenAiChatRoleTypes.USER, this.content)
-            OpenAiChatRoleTypes.USER -> OpenAiChatMessage(OpenAiChatRoleTypes.ASSISTANT, this.content)
+            OpenAiChatRoleTypes.ASSISTANT -> OpenAiChatMessage(
+                OpenAiChatRoleTypes.FUNCTION,
+                this.content,
+                this.functionCall,
+                this.name,
+            )
+
+            OpenAiChatRoleTypes.USER -> OpenAiChatMessage(
+                OpenAiChatRoleTypes.ASSISTANT,
+                this.content,
+                this.functionCall,
+                this.name,
+            )
+
+            OpenAiChatRoleTypes.FUNCTION -> OpenAiChatMessage(
+                OpenAiChatRoleTypes.USER,
+                this.content,
+                this.functionCall,
+                this.name,
+            )
+
             else -> error("should not reach here")
         }
     }
