@@ -10,7 +10,6 @@ package net.longbowxxx.playground.viewmodel
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
-import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO_0613
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRequest
@@ -19,7 +18,6 @@ import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.utils.DebugLogLevel
-import net.longbowxxx.playground.utils.debugLogErrorOut
 import net.longbowxxx.playground.utils.log
 
 suspend fun updateChatSessionTitle(messages: List<OpenAiChatMessage>, session: ChatHistory.ChatHistorySession) {
@@ -78,7 +76,7 @@ suspend fun updateChatSessionTitle(messages: List<OpenAiChatMessage>, session: C
         session.title = summary.title
         session.categories = summary.categories
     }.onFailure {
-        log(DebugLogLevel.WARN, "TitleAnalyzer", it,) {
+        log(DebugLogLevel.WARN, "TitleAnalyzer", it) {
             "updateChatSessionTitle failed. responseString=$responseString"
         }
     }.also {
