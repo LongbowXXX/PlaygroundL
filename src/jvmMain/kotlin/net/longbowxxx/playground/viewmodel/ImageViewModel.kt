@@ -78,8 +78,8 @@ class ImageViewModel(
                 val request = OpenAiChatRequest(
                     chatProperties.chatModel.value,
                     messages = listOf(
-                        OpenAiChatMessage(OpenAiChatRoleTypes.SYSTEM, imageProperties.translationPrompt.value),
-                        OpenAiChatMessage(OpenAiChatRoleTypes.USER, promptJa.value),
+                        OpenAiChatMessage(OpenAiChatRoleTypes.SYSTEM, imageProperties.translationPrompt.value, null, null),
+                        OpenAiChatMessage(OpenAiChatRoleTypes.USER, promptJa.value, null, null),
                     ),
                     stream = true,
                     temperature = 0f,
