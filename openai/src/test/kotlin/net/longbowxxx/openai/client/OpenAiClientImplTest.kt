@@ -26,6 +26,38 @@ class OpenAiClientImplTest {
 
     @Disabled
     @Test
+    fun requestWithFunction() = runBlocking {
+        logOpenAiRequestStream = System.out
+        logOpenAiResponseStream = System.out
+        val weatherFunc = OpenAiChatFunction(
+            name = "get_current_weather",
+            description = "Get the current weather in a given location",
+            parameters = OpenAiChatParameter.OpenAiChatParameterObject(
+                mapOf(
+                    "location" to OpenAiChatProperty("string", "The city and state, e.g. San Francisco, CA"),
+                    "unit" to OpenAiChatProperty("string", null, listOf("celsius", "fahrenheit")),
+                ),
+                required = listOf("location"),
+            ),
+        )
+
+        val client = OpenAiClient(openAiSettings)
+        val request = OpenAiChatRequest(
+            "gpt-3.5-turbo-0613",
+            listOf(
+                OpenAiChatMessage(OpenAiChatRoleTypes.ASSISTANT, "今日の東京の天気教えて"),
+            ),
+            listOf(weatherFunc),
+            functionCall = ofFunctionCallAuto(),
+            stream = true,
+        )
+        client.requestChatWithStreaming(request).collect {
+            println("$it")
+        }
+    }
+
+    @Disabled
+    @Test
     fun requestCreateImage() = runBlocking {
         val client = OpenAiClient(openAiSettings)
         val createImageRequest = OpenAiCreateImageRequest(

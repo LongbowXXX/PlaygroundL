@@ -17,7 +17,9 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO
+import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO_0613
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_4
+import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_4_0613
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRequest
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
@@ -42,7 +44,12 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     val errorMessage = mutableStateOf("")
     val requesting = mutableStateOf(false)
     val history = mutableStateOf<List<ChatHistory.ChatHistorySession>>(emptyList())
-    val models = listOf(OPENAI_CHAT_MODEL_GPT_35_TURBO, OPENAI_CHAT_MODEL_GPT_4)
+    val models = listOf(
+        OPENAI_CHAT_MODEL_GPT_35_TURBO_0613,
+        OPENAI_CHAT_MODEL_GPT_35_TURBO,
+        OPENAI_CHAT_MODEL_GPT_4_0613,
+        OPENAI_CHAT_MODEL_GPT_4,
+    )
     private var currentChatSession = ChatHistory.ChatHistorySession()
 
     val chatPromptFileList: List<File>
