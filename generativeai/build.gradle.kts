@@ -8,6 +8,8 @@ version = "${rootProject.property("package.version")}"
 
 repositories {
     mavenCentral()
+    // for Palm2 SDK (Beta)
+    mavenLocal()
 }
 
 dependencies {
