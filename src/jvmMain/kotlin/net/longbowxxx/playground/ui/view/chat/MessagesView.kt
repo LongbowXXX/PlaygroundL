@@ -76,10 +76,12 @@ fun ColumnScope.MessagesView() {
         listState.scrollToItem(index = messages.size)
     }
 
-    LaunchedEffect(lastMessageSize) {
-        // 最後のメッセージが更新された際に、末尾にスクロール
-        // 末尾の追加ボタンを考慮したIndexを指定
-        listState.scrollToItem(index = messages.size)
+    if (requesting) {
+        LaunchedEffect(lastMessageSize) {
+            // 最後のメッセージが更新された際に、末尾にスクロール
+            // 末尾の追加ボタンを考慮したIndexを指定
+            listState.scrollToItem(index = messages.size)
+        }
     }
 
     Row(

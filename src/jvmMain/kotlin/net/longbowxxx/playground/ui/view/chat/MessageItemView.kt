@@ -74,6 +74,11 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
                     Text(message.role.toDisplayText())
                 }
 
+                Text(
+                    message.name.orEmpty(),
+                    modifier = Modifier.width(300.dp),
+                )
+
                 QuickLoadWidget(chatMessageFileList) {
                     val newContent = it.readText(Charsets.UTF_8)
                     chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, newContent, null, message.name))
