@@ -19,59 +19,65 @@ import com.google.api.gax.rpc.FixedHeaderProvider
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class GenerativeAiClientImpl(private val settings: GenerativeAiSettings) : GenerativeAiClient {
+class GenerativeAiClientImpl(settings: GenerativeAiSettings) : GenerativeAiClient {
     private val headers = mapOf(
         "x-goog-api-key" to settings.apiKey,
     )
 
-    override suspend fun requestDiscuss() {
-        withContext(Dispatchers.IO) {
-            val provider = InstantiatingGrpcChannelProvider.newBuilder()
-                .setHeaderProvider(FixedHeaderProvider.create(headers))
-                .build()
+    override suspend fun requestDiscuss(discussRequest: DiscussRequest): DiscussResponse {
+        return withContext(Dispatchers.IO) {
+            logGenerativeAiRequest { "$discussRequest" }
+            val provider = InstantiatingGrpcChannelProvider.newBuilder().apply {
+                setHeaderProvider(FixedHeaderProvider.create(headers))
+            }.build()
 
-            val settings = DiscussServiceSettings.newBuilder()
-                .setTransportChannelProvider(provider)
-                .setCredentialsProvider(FixedCredentialsProvider.create(null))
-                .build()
+            val settings = DiscussServiceSettings.newBuilder().apply {
+                transportChannelProvider = provider
+                credentialsProvider = FixedCredentialsProvider.create(null)
+            }.build()
 
-            val input = Message.newBuilder()
-                .setContent("What is the capital of California?")
-                .build()
+            val examples = discussRequest.prompt.examples.map { example ->
+                Example.newBuilder().apply {
+                    input = example.input.toMessage()
+                    output = example.output.toMessage()
+                }.build()
+            }
 
-            val response = Message.newBuilder()
-                .setContent("If the capital of California is what you seek, Sacramento is where you ought to peek.")
-                .build()
+            val messages = discussRequest.prompt.messages.map {
+                it.toMessage()
+            }
 
-            val californiaExample = Example.newBuilder()
-                .setInput(input)
-                .setOutput(response)
-                .build()
+            val messagePrompt: MessagePrompt = MessagePrompt.newBuilder().apply {
+                addAllMessages(messages)
+                context = discussRequest.prompt.context
+                addAllExamples(examples)
+            }.build()
 
-            val palmMessage: Message = Message.newBuilder()
-                .setAuthor("0")
-                .setContent("How tall is the Eiffel Tower?")
-                .build()
+            val request = GenerateMessageRequest.newBuilder().apply {
+                model = discussRequest.model
+                prompt = messagePrompt
+                temperature = discussRequest.temperature
+                candidateCount = discussRequest.candidateCount
+            }.build()
 
-            val messagePrompt: MessagePrompt = MessagePrompt.newBuilder()
-                .addMessages(palmMessage) // required
-                .setContext("Respond to all questions with a rhyming poem.") // optional
-                .addExamples(californiaExample) // use addAllExamples() to add a list of examples
-                .build()
-
-            val request = GenerateMessageRequest.newBuilder()
-                .setModel("models/chat-bison-001") // Required, which model to use to generate the result
-                .setPrompt(messagePrompt) // Required
-                .setTemperature(0.5f) // Optional, controls the randomness of the output
-                .setCandidateCount(1) // Optional, the number of generated messages to return
-                .build()
             DiscussServiceClient.create(settings).use { client ->
                 val messageResponse = client.generateMessage(request)
 
-                val returnedMessage = messageResponse.candidatesList[0]
-
-                println(returnedMessage)
+                messageResponse.candidatesList.map { message ->
+                    DiscussMessage(message.content, message.author)
+                }.let {
+                    DiscussResponse(it)
+                }.also {
+                    logGenerativeAiResponse { "$it" }
+                }
             }
         }
+    }
+
+    private fun DiscussMessage.toMessage(): Message {
+        return Message.newBuilder().apply {
+            content = this@toMessage.content
+            author = this@toMessage.author
+        }.build()
     }
 }

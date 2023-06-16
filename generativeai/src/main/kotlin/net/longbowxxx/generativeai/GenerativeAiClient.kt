@@ -14,7 +14,7 @@ interface GenerativeAiClient {
         }
     }
 
-    suspend fun requestDiscuss()
+    suspend fun requestDiscuss(discussRequest: DiscussRequest): DiscussResponse
 }
 
 data class GenerativeAiSettings(
