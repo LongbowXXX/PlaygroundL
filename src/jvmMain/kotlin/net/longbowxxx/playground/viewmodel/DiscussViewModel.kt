@@ -32,7 +32,7 @@ class DiscussViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : 
     override val coroutineContext: CoroutineContext = dispatcher + job
 
     companion object {
-        private const val USER_AUTHOR = "0"
+        const val USER_AUTHOR = "0"
         private val INITIAL_MESSAGES = listOf(DiscussMessage(USER_AUTHOR, ""))
     }
 
@@ -125,9 +125,9 @@ class DiscussViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : 
                 val request = DiscussRequest(
                     currentModel,
                     prompt = DiscussPrompt(
-                        session.messages,
+                        messages.value,
                         examples = emptyList(),
-                        context = discussProperties.discussSystemPrompt.value,
+                        context = discussProperties.discussContext.value,
                     ),
                     temperature = discussProperties.discussTemperature.value,
                     candidateCount = 1,

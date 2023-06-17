@@ -15,13 +15,13 @@ class DiscussPreference : PreferenceBase() {
     companion object {
         private const val DISCUSS_REQUEST_TEMPERATURE_KEY = "discuss.request.temperature"
         private const val DISCUSS_REQUEST_MODEL_KEY = "discuss.request.model"
-        private const val DISCUSS_SYSTEM_PROMPT_KEY = "discuss.system.prompt"
+        private const val DISCUSS_CONTEXT_KEY = "discuss.context"
         private const val FILE_NAME = "discuss.properties"
         private const val FILE_COMMENT = "Playground Discuss Properties"
     }
 
     val discussTemperature = mutableStateOf(DISCUSS_TEMPERATURE_DEFAULT)
-    val discussSystemPrompt = mutableStateOf("")
+    val discussContext = mutableStateOf("")
     val discussModel = mutableStateOf(DISCUSS_MODEL)
 
     override val fileName = FILE_NAME
@@ -30,7 +30,7 @@ class DiscussPreference : PreferenceBase() {
     override fun load() {
         loadInternal {
             discussTemperature.value = getFloatProperty(DISCUSS_REQUEST_TEMPERATURE_KEY, DISCUSS_TEMPERATURE_DEFAULT)
-            discussSystemPrompt.value = getProperty(DISCUSS_SYSTEM_PROMPT_KEY, "")
+            discussContext.value = getProperty(DISCUSS_CONTEXT_KEY, "")
             discussModel.value = getProperty(DISCUSS_REQUEST_MODEL_KEY, DISCUSS_MODEL)
         }
     }
@@ -43,7 +43,7 @@ class DiscussPreference : PreferenceBase() {
     override fun save() {
         saveInternal {
             setProperty(DISCUSS_REQUEST_TEMPERATURE_KEY, discussTemperature.value.toString())
-            setProperty(DISCUSS_SYSTEM_PROMPT_KEY, discussSystemPrompt.value)
+            setProperty(DISCUSS_CONTEXT_KEY, discussContext.value)
             setProperty(DISCUSS_REQUEST_MODEL_KEY, discussModel.value)
         }
     }

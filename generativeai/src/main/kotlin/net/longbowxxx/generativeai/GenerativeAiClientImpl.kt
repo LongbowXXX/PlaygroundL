@@ -64,7 +64,7 @@ class GenerativeAiClientImpl(settings: GenerativeAiSettings) : GenerativeAiClien
                 val messageResponse = client.generateMessage(request)
 
                 messageResponse.candidatesList.map { message ->
-                    DiscussMessage(message.content, message.author)
+                    DiscussMessage(message.author, message.content)
                 }.let {
                     DiscussResponse(it)
                 }.also {
