@@ -76,8 +76,8 @@ class GenerativeAiClientImpl(settings: GenerativeAiSettings) : GenerativeAiClien
 
     private fun DiscussMessage.toMessage(): Message {
         return Message.newBuilder().apply {
-            content = this@toMessage.content
             author = this@toMessage.author
+            content = this@toMessage.content
         }.build()
     }
 }

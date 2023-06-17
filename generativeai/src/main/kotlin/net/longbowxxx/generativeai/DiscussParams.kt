@@ -7,24 +7,31 @@
 
 package net.longbowxxx.generativeai
 
-const val DISCUSS_MODEL = "models/chat-bison-001"
+import kotlinx.serialization.Serializable
 
+const val DISCUSS_MODEL = "models/chat-bison-001"
+const val DISCUSS_TEMPERATURE_DEFAULT = 0.5f
+
+@Serializable
 data class DiscussExample(
     val input: DiscussMessage,
     val output: DiscussMessage,
 )
 
+@Serializable
 data class DiscussMessage(
-    val content: String,
     val author: String = "",
+    val content: String,
 )
 
+@Serializable
 data class DiscussPrompt(
     val messages: List<DiscussMessage>,
     val examples: List<DiscussExample> = emptyList(),
     val context: String = "",
 )
 
+@Serializable
 data class DiscussRequest(
     val model: String,
     val prompt: DiscussPrompt,
@@ -32,6 +39,7 @@ data class DiscussRequest(
     val candidateCount: Int,
 )
 
+@Serializable
 data class DiscussResponse(
     val candidates: List<DiscussMessage>,
 )

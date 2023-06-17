@@ -17,8 +17,8 @@ class GenerativeAiClientImplTest {
                 listOf(DiscussMessage("How tall is the Eiffel Tower?", "0")),
                 listOf(
                     DiscussExample(
-                        DiscussMessage("What is the capital of California?"),
-                        DiscussMessage("If the capital of California is what you seek, Sacramento is where you ought to peek."),
+                        DiscussMessage(content = "What is the capital of California?"),
+                        DiscussMessage(content = "If the capital of California is what you seek, Sacramento is where you ought to peek."),
                     ),
                 ),
                 "Respond to all questions with a rhyming poem.",
