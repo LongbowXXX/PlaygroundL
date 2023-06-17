@@ -14,6 +14,7 @@ import kotlinx.serialization.Serializable
 import net.longbowxxx.openai.client.OpenAiChatFunction
 import net.longbowxxx.openai.client.OpenAiChatParameter
 import net.longbowxxx.openai.client.OpenAiChatProperty
+import net.longbowxxx.playground.utils.logTrace
 import java.io.File
 
 class SaveStringToFileFunctionPlugin : ChatFunctionPlugin() {
@@ -33,7 +34,9 @@ class SaveStringToFileFunctionPlugin : ChatFunctionPlugin() {
     override suspend fun executeInternal(arguments: String, context: FunctionCallContext): String {
         val param = arguments.toParams<SaveStringToFileArgs>()
         withContext(Dispatchers.IO) {
-            File(context.logDir, param.fileName).writeText(param.data, Charsets.UTF_8)
+            File(context.logDir, param.fileName).also {
+                logTrace { "save to file. ${it.absolutePath}" }
+            }.writeText(param.data, Charsets.UTF_8)
         }
         return SUCCESS
     }

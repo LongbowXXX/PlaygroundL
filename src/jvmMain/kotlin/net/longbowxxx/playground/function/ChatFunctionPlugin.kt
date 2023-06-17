@@ -11,12 +11,15 @@ import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.longbowxxx.openai.client.OpenAiChatFunction
 import net.longbowxxx.playground.history.ChatHistory
+import net.longbowxxx.playground.utils.DebugLoggable
+import net.longbowxxx.playground.utils.logTrace
 import java.io.File
 
-abstract class ChatFunctionPlugin {
+abstract class ChatFunctionPlugin : DebugLoggable {
     companion object {
         const val SUCCESS = "success"
     }
+
     protected val decodeJson = Json {
         encodeDefaults = false
         ignoreUnknownKeys = true
@@ -29,9 +32,12 @@ abstract class ChatFunctionPlugin {
     abstract val functionSpec: OpenAiChatFunction
     suspend fun execute(arguments: String, context: FunctionCallContext): String {
         return runCatching {
+            logTrace { "execute(): arguments=$arguments, context=$context" }
             executeInternal(arguments, context)
         }.getOrElse { ex ->
             "failed. exception=$ex"
+        }.also {
+            logTrace { "execute(): result=$it" }
         }
     }
 
