@@ -81,7 +81,7 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
 
                 QuickLoadWidget(chatMessageFileList) {
                     val newContent = it.readText(Charsets.UTF_8)
-                    chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, newContent, null, message.name))
+                    chatViewModel.updateMessageContent(index, newContent)
                 }
 
                 IconButton(
@@ -96,7 +96,7 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
                 content,
                 {
                     if (message.functionCall == null) {
-                        chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, it, null, message.name))
+                        chatViewModel.updateMessageContent(index, it)
                     }
                 },
                 label = {

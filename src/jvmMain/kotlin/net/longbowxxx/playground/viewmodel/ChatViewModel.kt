@@ -30,7 +30,10 @@ import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.openai.client.isFunctionAvailable
+import net.longbowxxx.openai.client.updateContent
 import net.longbowxxx.playground.function.ChatFunctionLoader
+import net.longbowxxx.playground.function.ChatFunctionPlugin
+import net.longbowxxx.playground.function.FunctionCallContext
 import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.logger.ChatLogger
 import java.io.Closeable
@@ -87,11 +90,19 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         }
     }
 
-    fun updateMessage(index: Int, message: OpenAiChatMessage) {
+    private fun updateMessage(index: Int, message: OpenAiChatMessage) {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)
         require(index < newList.size)
         newList[index] = message
+        messages.value = newList
+    }
+
+    fun updateMessageContent(index: Int, content: String) {
+        val newList = mutableListOf<OpenAiChatMessage>()
+        newList.addAll(messages.value)
+        require(index < newList.size)
+        newList[index] = newList[index].updateContent(content)
         messages.value = newList
     }
 
@@ -145,8 +156,8 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             requesting.value = true
             val session = currentChatSession
             val logger = ChatLogger()
-            val functions = if (functionEnabled) {
-                functionLoader.loadFunctions(File("chatFunction"))
+            val plugins = if (functionEnabled) {
+                functionLoader.loadPlugins(File("chatFunction"))
             } else {
                 null
             }
@@ -154,7 +165,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                 val request = OpenAiChatRequest(
                     currentModel,
                     messages = createMessages(),
-                    functions = functions,
+                    functions = plugins?.map { it.functionSpec },
                     stream = true,
                     temperature = chatProperties.chatTemperature.value,
                     topP = chatProperties.chatTopP.value,
@@ -175,7 +186,8 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                 // レスポンスが終わったら、次の入力用のメッセージ追加
                 val lastFunctionCall = latestMessages.last().functionCall
                 if (lastFunctionCall != null) {
-                    addMessage(OpenAiChatRoleTypes.FUNCTION, lastFunctionCall.name)
+                    checkNotNull(plugins) { "must not be null. function called from assistant." }
+                    callFunction(lastFunctionCall, plugins, FunctionCallContext(session, logger.logDir))
                 } else {
                     addMessage(OpenAiChatRoleTypes.USER)
                 }
@@ -187,6 +199,18 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
                 requesting.value = false
             }
         }
+    }
+
+    private suspend fun callFunction(
+        functionCallMessage: OpenAiChatFunctionCallMessage,
+        providers: List<ChatFunctionPlugin>,
+        context: FunctionCallContext,
+    ) {
+        val index = addMessage(OpenAiChatRoleTypes.FUNCTION, functionCallMessage.name)
+        val functionResponse = providers.firstOrNull { plugin ->
+            plugin.functionSpec.name == functionCallMessage.name
+        }?.execute(functionCallMessage.arguments, context) ?: error("not found function : $functionCallMessage")
+        updateMessageContent(index, functionResponse)
     }
 
     fun restoreOldSession(session: ChatHistory.ChatHistorySession) {
