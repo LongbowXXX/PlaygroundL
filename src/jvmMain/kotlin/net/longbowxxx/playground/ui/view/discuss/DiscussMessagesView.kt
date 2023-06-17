@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui.view.chat
+package net.longbowxxx.playground.ui.view.discuss
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -32,20 +32,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import net.longbowxxx.openai.client.OpenAiChatRoleTypes
-import net.longbowxxx.playground.ui.widget.ChatHistorySelectorWidget
-import net.longbowxxx.playground.viewmodel.chatViewModel
+import net.longbowxxx.playground.ui.widget.DiscussHistorySelectorWidget
+import net.longbowxxx.playground.viewmodel.DiscussViewModel
+import net.longbowxxx.playground.viewmodel.discussViewModel
 
 private const val NEW_SESSION_TEXT = "NEW SESSION"
 private const val SUBMIT_TEXT = "SUBMIT"
-private const val CHAT_HISTORY_TEXT = "RESTORE OLD CHAT"
+private const val DISCUSS_HISTORY_TEXT = "RESTORE OLD DISCUSS"
 
 @Suppress("FunctionName")
 @Composable
-fun ColumnScope.MessagesView() {
+fun ColumnScope.DiscussMessagesView() {
     val listState = rememberLazyListState()
-    val messages by remember { chatViewModel.messages }
-    val requesting by remember { chatViewModel.requesting }
+    val messages by remember { discussViewModel.messages }
+    val requesting by remember { discussViewModel.requesting }
     val lastMessageSize = messages.lastOrNull()?.content?.length ?: 0
 
     LazyColumn(
@@ -55,13 +55,13 @@ fun ColumnScope.MessagesView() {
         state = listState,
     ) {
         itemsIndexed(messages) { index, message ->
-            MessageItemView(index, message)
+            DiscussMessageItemView(index, message)
         }
         item {
             // メッセージ追加用ボタン
             Row(modifier = Modifier.fillMaxWidth()) {
                 IconButton(
-                    { chatViewModel.addMessage(OpenAiChatRoleTypes.USER) },
+                    { discussViewModel.addMessage(DiscussViewModel.USER_AUTHOR) },
                     enabled = !requesting,
                 ) {
                     Icon(Icons.Default.Add, null)
@@ -90,16 +90,16 @@ fun ColumnScope.MessagesView() {
         modifier = Modifier.fillMaxWidth().padding(10.dp),
     ) {
         Button(
-            { chatViewModel.requestChat() },
+            { discussViewModel.requestChat() },
             enabled = !requesting,
         ) {
             Text(SUBMIT_TEXT)
         }
-        ChatHistorySelectorWidget(CHAT_HISTORY_TEXT) {
-            chatViewModel.restoreOldSession(it)
+        DiscussHistorySelectorWidget(DISCUSS_HISTORY_TEXT) {
+            discussViewModel.restoreOldSession(it)
         }
         TextButton(
-            { chatViewModel.newSession() },
+            { discussViewModel.newSession() },
             enabled = !requesting,
         ) {
             Icon(Icons.Default.Add, null)

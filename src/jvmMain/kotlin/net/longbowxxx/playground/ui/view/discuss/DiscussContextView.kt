@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui.view.chat
+package net.longbowxxx.playground.ui.view.discuss
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.ColumnScope
@@ -29,46 +29,45 @@ import net.longbowxxx.playground.ui.widget.AudioTransWidget
 import net.longbowxxx.playground.ui.widget.FileChooseWidget
 import net.longbowxxx.playground.ui.widget.QuickLoadWidget
 import net.longbowxxx.playground.viewmodel.appProperties
-import net.longbowxxx.playground.viewmodel.chatProperties
-import net.longbowxxx.playground.viewmodel.chatViewModel
 import net.longbowxxx.playground.viewmodel.createAudioViewModel
+import net.longbowxxx.playground.viewmodel.discussProperties
+import net.longbowxxx.playground.viewmodel.discussViewModel
 import java.io.File
 
-private const val SYSTEM_PROMPT_LABEL_TEXT = "SYSTEM"
-private const val LOAD_SYSTEM_TEXT = "LOAD SYSTEM PROMPT…"
+private const val CONTEXT_LABEL_TEXT = "CONTEXT IN ENGLISH"
+private const val LOAD_CONTEXT_TEXT = "LOAD CONTEXT…"
 private val audioViewModel = createAudioViewModel()
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
 @Composable
-fun ColumnScope.SystemPromptView() {
-    var systemPrompt by remember { chatProperties.chatSystemPrompt }
-    val requesting by remember { chatViewModel.requesting }
+fun ColumnScope.DiscussContextView() {
+    var discussContext by remember { discussProperties.discussContext }
+    val requesting by remember { discussViewModel.requesting }
     val verticalScrollState = rememberScrollState(0)
-    var systemMessage by remember { chatProperties.chatSystemPrompt }
     val messageFontSizeSp by remember { appProperties.messageFontSizeSp }
 
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
-        FileChooseWidget(LOAD_SYSTEM_TEXT) { selectedFile ->
+        FileChooseWidget(LOAD_CONTEXT_TEXT) { selectedFile ->
             selectedFile?.let {
-                systemMessage = File(it).readText(Charsets.UTF_8)
+                discussContext = File(it).readText(Charsets.UTF_8)
             }
         }
-        QuickLoadWidget(chatViewModel.chatPromptFileList) {
-            systemPrompt = it.readText(Charsets.UTF_8)
+        QuickLoadWidget(discussViewModel.chatPromptFileList) {
+            discussContext = it.readText(Charsets.UTF_8)
         }
         AudioTransWidget(audioViewModel, true) {
-            systemPrompt = it
+            discussContext = it
         }
     }
 
     TextField(
-        systemPrompt,
+        discussContext,
         {
-            systemPrompt = it
+            discussContext = it
         },
         label = {
-            Text(SYSTEM_PROMPT_LABEL_TEXT)
+            Text(CONTEXT_LABEL_TEXT)
         },
         modifier = Modifier.fillMaxWidth()
             .verticalScroll(verticalScrollState)

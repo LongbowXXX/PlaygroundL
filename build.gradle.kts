@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import java.net.URL
 
 plugins {
     kotlin("multiplatform")
@@ -14,6 +15,8 @@ repositories {
     google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    // for Palm2 SDK (Beta)
+    mavenLocal()
 }
 
 allprojects {
@@ -70,6 +73,7 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(project(":openai"))
+                implementation(project(":generativeai"))
                 implementation("org.jetbrains.compose.material3:material3-desktop:${property("compose.version")}")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlinx.coroutine.core.version")}")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${property("kotlinx.serialization.version")}")
@@ -98,6 +102,36 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "PlaygroundL"
             packageVersion = property("package.version") as String
+        }
+    }
+}
+
+tasks.register("downloadPalm2BetaSDK") {
+    group = "build"
+    description = "Since the SDK for PaLM2 is a Beta version, download the file and install it on mavenLocal"
+    dependsOn(emptyArray<String>())
+    doLast {
+        val baseName = "google-cloud-ai-generativelanguage-v1beta2-java"
+        val outFileName = "$baseName.tar.gz"
+        val palm2WorkDir = "${rootProject.rootDir}/palm2"
+        File(palm2WorkDir).mkdirs()
+        val outFile = File("$palm2WorkDir/$outFileName")
+        val url = URL("https://storage.googleapis.com/generativeai-downloads/clients/$outFileName")
+        outFile.outputStream().use { out ->
+            url.openStream().use {
+                it.copyTo(out)
+            }
+        }
+        copy {
+            from(tarTree(resources.gzip(outFile)))
+            into(palm2WorkDir)
+        }
+        // TODO: gradle.properties の引数に -Dfile.encoding=UTF-8 を追加
+        // org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
+        exec {
+            workingDir = File("$palm2WorkDir/$baseName")
+            executable("./gradlew.bat")
+            args("publishToMavenLocal")
         }
     }
 }

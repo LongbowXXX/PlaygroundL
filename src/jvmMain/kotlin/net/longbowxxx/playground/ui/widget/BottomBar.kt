@@ -18,17 +18,28 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 
 const val CHAT_TAB = 0
-const val IMAGE_TAB = 1
-const val SETTING_TAB = 2
+const val DISCUSS_TAB = 1
+const val IMAGE_TAB = 2
+const val SETTING_TAB = 3
 
 private const val CHAT_TEXT = "CHAT"
+private const val DISCUSS_TEXT = "DISCUSS"
 private const val IMAGE_TEXT = "IMAGE"
 private const val SETTINGS_TEXT = "SETTINGS"
 private val bottomItems = listOf(
     CHAT_TEXT to Icons.Default.Face,
+    DISCUSS_TEXT to Icons.Default.Face,
     IMAGE_TEXT to Icons.Filled.Edit,
     SETTINGS_TEXT to Icons.Default.Settings,
 )
+
+fun Int.toTabName() = when (this) {
+    0 -> CHAT_TEXT
+    1 -> DISCUSS_TEXT
+    2 -> IMAGE_TEXT
+    3 -> SETTINGS_TEXT
+    else -> error("Unknown Tab Index $this")
+}
 
 @Suppress("FunctionName")
 @Composable

@@ -5,14 +5,13 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.ui.view.chat
+package net.longbowxxx.playground.ui.view.discuss
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ElevatedCard
@@ -20,7 +19,6 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,22 +34,21 @@ import androidx.compose.ui.input.key.type
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import net.longbowxxx.openai.client.OpenAiChatMessage
-import net.longbowxxx.openai.client.OpenAiChatRoleTypes
+import net.longbowxxx.generativeai.DiscussMessage
 import net.longbowxxx.playground.ui.widget.QuickLoadWidget
 import net.longbowxxx.playground.viewmodel.appProperties
-import net.longbowxxx.playground.viewmodel.chatViewModel
+import net.longbowxxx.playground.viewmodel.discussViewModel
 import java.awt.event.KeyEvent
 
-private const val CONTENT_TEXT = "CONTENT"
+private const val CONTENT_TEXT = "CONTENT IN ENGLISH"
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
 @Composable
-fun MessageItemView(index: Int, message: OpenAiChatMessage) {
-    val requesting by remember { chatViewModel.requesting }
+fun DiscussMessageItemView(index: Int, message: DiscussMessage) {
+    val requesting by remember { discussViewModel.requesting }
     val messageFontSizeSp by remember { appProperties.messageFontSizeSp }
-    val chatMessageFileList = chatViewModel.chatMessageFileList
+    val chatMessageFileList = discussViewModel.chatMessageFileList
 
     ElevatedCard(
         modifier = Modifier
@@ -66,38 +63,25 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                TextButton(
-                    { chatViewModel.toggleRole(index) },
-                    enabled = !requesting,
-                    modifier = Modifier.width(150.dp),
-                ) {
-                    Text(message.role.toDisplayText())
-                }
-
-                Text(
-                    message.name.orEmpty(),
-                    modifier = Modifier.width(300.dp),
-                )
+                Text(message.author)
 
                 QuickLoadWidget(chatMessageFileList) {
                     val newContent = it.readText(Charsets.UTF_8)
-                    chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, newContent, null, message.name))
+                    discussViewModel.updateMessage(index, DiscussMessage(message.author, newContent))
                 }
 
                 IconButton(
-                    { chatViewModel.removeMessage(index) },
+                    { discussViewModel.removeMessage(index) },
                     enabled = !requesting,
                 ) {
                     Icon(Icons.Default.Clear, null)
                 }
             }
-            val content = message.content ?: message.functionCall?.toString() ?: ""
+            val content = message.content
             TextField(
                 content,
                 {
-                    if (message.functionCall == null) {
-                        chatViewModel.updateMessage(index, OpenAiChatMessage(message.role, it, null, message.name))
-                    }
+                    discussViewModel.updateMessage(index, DiscussMessage(message.author, it))
                 },
                 label = {
                     Text(CONTENT_TEXT)
@@ -109,7 +93,7 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
                             it.key.nativeKeyCode == KeyEvent.VK_ENTER &&
                             it.isAltPressed
                         ) {
-                            chatViewModel.requestChat()
+                            discussViewModel.requestChat()
                             true
                         } else {
                             false
@@ -119,14 +103,5 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
                 textStyle = TextStyle(fontSize = messageFontSizeSp.sp),
             )
         }
-    }
-}
-
-fun OpenAiChatRoleTypes.toDisplayText(): String {
-    return when (this) {
-        OpenAiChatRoleTypes.USER -> "USER"
-        OpenAiChatRoleTypes.ASSISTANT -> "ASSISTANT"
-        OpenAiChatRoleTypes.FUNCTION -> "FUNCTION"
-        OpenAiChatRoleTypes.SYSTEM -> error("Invalid type SYSTEM selected.")
     }
 }
