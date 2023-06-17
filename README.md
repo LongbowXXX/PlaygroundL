@@ -1,22 +1,29 @@
 PlaygroundL
 ===
-This is a playground for testing AI by calling OpenAI's Chat API.  
-Please refer to the [official documentation](https://platform.openai.com/docs/guides/chat) for more information about the Chat API.
+This is a playground for testing AI such as OpenAI and Google Palm2.  
+Please refer to the documentation for each API: [OpenAI Documentation](https://platform.openai.com/docs/introduction) and [Google Documentation](https://developers.generativeai.google/api/python/google/generativeai).
 
 # Environment
-This application runs on Windows environment.  
+It runs on Windows 11 environment.  
 JAVA 17 is required for the application to run.
 
 The application has been tested in an environment where Amazon Corretto 17 JDK is set in JAVA_HOME.  
 https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 
-# How to use the app
-Please refer to [HowToUse-en.md](documents/HowToUse-en.md).  
+# Development Environment Setup
+Download and install Google Palm2 SDK to the local repository, otherwise the build will not pass.  
+Please run the following command:
+```
+> gradlew.bat downloadPalm2BetaSDK 
+```
 
-[PLAYGROUND-Movie.mp4](releaseArchive/PLAYGROUND-Movie.mp4)  
+# How to Use the Application
+Please refer to [HowToUse-ja.md](documents/HowToUse-ja.md).
+
+[PLAYGROUND-Movie.mp4](releaseArchive/PLAYGROUND-Movie.mp4)
 
 # OSS
-The following OSS is used in this application.
+Open-source software used in this application.
 
 - org.jetbrains.compose.desktop:desktop-jvm-windows-x64  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
@@ -34,5 +41,7 @@ The following OSS is used in this application.
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - realm/realm-kotlin  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+- io.grpc:grpc-okhttp  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
-**This document was translated using OpenAI.**
+This document was translated using OpenAI.
