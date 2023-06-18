@@ -27,12 +27,12 @@ import net.longbowxxx.openai.client.OpenAiEditImageRequest
 import net.longbowxxx.openai.client.OpenAiImageVariationRequest
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.playground.logger.ImageLogger
+import net.longbowxxx.playground.utils.toURL
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skiko.toBitmap
 import java.awt.image.BufferedImage
 import java.io.Closeable
 import java.io.File
-import java.net.URL
 import javax.imageio.ImageIO
 import kotlin.coroutines.CoroutineContext
 
@@ -249,10 +249,6 @@ class ImageViewModel(
                 }
             }
         }
-    }
-
-    private fun String.toURL(): URL {
-        return URL(this)
     }
 
     private fun addImage(image: Bitmap, file: File) {

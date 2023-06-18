@@ -20,6 +20,7 @@ class ChatFunctionLoader {
 
     private val plugins = listOf(
         SaveStringToFileFunctionPlugin(),
+        CreateImageFunctionPlugin(),
     )
 
     fun loadPlugins(directory: File): List<ChatFunctionPlugin> {

@@ -25,6 +25,11 @@ abstract class ChatFunctionPlugin : DebugLoggable {
         ignoreUnknownKeys = true
     }
 
+    protected val encodeJson = Json {
+        encodeDefaults = false
+        prettyPrint = true
+    }
+
     protected inline fun <reified T> String.toParams(): T {
         return decodeJson.decodeFromString<T>(this)
     }
