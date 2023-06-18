@@ -28,8 +28,14 @@ class CreateImageFunctionPlugin : ChatFunctionPlugin() {
             "Generate images using DALL·E 2",
             OpenAiChatParameter.OpenAiChatParameterObject(
                 mapOf(
-                    "prompt" to OpenAiChatProperty("string", "prompt for image generation"),
-                    "image_name" to OpenAiChatProperty("string", "the name of the image to generate"),
+                    "image_name" to OpenAiChatProperty(
+                        "string",
+                        "the name of the image to generate in English. Ex: tokyo_tower",
+                    ),
+                    "prompt" to OpenAiChatProperty(
+                        "string",
+                        "the prompt for image generation in English. Ex: Tokyo tower.",
+                    ),
                     "number_of_images" to OpenAiChatProperty("integer", "number of images to generate"),
                 ),
                 listOf("prompt", "image_name", "number_of_images"),
