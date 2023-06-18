@@ -18,13 +18,23 @@ class ChatFunctionLoader {
         ignoreUnknownKeys = true
     }
 
-    fun loadFunctions(directory: File): List<OpenAiChatFunction> {
-        return directory.walkTopDown().filter {
+    private val plugins = listOf(
+        SaveStringToFileFunctionPlugin(),
+        CreateImageFunctionPlugin(),
+    )
+
+    fun loadPlugins(directory: File): List<ChatFunctionPlugin> {
+        val allPlugins = directory.walkTopDown().filter {
             it.isFile && it.name.endsWith(".json")
         }.map { file ->
             file.readText(Charsets.UTF_8).let { jsonString ->
-                decodeJson.decodeFromString<OpenAiChatFunction>(jsonString)
+                val spec = decodeJson.decodeFromString<OpenAiChatFunction>(jsonString)
+                MockFunctionPlugin(spec)
             }
-        }.toList()
+        }.toMutableList<ChatFunctionPlugin>()
+        allPlugins.addAll(
+            plugins,
+        )
+        return allPlugins
     }
 }

@@ -10,6 +10,7 @@ package net.longbowxxx.playground.logger
 import net.longbowxxx.openai.client.OpenAiCreateImageRequest
 import net.longbowxxx.openai.client.OpenAiEditImageRequest
 import net.longbowxxx.openai.client.OpenAiImageVariationRequest
+import net.longbowxxx.playground.utils.copyTo
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL
@@ -84,14 +85,6 @@ class ImageLogger(
             val file = File(logDir, imageName)
             ImageIO.write(image, PNG_FILE_FORMAT, file)
             file
-        }
-    }
-
-    private fun URL.copyTo(outFile: File) {
-        openStream().use { input ->
-            outFile.outputStream().use { output ->
-                input.copyTo(output)
-            }
         }
     }
 }

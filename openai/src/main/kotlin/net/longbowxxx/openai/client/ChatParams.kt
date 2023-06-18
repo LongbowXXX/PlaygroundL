@@ -93,6 +93,8 @@ data class OpenAiChatMessage(
     val name: String? = null,
 )
 
+fun OpenAiChatMessage.updateContent(newContent: String?) = OpenAiChatMessage(role, newContent, functionCall, name)
+
 @Serializable
 data class OpenAiChatFunctionCallMessage(
     val name: String,

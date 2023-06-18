@@ -36,7 +36,14 @@ class ChatLogger(
         writeLog {
             messages.forEach { message ->
                 write("# ${message.role.name}\n")
-                write("${message.content}\n")
+                if (message.content != null) {
+                    write("${message.content}\n")
+                }
+                if (message.functionCall != null) {
+                    write("## function call  \n")
+                    write("${message.functionCall?.name}  \n")
+                    write("```json\n${message.functionCall?.arguments}\n```\n")
+                }
                 appendHorizontalLine()
             }
         }
