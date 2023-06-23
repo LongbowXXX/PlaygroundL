@@ -1,6 +1,12 @@
 PlaygroundL Change Log
 ===
 
+## [1.5.0]
+### Added
+- Add plugin system for function
+  - Add create image plugin
+  - Add save file plugin
+
 ## [1.4.0]
 ### Added
 - Add chat function call

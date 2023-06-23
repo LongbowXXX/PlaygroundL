@@ -126,8 +126,6 @@ tasks.register("downloadPalm2BetaSDK") {
             from(tarTree(resources.gzip(outFile)))
             into(palm2WorkDir)
         }
-        // TODO: gradle.properties の引数に -Dfile.encoding=UTF-8 を追加
-        // org.gradle.jvmargs=-Xmx2048m -Dfile.encoding=UTF-8
         exec {
             workingDir = File("$palm2WorkDir/$baseName")
             executable("./gradlew.bat")
@@ -136,31 +134,11 @@ tasks.register("downloadPalm2BetaSDK") {
     }
 }
 
-tasks.register("generateBatch") {
-    group = "release"
-    doLast {
-        // 生成するファイルの内容を定義
-        val batchString = """
-            set "PATH=%JAVA_HOME%\bin;%PATH%"
-            java -jar ./PlaygroundL-windows-x64-${rootProject.property("package.version")}.jar
-        """.trimIndent()
-
-        // 生成するファイルのパスを指定
-        val filePath = "$buildDir/tmp/release/run.bat"
-
-        // ファイルを生成
-        File(filePath).apply {
-            parentFile.mkdirs()
-            writeText(batchString)
-        }
-    }
-}
-
 tasks.register<Copy>("copyArtifacts") {
     group = "release"
-    from("$buildDir/compose/jars")
+    from("$buildDir/compose/binaries/main/app/PlaygroundL")
     into("$buildDir/tmp/release")
-    dependsOn("packageUberJarForCurrentOS")
+    dependsOn("createDistributable")
 }
 
 tasks.register<Copy>("copyDocuments") {
@@ -193,7 +171,6 @@ tasks.register<Zip>("zipArtifacts") {
     destinationDirectory.set(file("$buildDir/release"))
     archiveFileName.set("${project.name}-${rootProject.property("package.version")}.zip")
 
-    dependsOn("generateBatch")
     dependsOn("copyArtifacts")
     dependsOn("copyDocuments")
     dependsOn("copyChatPrompt")

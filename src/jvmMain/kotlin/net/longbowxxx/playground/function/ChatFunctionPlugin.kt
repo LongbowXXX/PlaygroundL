@@ -7,13 +7,14 @@
 
 package net.longbowxxx.playground.function
 
+import androidx.compose.runtime.Composable
 import kotlinx.serialization.decodeFromString
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.longbowxxx.openai.client.OpenAiChatFunction
-import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.utils.DebugLoggable
+import net.longbowxxx.playground.utils.logError
 import net.longbowxxx.playground.utils.logTrace
-import java.io.File
 
 abstract class ChatFunctionPlugin : DebugLoggable {
     companion object {
@@ -35,10 +36,10 @@ abstract class ChatFunctionPlugin : DebugLoggable {
     }
 
     abstract val functionSpec: OpenAiChatFunction
-    suspend fun execute(arguments: String, context: FunctionCallContext): String {
+    suspend fun execute(arguments: String): String {
         return runCatching {
-            logTrace { "execute(): arguments=$arguments, context=$context" }
-            executeInternal(arguments, context)
+            logTrace { "execute(): arguments=$arguments" }
+            executeInternal(arguments)
         }.getOrElse { ex ->
             "failed. exception=$ex"
         }.also {
@@ -46,10 +47,24 @@ abstract class ChatFunctionPlugin : DebugLoggable {
         }
     }
 
-    protected abstract suspend fun executeInternal(arguments: String, context: FunctionCallContext): String
-}
+    @Suppress("FunctionName")
+    @Composable
+    fun FunctionView(content: String) {
+        runCatching {
+            FunctionViewInternal(content)
+        }.onFailure {
+            logError(it) { "FunctionView failure" }
+        }
+    }
 
-data class FunctionCallContext(
-    val session: ChatHistory.ChatHistorySession,
-    val logDir: File,
-)
+    @Suppress("FunctionName")
+    @Composable
+    protected open fun FunctionViewInternal(content: String) {
+    }
+
+    protected abstract suspend fun executeInternal(arguments: String): String
+
+    protected inline fun <reified T> T.toResponseStr(): String {
+        return encodeJson.encodeToString(this)
+    }
+}

@@ -7,34 +7,34 @@
 
 package net.longbowxxx.playground.function
 
-import kotlinx.serialization.decodeFromString
-import kotlinx.serialization.json.Json
-import net.longbowxxx.openai.client.OpenAiChatFunction
+import net.longbowxxx.playground.utils.DebugLoggable
+import net.longbowxxx.playground.utils.logInfo
 import java.io.File
 
-class ChatFunctionLoader {
-    private val decodeJson = Json {
-        encodeDefaults = false
-        ignoreUnknownKeys = true
-    }
-
-    private val plugins = listOf(
+class ChatFunctionLoader : DebugLoggable {
+    private val nativePlugins = listOf(
         SaveStringToFileFunctionPlugin(),
         CreateImageFunctionPlugin(),
+        ShowImagePlugin(),
     )
 
     fun loadPlugins(directory: File): List<ChatFunctionPlugin> {
         val allPlugins = directory.walkTopDown().filter {
-            it.isFile && it.name.endsWith(".json")
-        }.map { file ->
-            file.readText(Charsets.UTF_8).let { jsonString ->
-                val spec = decodeJson.decodeFromString<OpenAiChatFunction>(jsonString)
-                MockFunctionPlugin(spec)
-            }
-        }.toMutableList<ChatFunctionPlugin>()
+            it.isDirectory
+        }.mapNotNull { pluginDirectory ->
+            loadPlugin(pluginDirectory)
+        }.toMutableList()
         allPlugins.addAll(
-            plugins,
+            nativePlugins,
         )
         return allPlugins
+    }
+
+    private fun loadPlugin(pluginDirectory: File): ChatFunctionPlugin? {
+        if (MockFunctionPlugin.isMockPlugin(pluginDirectory)) {
+            return MockFunctionPlugin.loadMockPlugin(pluginDirectory)
+        }
+        logInfo { "loadPlugin failed. ${pluginDirectory.absolutePath}" }
+        return null
     }
 }

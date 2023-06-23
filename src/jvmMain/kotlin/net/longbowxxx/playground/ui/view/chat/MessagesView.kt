@@ -9,6 +9,7 @@ package net.longbowxxx.playground.ui.view.chat
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -38,6 +40,7 @@ import net.longbowxxx.playground.viewmodel.chatViewModel
 
 private const val NEW_SESSION_TEXT = "NEW SESSION"
 private const val SUBMIT_TEXT = "SUBMIT"
+private const val CANCEL_TEXT = "CANCEL"
 private const val CHAT_HISTORY_TEXT = "RESTORE OLD CHAT"
 
 @Suppress("FunctionName")
@@ -89,11 +92,28 @@ fun ColumnScope.MessagesView() {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth().padding(10.dp),
     ) {
-        Button(
-            { chatViewModel.requestChat() },
-            enabled = !requesting,
-        ) {
-            Text(SUBMIT_TEXT)
+        Box {
+            Button(
+                {
+                    if (requesting) {
+                        chatViewModel.cancelRequestChat()
+                    } else {
+                        chatViewModel.requestChat()
+                    }
+                },
+            ) {
+                if (requesting) {
+                    Text(CANCEL_TEXT)
+                } else {
+                    Text(SUBMIT_TEXT)
+                }
+            }
+            if (requesting) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = MaterialTheme.colorScheme.tertiary,
+                )
+            }
         }
         ChatHistorySelectorWidget(CHAT_HISTORY_TEXT) {
             chatViewModel.restoreOldSession(it)
