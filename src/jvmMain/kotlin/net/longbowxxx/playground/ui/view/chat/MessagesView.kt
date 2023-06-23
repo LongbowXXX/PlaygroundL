@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -21,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -35,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
+import net.longbowxxx.playground.ui.tertiaryButtonColors
 import net.longbowxxx.playground.ui.widget.ChatHistorySelectorWidget
 import net.longbowxxx.playground.viewmodel.chatViewModel
 
@@ -92,7 +95,7 @@ fun ColumnScope.MessagesView() {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth().padding(10.dp),
     ) {
-        Box {
+        Box(modifier = Modifier.width(150.dp)) {
             Button(
                 {
                     if (requesting) {
@@ -100,6 +103,10 @@ fun ColumnScope.MessagesView() {
                     } else {
                         chatViewModel.requestChat()
                     }
+                },
+                colors = when (requesting) {
+                    true -> tertiaryButtonColors()
+                    false -> ButtonDefaults.buttonColors()
                 },
             ) {
                 if (requesting) {
@@ -110,8 +117,7 @@ fun ColumnScope.MessagesView() {
             }
             if (requesting) {
                 CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center),
-                    color = MaterialTheme.colorScheme.tertiary,
+                    modifier = Modifier.align(Alignment.CenterEnd),
                 )
             }
         }
