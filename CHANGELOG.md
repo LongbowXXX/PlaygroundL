@@ -6,6 +6,7 @@ PlaygroundL Change Log
 - Add plugin system for function
   - Add create image plugin
   - Add save file plugin
+- Add PaLM2 discuss service (English Only)
 
 ## [1.4.0]
 ### Added
