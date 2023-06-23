@@ -9,7 +9,6 @@ package net.longbowxxx.playground.function
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.encodeToString
 import net.longbowxxx.openai.client.OpenAiChatFunction
 import net.longbowxxx.openai.client.OpenAiChatParameter
 import net.longbowxxx.openai.client.OpenAiChatProperty
@@ -17,6 +16,7 @@ import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiCreateImageRequest
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.playground.utils.copyTo
+import net.longbowxxx.playground.utils.randomShortId
 import net.longbowxxx.playground.utils.toURL
 import net.longbowxxx.playground.viewmodel.appProperties
 import java.io.File
@@ -42,7 +42,7 @@ class CreateImageFunctionPlugin : ChatFunctionPlugin() {
             ),
         )
 
-    override suspend fun executeInternal(arguments: String, context: FunctionCallContext): String {
+    override suspend fun executeInternal(arguments: String): String {
         val imageArgs = arguments.toParams<CreateImageArgs>()
         val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
         val request = OpenAiCreateImageRequest(
@@ -51,16 +51,18 @@ class CreateImageFunctionPlugin : ChatFunctionPlugin() {
         )
         val response = client.requestCreateImage(request)
 
-        val imageUrls = response.data.mapNotNull { imageData -> imageData.url?.toURL() }
-            .mapIndexed { index, imageUrl ->
+        val imageUris = response.data.mapNotNull { imageData -> imageData.url?.toURL() }
+            .map { imageUrl ->
                 // 画像をファイルに保存する
-                val imageName = "${imageArgs.imageName}-$index.png"
-                val file = File(context.logDir, imageName)
+                val shortId = randomShortId()
+                val imageName = "${imageArgs.imageName}-$shortId.png"
+                val file = File("log/cache", imageName)
+                file.parentFile.mkdirs()
                 imageUrl.copyTo(file)
-                imageUrl.toString()
+                file.toURI().toASCIIString()
             }
 
-        return encodeJson.encodeToString(CreateImageResponse(SUCCESS, imageUrls))
+        return CreateImageResponse(SUCCESS, imageUris).toResponseStr()
     }
 }
 
@@ -76,6 +78,6 @@ data class CreateImageArgs(
 @Serializable
 data class CreateImageResponse(
     val type: String,
-    @SerialName("image_urls")
-    val imageUrls: List<String>,
+    @SerialName("image_uris")
+    val imageUris: List<String>,
 )

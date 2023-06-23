@@ -25,10 +25,8 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 [Google generative AI](https://developers.generativeai.google/) で、waitlist に登録し、利用権を得たら [API Key を発行](https://developers.generativeai.google/products/palm)してください。  
 
 # ファイルの説明
-- run.bat  
-  アプリを起動するための Windows Batch ファイル。  
-- PlaygroundL-xxx.jar  
-  アプリ本体の jar ファイル。  
+- PlaygroundL.exe    
+  アプリ起動するための exe ファイル。  
 - playgroundApp.properties  
   アプリの設定ファイル。アプリにより自動生成されます。  
 - chat.properties  

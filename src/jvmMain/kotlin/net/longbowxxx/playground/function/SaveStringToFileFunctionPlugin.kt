@@ -15,6 +15,7 @@ import net.longbowxxx.openai.client.OpenAiChatFunction
 import net.longbowxxx.openai.client.OpenAiChatParameter
 import net.longbowxxx.openai.client.OpenAiChatProperty
 import net.longbowxxx.playground.utils.logTrace
+import net.longbowxxx.playground.utils.randomShortId
 import java.io.File
 
 class SaveStringToFileFunctionPlugin : ChatFunctionPlugin() {
@@ -31,14 +32,17 @@ class SaveStringToFileFunctionPlugin : ChatFunctionPlugin() {
             ),
         )
 
-    override suspend fun executeInternal(arguments: String, context: FunctionCallContext): String {
+    override suspend fun executeInternal(arguments: String): String {
         val param = arguments.toParams<SaveStringToFileArgs>()
-        withContext(Dispatchers.IO) {
-            File(context.logDir, param.fileName).also {
+        val file = withContext(Dispatchers.IO) {
+            val shortId = randomShortId()
+            File("log/save", "${param.fileName}-$shortId").also {
                 logTrace { "save to file. ${it.absolutePath}" }
-            }.writeText(param.data, Charsets.UTF_8)
+            }.apply {
+                writeText(param.data, Charsets.UTF_8)
+            }
         }
-        return SUCCESS
+        return SaveStringToFileResponse(SUCCESS, file.toURI().toASCIIString()).toResponseStr()
     }
 }
 
@@ -47,4 +51,11 @@ data class SaveStringToFileArgs(
     @SerialName("file_name")
     val fileName: String,
     val data: String,
+)
+
+@Serializable
+data class SaveStringToFileResponse(
+    val type: String,
+    @SerialName("saved_file_uri")
+    val savedFileUri: String,
 )

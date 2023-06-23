@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -82,7 +83,9 @@ fun ApplicationScope.PlaygroundWindow() {
 fun PlaygroundScreen(onTabSelected: (String) -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
 
-    MaterialTheme {
+    MaterialTheme(
+        colorScheme = lightColorScheme(),
+    ) {
         Scaffold(
             bottomBar = {
                 BottomBar(selectedTab) { selectedTab = it }

@@ -18,7 +18,7 @@ Please run the following command:
 ```
 
 # How to Use the Application
-Please refer to [HowToUse-ja.md](documents/HowToUse-ja.md).
+Please refer to [HowToUse-en.md](documents/HowToUse-en.md).
 
 [PLAYGROUND-Movie.mp4](releaseArchive/PLAYGROUND-Movie.mp4)
 

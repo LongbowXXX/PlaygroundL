@@ -27,7 +27,7 @@ suspend fun updateChatSessionTitle(messages: List<OpenAiChatMessage>, session: C
     runCatching {
         val requestMessages = mutableListOf<OpenAiChatMessage>().apply {
             // 解析するときに古いSystemプロンプトが邪魔をするのでそれ以外を採用
-            addAll(messages.filter { it.role != OpenAiChatRoleTypes.SYSTEM })
+            addAll(messages.filter { it.role != OpenAiChatRoleTypes.SYSTEM && it.hasContent })
             add(
                 OpenAiChatMessage(
                     OpenAiChatRoleTypes.SYSTEM,
