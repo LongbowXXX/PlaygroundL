@@ -18,7 +18,7 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
       - name: Build with Gradle
-        run: ./gradlew build zipArtifacts
+        run: ./gradlew downloadPalm2BetaSDK build zipArtifacts
       - name: Release
         uses: softprops/action-gh-release@v1
         if: github.event_name == 'release'
