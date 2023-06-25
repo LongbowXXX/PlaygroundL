@@ -23,6 +23,8 @@ jobs:
       - name: Build release artifacts with Gradle
         if: github.event_name == 'release'
         run: ./gradlew zipArtifacts
+      - name: Stop gradle daemon
+        run: ./gradlew --stop
       - name: Release
         uses: softprops/action-gh-release@v1
         if: github.event_name == 'release'
