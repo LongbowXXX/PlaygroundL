@@ -172,7 +172,7 @@ tasks.register<Copy>("copyChatFunction") {
 tasks.register<Zip>("zipArtifacts") {
     group = "release"
     from("$buildDir/tmp/release")
-    destinationDirectory.set(file("$rootDir/releaseArtifacts"))
+    destinationDirectory.set(file("$buildDir/release"))
     archiveFileName.set("${project.name}-${rootProject.property("package.version")}.zip")
 
     dependsOn("copyArtifacts")

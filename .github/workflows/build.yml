@@ -35,8 +35,13 @@ jobs:
             ${{ runner.os }}-m2-
       - name: Build with Gradle
         run: ./gradlew downloadPalm2BetaSDK build zipArtifacts
+      - name: Save artifacts
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: build/release/
       - name: Release
         uses: softprops/action-gh-release@v1
         if: github.event_name == 'release'
         with:
-          files: releaseArtifacts/*
+          files: build/release/*
