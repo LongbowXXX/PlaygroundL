@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,12 +28,15 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
 import net.longbowxxx.playground.ui.view.chat.ChatScreen
+import net.longbowxxx.playground.ui.view.discuss.DiscussScreen
 import net.longbowxxx.playground.ui.view.image.ImageScreen
 import net.longbowxxx.playground.ui.view.settings.SettingsScreen
 import net.longbowxxx.playground.ui.widget.BottomBar
 import net.longbowxxx.playground.ui.widget.CHAT_TAB
+import net.longbowxxx.playground.ui.widget.DISCUSS_TAB
 import net.longbowxxx.playground.ui.widget.IMAGE_TAB
 import net.longbowxxx.playground.ui.widget.SETTING_TAB
+import net.longbowxxx.playground.ui.widget.toTabName
 import net.longbowxxx.playground.utils.DebugLogLevel
 import net.longbowxxx.playground.utils.log
 import net.longbowxxx.playground.viewmodel.appProperties
@@ -45,6 +49,7 @@ private const val TITLE_TEXT = "PLAYGROUND"
 @Composable
 @Preview
 fun ApplicationScope.PlaygroundWindow() {
+    var selectedTabName by remember { mutableStateOf("") }
     val windowState = rememberWindowState(
         position = WindowPosition(appProperties.windowLeft.dp, appProperties.windowTop.dp),
         size = DpSize(appProperties.windowWidth.dp, appProperties.windowHeight.dp),
@@ -62,22 +67,25 @@ fun ApplicationScope.PlaygroundWindow() {
             closeViewModelAndProperties()
             exitApplication()
         },
-        title = TITLE_TEXT,
+        title = "$TITLE_TEXT - $selectedTabName",
         state = windowState,
         icon = appLogoMini,
     ) {
-        PlaygroundScreen()
+        PlaygroundScreen {
+            selectedTabName = it
+        }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
 @Composable
-@Preview
-fun PlaygroundScreen() {
+fun PlaygroundScreen(onTabSelected: (String) -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
 
-    MaterialTheme {
+    MaterialTheme(
+        colorScheme = lightColorScheme(),
+    ) {
         Scaffold(
             bottomBar = {
                 BottomBar(selectedTab) { selectedTab = it }
@@ -92,8 +100,10 @@ fun PlaygroundScreen() {
                     76.dp,
                 ).fillMaxSize(),
             ) {
+                onTabSelected(selectedTab.toTabName())
                 when (selectedTab) {
                     CHAT_TAB -> ChatScreen()
+                    DISCUSS_TAB -> DiscussScreen()
                     IMAGE_TAB -> ImageScreen()
                     SETTING_TAB -> SettingsScreen()
                 }

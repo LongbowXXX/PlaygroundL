@@ -10,6 +10,7 @@ build/
 .idea/compiler.xml
 .idea/uiDesigner.xml
 .idea/libraries/
+.idea/artifacts/
 *.iws
 *.iml
 *.ipr
@@ -45,5 +46,7 @@ bin/
 /log/
 /playgroundApp.properties
 /chat.properties
+/discuss.properties
 /image.properties
 /db/
+/palm2/

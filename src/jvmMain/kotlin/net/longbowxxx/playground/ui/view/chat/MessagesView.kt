@@ -9,10 +9,12 @@ package net.longbowxxx.playground.ui.view.chat
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -20,6 +22,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -33,11 +37,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
+import net.longbowxxx.playground.ui.tertiaryButtonColors
 import net.longbowxxx.playground.ui.widget.ChatHistorySelectorWidget
 import net.longbowxxx.playground.viewmodel.chatViewModel
 
 private const val NEW_SESSION_TEXT = "NEW SESSION"
 private const val SUBMIT_TEXT = "SUBMIT"
+private const val CANCEL_TEXT = "CANCEL"
 private const val CHAT_HISTORY_TEXT = "RESTORE OLD CHAT"
 
 @Suppress("FunctionName")
@@ -76,10 +82,12 @@ fun ColumnScope.MessagesView() {
         listState.scrollToItem(index = messages.size)
     }
 
-    LaunchedEffect(lastMessageSize) {
-        // 最後のメッセージが更新された際に、末尾にスクロール
-        // 末尾の追加ボタンを考慮したIndexを指定
-        listState.scrollToItem(index = messages.size)
+    if (requesting) {
+        LaunchedEffect(lastMessageSize) {
+            // 最後のメッセージが更新された際に、末尾にスクロール
+            // 末尾の追加ボタンを考慮したIndexを指定
+            listState.scrollToItem(index = messages.size)
+        }
     }
 
     Row(
@@ -87,11 +95,31 @@ fun ColumnScope.MessagesView() {
         horizontalArrangement = Arrangement.SpaceBetween,
         modifier = Modifier.fillMaxWidth().padding(10.dp),
     ) {
-        Button(
-            { chatViewModel.requestChat() },
-            enabled = !requesting,
-        ) {
-            Text(SUBMIT_TEXT)
+        Box(modifier = Modifier.width(150.dp)) {
+            Button(
+                {
+                    if (requesting) {
+                        chatViewModel.cancelRequestChat()
+                    } else {
+                        chatViewModel.requestChat()
+                    }
+                },
+                colors = when (requesting) {
+                    true -> tertiaryButtonColors()
+                    false -> ButtonDefaults.buttonColors()
+                },
+            ) {
+                if (requesting) {
+                    Text(CANCEL_TEXT)
+                } else {
+                    Text(SUBMIT_TEXT)
+                }
+            }
+            if (requesting) {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.CenterEnd),
+                )
+            }
         }
         ChatHistorySelectorWidget(CHAT_HISTORY_TEXT) {
             chatViewModel.restoreOldSession(it)

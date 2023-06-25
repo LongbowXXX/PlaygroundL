@@ -8,7 +8,9 @@
 package net.longbowxxx.playground.viewmodel
 
 import net.longbowxxx.playground.history.ChatHistory
+import net.longbowxxx.playground.history.DiscussHistory
 import net.longbowxxx.playground.preference.ChatPreference
+import net.longbowxxx.playground.preference.DiscussPreference
 import net.longbowxxx.playground.preference.ImagePreference
 import net.longbowxxx.playground.preference.PlaygroundPreference
 
@@ -24,6 +26,12 @@ val chatProperties: ChatPreference by lazy {
     }
 }
 
+val discussProperties: DiscussPreference by lazy {
+    DiscussPreference().apply {
+        load()
+    }
+}
+
 val imageProperties: ImagePreference by lazy {
     ImagePreference().apply {
         load()
@@ -34,8 +42,16 @@ val chatHistory: ChatHistory by lazy {
     ChatHistory()
 }
 
+val discussHistory: DiscussHistory by lazy {
+    DiscussHistory()
+}
+
 val chatViewModel: ChatViewModel by lazy {
     ChatViewModel()
+}
+
+val discussViewModel: DiscussViewModel by lazy {
+    DiscussViewModel()
 }
 
 val imageViewModel: ImageViewModel by lazy {

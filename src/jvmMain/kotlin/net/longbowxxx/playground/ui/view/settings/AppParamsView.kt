@@ -20,12 +20,15 @@ import kotlin.math.roundToInt
 
 private const val OPENAI_API_KEY_TEXT = "OPENAI_API_KEY"
 private const val RESET_OPENAI_API_KEY_TEXT = "RESET OPENAI API KEY"
+private const val PALM_API_KEY_TEXT = "PALM_API_KEY"
+private const val RESET_PALM_API_KEY_TEXT = "RESET PALM API KEY"
 private const val MESSAGE_FONT_SIZE_TEXT = "MESSAGE FONT SIZE"
 
 @Suppress("FunctionName")
 @Composable
 fun AppParamsView() {
     val apikeyEnabled by remember { appProperties.apiKeyEnabled }
+    val palmApiKeyEnabled by remember { appProperties.palmApiKeyEnabled }
     var messageFontSizeSp by remember { appProperties.messageFontSizeSp }
 
     if (!apikeyEnabled) {
@@ -38,6 +41,19 @@ fun AppParamsView() {
             { appProperties.resetApiKey() },
         ) {
             Text(RESET_OPENAI_API_KEY_TEXT)
+        }
+    }
+
+    if (!palmApiKeyEnabled) {
+        SecretTextInputWidget(
+            PALM_API_KEY_TEXT,
+            false,
+        ) { appProperties.palmApiKey = it }
+    } else {
+        Button(
+            { appProperties.resetPalmApiKey() },
+        ) {
+            Text(RESET_PALM_API_KEY_TEXT)
         }
     }
 

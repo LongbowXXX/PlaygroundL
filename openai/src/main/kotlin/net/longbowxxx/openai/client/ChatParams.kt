@@ -91,7 +91,14 @@ data class OpenAiChatMessage(
     @SerialName("function_call")
     val functionCall: OpenAiChatFunctionCallMessage? = null,
     val name: String? = null,
-)
+) {
+    val hasContent: Boolean
+        get() {
+            return content != null || functionCall != null
+        }
+}
+
+fun OpenAiChatMessage.updateContent(newContent: String?) = OpenAiChatMessage(role, newContent, functionCall, name)
 
 @Serializable
 data class OpenAiChatFunctionCallMessage(

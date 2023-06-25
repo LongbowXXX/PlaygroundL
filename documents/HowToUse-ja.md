@@ -1,15 +1,17 @@
 Playground の使い方
 ===
-OpenAI の Chat API を呼び出して、AIを試すための Playground です。  
-Chat API については[公式ドキュメント](https://platform.openai.com/docs/guides/chat)を確認してください。  
+AIを試すための Playground です。  
 
 # 動作環境
+Windows 11 で動作します。  
 アプリの動作には JAVA 17 が必要になります。  
 
 JAVA_HOME に Amazon corretto 17 の JDK が設定された環境で動作を確認しています。  
 https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html  
 
 # 事前準備
+
+## OpenAI
 [OpenAI](https://openai.com/) の API KEY を取得する（有料）必要があります。  
 1. OpenAI の アカウントを作成    
    認証時にショートメッセージが送られるので、SMSを受け取れる電話番号が必要になります。
@@ -19,15 +21,18 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
    発行時しか表示されないので、安全な場所に保存してください。
 4. Billing の Usage limits で上限を設定
 
+## Google generative AI
+[Google generative AI](https://developers.generativeai.google/) で、waitlist に登録し、利用権を得たら [API Key を発行](https://developers.generativeai.google/products/palm)してください。  
+
 # ファイルの説明
-- run.bat  
-  アプリを起動するための Windows Batch ファイル。  
-- PlaygroundL-xxx.jar  
-  アプリ本体の jar ファイル。  
+- PlaygroundL.exe    
+  アプリ起動するための exe ファイル。  
 - playgroundApp.properties  
   アプリの設定ファイル。アプリにより自動生成されます。  
 - chat.properties  
-  CHAT 関連の設定ファイル。アプリにより自動生成されます。
+  CHAT (Open AI) 関連の設定ファイル。アプリにより自動生成されます。
+- discuss.properties  
+  DISCUSS (Google generative AI) 関連の設定ファイル。アプリにより自動生成されます。
 - image.properties  
   IMAGE 関連の設定ファイル。アプリにより自動生成されます。
 - chatPrompt ディレクトリ  
@@ -67,6 +72,9 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 1. RESTORE OLD CHAT… を押下します  
 2. 一覧の中から復元したいセッションを選択します  
 
+## DISCUSS 機能の使い方
+基本は CHAT と同様ですが、英語しか使えません。  
+
 ## IMAGE 機能の使い方
 
 ### 画像生成
@@ -95,7 +103,7 @@ GPT-4 を使うためには [waitlist](https://openai.com/waitlist/gpt-4-api) �
 本アプリが利用している OSS。  
 
 - org.jetbrains.compose.desktop:desktop-jvm-windows-x64  
-  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - org.jetbrains.compose.material3:material3-desktop  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - org.jetbrains.kotlin:kotlin-stdlib-common  
@@ -107,6 +115,8 @@ GPT-4 を使うためには [waitlist](https://openai.com/waitlist/gpt-4-api) �
 - org.jetbrains.kotlinx:kotlinx-serialization-json  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - com.squareup.okhttp3:okhttp  
-  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - realm/realm-kotlin  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+- io.grpc:grpc-okhttp  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)

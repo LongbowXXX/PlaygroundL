@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import java.net.URL
 
 plugins {
     kotlin("multiplatform")
@@ -14,6 +15,8 @@ repositories {
     google()
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
+    // for Palm2 SDK (Beta)
+    mavenLocal()
 }
 
 allprojects {
@@ -70,6 +73,7 @@ kotlin {
             dependencies {
                 implementation(compose.desktop.currentOs)
                 implementation(project(":openai"))
+                implementation(project(":generativeai"))
                 implementation("org.jetbrains.compose.material3:material3-desktop:${property("compose.version")}")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlinx.coroutine.core.version")}")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${property("kotlinx.serialization.version")}")
@@ -99,34 +103,46 @@ compose.desktop {
             packageName = "PlaygroundL"
             packageVersion = property("package.version") as String
         }
+
+        buildTypes.release.proguard {
+            configurationFiles.from("proguard-rules.pro")
+        }
     }
 }
 
-tasks.register("generateBatch") {
-    group = "release"
+tasks.register("downloadPalm2BetaSDK") {
+    group = "build"
+    description = "Since the SDK for PaLM2 is a Beta version, download the file and install it on mavenLocal"
+    dependsOn(emptyArray<String>())
     doLast {
-        // 生成するファイルの内容を定義
-        val batchString = """
-            set "PATH=%JAVA_HOME%\bin;%PATH%"
-            java -jar ./PlaygroundL-windows-x64-${rootProject.property("package.version")}.jar
-        """.trimIndent()
-
-        // 生成するファイルのパスを指定
-        val filePath = "$buildDir/tmp/release/run.bat"
-
-        // ファイルを生成
-        File(filePath).apply {
-            parentFile.mkdirs()
-            writeText(batchString)
+        val baseName = "google-cloud-ai-generativelanguage-v1beta2-java"
+        val outFileName = "$baseName.tar.gz"
+        val palm2WorkDir = "${rootProject.rootDir}/palm2"
+        File(palm2WorkDir).mkdirs()
+        val outFile = File("$palm2WorkDir/$outFileName")
+        val url = URL("https://storage.googleapis.com/generativeai-downloads/clients/$outFileName")
+        outFile.outputStream().use { out ->
+            url.openStream().use {
+                it.copyTo(out)
+            }
+        }
+        copy {
+            from(tarTree(resources.gzip(outFile)))
+            into(palm2WorkDir)
+        }
+        exec {
+            workingDir = File("$palm2WorkDir/$baseName")
+            executable("./gradlew.bat")
+            args("publishToMavenLocal")
         }
     }
 }
 
 tasks.register<Copy>("copyArtifacts") {
     group = "release"
-    from("$buildDir/compose/jars")
+    from("$buildDir/compose/binaries/main-release/app/PlaygroundL")
     into("$buildDir/tmp/release")
-    dependsOn("packageUberJarForCurrentOS")
+    dependsOn("createReleaseDistributable")
 }
 
 tasks.register<Copy>("copyDocuments") {
@@ -159,7 +175,6 @@ tasks.register<Zip>("zipArtifacts") {
     destinationDirectory.set(file("$buildDir/release"))
     archiveFileName.set("${project.name}-${rootProject.property("package.version")}.zip")
 
-    dependsOn("generateBatch")
     dependsOn("copyArtifacts")
     dependsOn("copyDocuments")
     dependsOn("copyChatPrompt")

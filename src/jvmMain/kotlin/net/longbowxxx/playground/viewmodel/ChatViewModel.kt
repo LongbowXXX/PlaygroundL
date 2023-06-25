@@ -8,6 +8,7 @@
 package net.longbowxxx.playground.viewmodel
 
 import androidx.compose.runtime.mutableStateOf
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +31,9 @@ import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.openai.client.isFunctionAvailable
+import net.longbowxxx.openai.client.updateContent
 import net.longbowxxx.playground.function.ChatFunctionLoader
+import net.longbowxxx.playground.function.ChatFunctionPlugin
 import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.logger.ChatLogger
 import java.io.Closeable
@@ -38,7 +41,7 @@ import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : CoroutineScope, Closeable {
-    private val functionLoader = ChatFunctionLoader()
+
     private val job = Job()
     override val coroutineContext: CoroutineContext = dispatcher + job
 
@@ -73,6 +76,13 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             }.toList()
         }
 
+    private val functionLoader = ChatFunctionLoader()
+    val allFunctions = functionLoader.loadPlugins(File("chatFunction"))
+    private val activeFunctions: List<ChatFunctionPlugin>
+        get() {
+            return allFunctions
+        }
+
     fun updateHistory() {
         launch {
             val newHistory = chatHistory.getHistory()
@@ -87,7 +97,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         }
     }
 
-    fun updateMessage(index: Int, message: OpenAiChatMessage) {
+    private fun updateMessage(index: Int, message: OpenAiChatMessage) {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)
         require(index < newList.size)
@@ -95,13 +105,12 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         messages.value = newList
     }
 
-    fun toggleRole(index: Int) {
+    fun updateMessageContent(index: Int, content: String) {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)
         require(index < newList.size)
-        newList[index] = newList[index].toggleRole()
+        newList[index] = newList[index].updateContent(content)
         messages.value = newList
-        currentChatSession.messages = newList
     }
 
     fun removeMessage(index: Int) {
@@ -113,10 +122,10 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         currentChatSession.messages = newList
     }
 
-    fun addMessage(role: OpenAiChatRoleTypes, name: String? = null): Int {
+    fun addMessage(role: OpenAiChatRoleTypes, content: String? = null, name: String? = null): Int {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)
-        newList.add(OpenAiChatMessage(role, null, null, name))
+        newList.add(OpenAiChatMessage(role, content, null, name))
         messages.value = newList
         currentChatSession.messages = newList
         return newList.size - 1
@@ -129,6 +138,10 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             chatHistory.saveSession(lastSession)
         }
         currentChatSession = ChatHistory.ChatHistorySession()
+    }
+
+    fun cancelRequestChat() {
+        currentRequestJob?.cancel()
     }
 
     fun requestChat() {
@@ -145,48 +158,75 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             requesting.value = true
             val session = currentChatSession
             val logger = ChatLogger()
-            val functions = if (functionEnabled) {
-                functionLoader.loadFunctions(File("chatFunction"))
+            val plugins = if (functionEnabled) {
+                activeFunctions
             } else {
                 null
             }
             runCatching {
-                val request = OpenAiChatRequest(
-                    currentModel,
-                    messages = createMessages(),
-                    functions = functions,
-                    stream = true,
-                    temperature = chatProperties.chatTemperature.value,
-                    topP = chatProperties.chatTopP.value,
-                    maxTokens = chatProperties.chatMaxTokens.value,
-                    presencePenalty = chatProperties.chatPresencePenalty.value,
-                    frequencyPenalty = chatProperties.chatFrequencyPenalty.value,
-                )
-                val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
-                client.requestChatWithStreaming(request).correctStreamResponse()
+                requestInternal(currentModel, plugins, logger)
+                logger.logMessages(session.messages)
 
-                val latestMessages = createMessages()
-                session.messages = latestMessages
-                logger.logRequest(request)
-                logger.logMessages(latestMessages)
                 launch {
-                    updateChatSessionTitle(latestMessages, session)
+                    updateChatSessionTitle(session.messages, session)
                 }
-                // レスポンスが終わったら、次の入力用のメッセージ追加
-                val lastFunctionCall = latestMessages.last().functionCall
-                if (lastFunctionCall != null) {
-                    addMessage(OpenAiChatRoleTypes.FUNCTION, lastFunctionCall.name)
-                } else {
-                    addMessage(OpenAiChatRoleTypes.USER)
-                }
+                Unit
             }.onFailure {
-                errorMessage.value = it.message ?: it.toString()
-                logger.logError(it)
+                if (it !is CancellationException) {
+                    errorMessage.value = it.message ?: it.toString()
+                    logger.logError(it)
+                }
             }.also {
                 logger.close()
                 requesting.value = false
             }
         }
+    }
+
+    private suspend fun requestInternal(
+        currentModel: String,
+        plugins: List<ChatFunctionPlugin>?,
+        logger: ChatLogger,
+    ) {
+        val historyMessages = createMessages()
+        val request = OpenAiChatRequest(
+            currentModel,
+            messages = historyMessages.filter { it.hasContent },
+            functions = plugins?.map { it.functionSpec },
+            stream = true,
+            temperature = chatProperties.chatTemperature.value,
+            topP = chatProperties.chatTopP.value,
+            maxTokens = chatProperties.chatMaxTokens.value,
+            presencePenalty = chatProperties.chatPresencePenalty.value,
+            frequencyPenalty = chatProperties.chatFrequencyPenalty.value,
+        )
+        logger.logRequest(request)
+        val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
+        val newMessage = client.requestChatWithStreaming(request).correctStreamResponse()
+        // レスポンスが終わったら、次の入力用のメッセージ追加
+        val lastFunctionCall = newMessage.functionCall
+        if (lastFunctionCall != null) {
+            // function 呼び出し実行
+            val functionResponse = callFunction(lastFunctionCall)
+            // function 結果をメッセージに追加
+            addMessage(
+                OpenAiChatRoleTypes.FUNCTION,
+                functionResponse,
+                lastFunctionCall.name,
+            )
+            // 次の request を行う
+            requestInternal(currentModel, plugins, logger)
+        } else {
+            addMessage(OpenAiChatRoleTypes.USER)
+        }
+    }
+
+    private suspend fun callFunction(
+        functionCallMessage: OpenAiChatFunctionCallMessage,
+    ): String {
+        return activeFunctions.firstOrNull { plugin ->
+            plugin.functionSpec.name == functionCallMessage.name
+        }?.execute(functionCallMessage.arguments) ?: error("not found function : $functionCallMessage")
     }
 
     fun restoreOldSession(session: ChatHistory.ChatHistorySession) {
@@ -198,9 +238,10 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         messages.value = session.messages
     }
 
-    private suspend fun Flow<OpenAiChatStreamResponse>.correctStreamResponse() {
+    private suspend fun Flow<OpenAiChatStreamResponse>.correctStreamResponse(): OpenAiChatMessage {
         var firstTime = true
         var itemIndex = 0
+        var completedMessage: OpenAiChatMessage? = null
         this.collect { streamResponse ->
             if (firstTime) {
                 firstTime = false
@@ -210,9 +251,11 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             streamResponse.choices.firstOrNull()?.delta?.let { contentDelta ->
                 val oldMessage = messages.value[itemIndex]
                 val newMessage = oldMessage.add(contentDelta)
+                completedMessage = newMessage
                 updateMessage(itemIndex, newMessage)
             }
         }
+        return checkNotNull(completedMessage) { "correctStreamResponse() : completedMessage must not be null." }
     }
 
     private fun OpenAiChatMessage.add(delta: OpenAiChatStreamDelta): OpenAiChatMessage {
@@ -249,33 +292,6 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         }
         messageList.addAll(messages.value)
         return messageList
-    }
-
-    private fun OpenAiChatMessage.toggleRole(): OpenAiChatMessage {
-        return when (this.role) {
-            OpenAiChatRoleTypes.ASSISTANT -> OpenAiChatMessage(
-                OpenAiChatRoleTypes.FUNCTION,
-                this.content,
-                this.functionCall,
-                this.name,
-            )
-
-            OpenAiChatRoleTypes.USER -> OpenAiChatMessage(
-                OpenAiChatRoleTypes.ASSISTANT,
-                this.content,
-                this.functionCall,
-                this.name,
-            )
-
-            OpenAiChatRoleTypes.FUNCTION -> OpenAiChatMessage(
-                OpenAiChatRoleTypes.USER,
-                this.content,
-                this.functionCall,
-                this.name,
-            )
-
-            else -> error("should not reach here")
-        }
     }
 
     override fun close() {

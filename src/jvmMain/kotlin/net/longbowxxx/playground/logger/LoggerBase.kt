@@ -31,7 +31,7 @@ open class LoggerBase(
     }
     private val writer: BufferedWriter
     protected val dateTimeStr: String
-    protected val logDir: File
+    val logDir: File
 
     init {
         val now = LocalDateTime.now()
