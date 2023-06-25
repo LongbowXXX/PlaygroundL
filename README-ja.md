@@ -20,8 +20,6 @@ Google の Palm2 の SDK をダウロードして、ローカルリポジトリ�
 # アプリの使い方
 [HowToUse-ja.md](documents/HowToUse-ja.md)を参照してください。  
 
-[PLAYGROUND-Movie.mp4](releaseArchive/PLAYGROUND-Movie.mp4)  
-
 # OSS
 このアプリケーションで使用されているOSS。  
 

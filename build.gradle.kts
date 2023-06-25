@@ -103,6 +103,10 @@ compose.desktop {
             packageName = "PlaygroundL"
             packageVersion = property("package.version") as String
         }
+
+        buildTypes.release.proguard {
+            configurationFiles.from("proguard-rules.pro")
+        }
     }
 }
 
@@ -136,9 +140,9 @@ tasks.register("downloadPalm2BetaSDK") {
 
 tasks.register<Copy>("copyArtifacts") {
     group = "release"
-    from("$buildDir/compose/binaries/main/app/PlaygroundL")
+    from("$buildDir/compose/binaries/main-release/app/PlaygroundL")
     into("$buildDir/tmp/release")
-    dependsOn("createDistributable")
+    dependsOn("createReleaseDistributable")
 }
 
 tasks.register<Copy>("copyDocuments") {
