@@ -25,6 +25,8 @@ jobs:
         run: ./gradlew zipArtifacts
       - name: Stop gradle daemon
         run: ./gradlew --stop
+      - name: Stop gradle daemon
+        run: ./gradlew --stop
       - name: Release
         uses: softprops/action-gh-release@v1
         if: github.event_name == 'release'
