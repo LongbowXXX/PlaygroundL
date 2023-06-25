@@ -17,29 +17,12 @@ jobs:
         with:
           java-version: '17'
           distribution: 'corretto'
-      - name: Cache Gradle packages
-        uses: actions/cache@v2
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-      - name: Cache Maven packages
-        uses: actions/cache@v2
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-m2-
+          cache: 'gradle'
       - name: Build with Gradle
-        run: ./gradlew downloadPalm2BetaSDK build zipArtifacts
-      - name: Save artifacts
-        uses: actions/upload-artifact@v3
-        with:
-          name: my-artifact
-          path: build/release/
+        run: ./gradlew downloadPalm2BetaSDK build
+      - name: Build release artifacts with Gradle
+        if: github.event_name == 'release'
+        run: ./gradlew zipArtifacts
       - name: Release
         uses: softprops/action-gh-release@v1
         if: github.event_name == 'release'
