@@ -10,6 +10,7 @@ package net.longbowxxx.openai.client
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
@@ -24,6 +25,8 @@ import okhttp3.Response
 import okhttp3.ResponseBody
 import java.io.IOException
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
 class OpenAiClientImpl(
     private val settings: OpenAiSettings,
@@ -43,6 +46,7 @@ class OpenAiClientImpl(
         private const val IMAGE_VARIATION_URL = "https://api.openai.com/v1/images/variations"
         private const val AUDIO_TRANSCRIPTION_URL = "https://api.openai.com/v1/audio/transcriptions"
         private const val AUDIO_TRANSLATION_URL = "https://api.openai.com/v1/audio/translations"
+        private const val OPENAI_EMBEDDING_URL = "https://api.openai.com/v1/embeddings"
         private val jsonMediaType = "application/json; charset=utf-8".toMediaType()
         private val imagePngMediaType = "image/png".toMediaType()
         private val audioWavType = "audio/wav".toMediaType()
@@ -51,7 +55,7 @@ class OpenAiClientImpl(
         private const val TIMEOUT_SECONDS = 30L
     }
 
-    override fun requestChatWithStreaming(request: OpenAiChatRequest): Flow<OpenAiChatStreamResponse> {
+    override suspend fun requestChatWithStreaming(request: OpenAiChatRequest): Flow<OpenAiChatStreamResponse> {
         val requestBody = encodeJson.encodeToString(request).also { requestJson ->
             logOpenAiRequest { requestJson }
         }.toRequestBody(jsonMediaType)
@@ -62,8 +66,7 @@ class OpenAiClientImpl(
             .header("Authorization", "Bearer ${settings.apiKey}")
             .build()
 
-        return httpClient().newCall(httpRequest)
-            .execute()
+        return httpClient().executeCancellable(httpRequest)
             .successfulBodyOrThrow { responseBody ->
                 responseBody.toFlow()
             }
@@ -81,8 +84,7 @@ class OpenAiClientImpl(
                 .header("Authorization", "Bearer ${settings.apiKey}")
                 .build()
 
-            httpClient().newCall(httpRequest)
-                .execute()
+            httpClient().executeCancellable(httpRequest)
                 .successfulBodyOrThrow { responseBody ->
                     decodeJson.decodeFromString<OpenAiImageResponse>(responseBody.string())
                 }
@@ -108,8 +110,7 @@ class OpenAiClientImpl(
                 .header("Authorization", "Bearer ${settings.apiKey}")
                 .build()
 
-            httpClient().newCall(httpRequest)
-                .execute()
+            httpClient().executeCancellable(httpRequest)
                 .successfulBodyOrThrow { responseBody ->
                     decodeJson.decodeFromString<OpenAiImageResponse>(responseBody.string())
                 }
@@ -131,8 +132,7 @@ class OpenAiClientImpl(
                 .header("Authorization", "Bearer ${settings.apiKey}")
                 .build()
 
-            httpClient().newCall(httpRequest)
-                .execute()
+            httpClient().executeCancellable(httpRequest)
                 .successfulBodyOrThrow { responseBody ->
                     decodeJson.decodeFromString<OpenAiImageResponse>(responseBody.string())
                 }
@@ -145,6 +145,25 @@ class OpenAiClientImpl(
 
     override suspend fun requestAudioTranslation(request: OpenAiAudioRequest): OpenAiAudioResponse {
         return requestAudio(request, AUDIO_TRANSLATION_URL)
+    }
+
+    override suspend fun requestEmbedding(request: OpenAiEmbeddingRequest): OpenAiEmbeddingResponse {
+        return withContext(Dispatchers.IO) {
+            val requestBody = encodeJson.encodeToString(request).also { requestJson ->
+                logOpenAiRequest { requestJson }
+            }.toRequestBody(jsonMediaType)
+            val httpRequest = Request.Builder()
+                .url(OPENAI_EMBEDDING_URL)
+                .post(requestBody)
+                .header("Content-Type", "application/json")
+                .header("Authorization", "Bearer ${settings.apiKey}")
+                .build()
+
+            httpClient().executeCancellable(httpRequest)
+                .successfulBodyOrThrow { responseBody ->
+                    decodeJson.decodeFromString<OpenAiEmbeddingResponse>(responseBody.string())
+                }
+        }
     }
 
     private suspend fun requestAudio(request: OpenAiAudioRequest, endpoint: String): OpenAiAudioResponse {
@@ -170,13 +189,30 @@ class OpenAiClientImpl(
                 .header("Authorization", "Bearer ${settings.apiKey}")
                 .build()
 
-            httpClient().newCall(httpRequest)
-                .execute()
+            httpClient().executeCancellable(httpRequest)
                 .successfulBodyOrThrow { responseBody ->
                     decodeJson.decodeFromString<OpenAiAudioResponse.Json>(responseBody.string())
                 }
         }
     }
+
+    private suspend fun OkHttpClient.executeCancellable(request: Request): Response =
+        suspendCancellableCoroutine { continuation ->
+            val call = newCall(request)
+            continuation.invokeOnCancellation {
+                call.cancel()
+            }
+            runCatching {
+                call.execute()
+            }.fold(
+                onSuccess = {
+                    continuation.resume(it)
+                },
+                onFailure = {
+                    continuation.resumeWithException(it)
+                },
+            )
+        }
 
     private fun httpClient(): OkHttpClient {
         return OkHttpClient.Builder().apply {

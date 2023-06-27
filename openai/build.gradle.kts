@@ -17,6 +17,7 @@ dependencies {
     implementation("com.squareup.okhttp3:okhttp:${property("okhttp3.version")}")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.junit.jupiter:junit-jupiter")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:${property("kotlinx.coroutine.core.version")}")
 }
 
 tasks.test {

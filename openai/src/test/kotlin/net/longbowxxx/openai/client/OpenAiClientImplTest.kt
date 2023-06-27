@@ -1,11 +1,14 @@
 package net.longbowxxx.openai.client
 
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.runTest
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.net.URL
 
+@OptIn(ExperimentalCoroutinesApi::class)
 class OpenAiClientImplTest {
 
     @Disabled
@@ -87,5 +90,18 @@ class OpenAiClientImplTest {
             }
         }
         Unit
+    }
+
+    @Disabled
+    @Test
+    fun requestEmbedding() = runTest {
+        val client = OpenAiClient(openAiSettings)
+        val response = client.requestEmbedding(
+            OpenAiEmbeddingRequest(
+                model = EMBEDDING_MODEL_ADA_002,
+                input = "おはようございます。",
+            ),
+        )
+        println("$response")
     }
 }
