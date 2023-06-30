@@ -22,6 +22,10 @@ private const val OPENAI_API_KEY_TEXT = "OPENAI_API_KEY"
 private const val RESET_OPENAI_API_KEY_TEXT = "RESET OPENAI API KEY"
 private const val PALM_API_KEY_TEXT = "PALM_API_KEY"
 private const val RESET_PALM_API_KEY_TEXT = "RESET PALM API KEY"
+private const val GOOGLE_API_KEY_TEXT = "GOOGLE_API_KEY"
+private const val RESET_GOOGLE_API_KEY_TEXT = "RESET GOOGLE API KEY"
+private const val GOOGLE_CUSTOM_SEARCH_CX_TEXT = "GOOGLE_CUSTOM_SEARCH_CX"
+private const val RESET_CUSTOM_SEARCH_CX_TEXT = "RESET CUSTOM SEARCH CX"
 private const val MESSAGE_FONT_SIZE_TEXT = "MESSAGE FONT SIZE"
 
 @Suppress("FunctionName")
@@ -29,6 +33,8 @@ private const val MESSAGE_FONT_SIZE_TEXT = "MESSAGE FONT SIZE"
 fun AppParamsView() {
     val apikeyEnabled by remember { appProperties.apiKeyEnabled }
     val palmApiKeyEnabled by remember { appProperties.palmApiKeyEnabled }
+    val googleApiKeyEnabled by remember { appProperties.googleApiKeyEnabled }
+    val googleCustomSearchCxEnabled by remember { appProperties.googleCustomSearchCxEnabled }
     var messageFontSizeSp by remember { appProperties.messageFontSizeSp }
 
     if (!apikeyEnabled) {
@@ -54,6 +60,32 @@ fun AppParamsView() {
             { appProperties.resetPalmApiKey() },
         ) {
             Text(RESET_PALM_API_KEY_TEXT)
+        }
+    }
+
+    if (!googleApiKeyEnabled) {
+        SecretTextInputWidget(
+            GOOGLE_API_KEY_TEXT,
+            false,
+        ) { appProperties.googleApiKey = it }
+    } else {
+        Button(
+            { appProperties.resetGoogleApiKey() },
+        ) {
+            Text(RESET_GOOGLE_API_KEY_TEXT)
+        }
+    }
+
+    if (!googleCustomSearchCxEnabled) {
+        SecretTextInputWidget(
+            GOOGLE_CUSTOM_SEARCH_CX_TEXT,
+            false,
+        ) { appProperties.googleCustomSearchCx = it }
+    } else {
+        Button(
+            { appProperties.resetCustomSearchCxKey() },
+        ) {
+            Text(RESET_CUSTOM_SEARCH_CX_TEXT)
         }
     }
 

@@ -16,6 +16,7 @@ class ChatFunctionLoader : DebugLoggable {
         SaveStringToFileFunctionPlugin(),
         CreateImageFunctionPlugin(),
         ShowImagePlugin(),
+        WebSearchPlugin(),
     )
 
     fun loadPlugins(directory: File): List<ChatFunctionPlugin> {

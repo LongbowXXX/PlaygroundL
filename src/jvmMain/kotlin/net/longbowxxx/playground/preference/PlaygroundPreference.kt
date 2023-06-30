@@ -13,6 +13,8 @@ class PlaygroundPreference : PreferenceBase() {
     companion object {
         private const val API_KEY_KEY = "apikey.encrypted"
         private const val PALM_API_KEY_KEY = "palm.apikey.encrypted"
+        private const val GOOGLE_API_KEY_KEY = "google.apikey.encrypted"
+        private const val GOOGLE_CUSTOM_SEARCH_CX_KEY = "google.customsearch.cx.encrypted"
         private const val MESSAGE_FONT_SIZE_KEY = "message.font.size"
         private const val WINDOW_LEFT_KEY = "window.left"
         private const val WINDOW_TOP_KEY = "window.top"
@@ -29,6 +31,8 @@ class PlaygroundPreference : PreferenceBase() {
 
     val apiKeyEnabled = mutableStateOf(false)
     val palmApiKeyEnabled = mutableStateOf(false)
+    val googleApiKeyEnabled = mutableStateOf(false)
+    val googleCustomSearchCxEnabled = mutableStateOf(false)
     val messageFontSizeSp = mutableStateOf(DEFAULT_MESSAGE_FONT_SIZE)
     var windowLeft: Int = DEFAULT_WINDOW_LEFT
     var windowTop: Int = DEFAULT_WINDOW_TOP
@@ -51,10 +55,26 @@ class PlaygroundPreference : PreferenceBase() {
         }
         get() = properties.getOrDefaultSecretProperty(PALM_API_KEY_KEY, "")
 
+    var googleApiKey: String
+        set(value) {
+            properties.setSecretProperty(GOOGLE_API_KEY_KEY, value)
+            googleApiKeyEnabled.value = value.isNotEmpty()
+        }
+        get() = properties.getOrDefaultSecretProperty(GOOGLE_API_KEY_KEY, "")
+
+    var googleCustomSearchCx: String
+        set(value) {
+            properties.setSecretProperty(GOOGLE_CUSTOM_SEARCH_CX_KEY, value)
+            googleCustomSearchCxEnabled.value = value.isNotEmpty()
+        }
+        get() = properties.getOrDefaultSecretProperty(GOOGLE_CUSTOM_SEARCH_CX_KEY, "")
+
     override fun load() {
         loadInternal {
             apiKeyEnabled.value = apiKey.isNotEmpty()
             palmApiKeyEnabled.value = palmApiKey.isNotEmpty()
+            googleApiKeyEnabled.value = googleApiKey.isNotEmpty()
+            googleCustomSearchCxEnabled.value = googleCustomSearchCx.isNotEmpty()
             messageFontSizeSp.value = getIntProperty(MESSAGE_FONT_SIZE_KEY, DEFAULT_MESSAGE_FONT_SIZE)
             windowLeft = getIntProperty(WINDOW_LEFT_KEY, DEFAULT_WINDOW_LEFT)
             windowTop = getIntProperty(WINDOW_TOP_KEY, DEFAULT_WINDOW_TOP)
@@ -76,6 +96,14 @@ class PlaygroundPreference : PreferenceBase() {
 
     fun resetPalmApiKey() {
         palmApiKey = ""
+    }
+
+    fun resetGoogleApiKey() {
+        googleApiKey = ""
+    }
+
+    fun resetCustomSearchCxKey() {
+        googleCustomSearchCx = ""
     }
 
     override fun save() {
