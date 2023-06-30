@@ -8,10 +8,7 @@ build/
 .idea/modules.xml
 .idea/jarRepositories.xml
 .idea/compiler.xml
-.idea/uiDesigner.xml
 .idea/libraries/
-.idea/artifacts/
-.idea/runConfigurations/
 *.iws
 *.iml
 *.ipr
@@ -43,11 +40,3 @@ bin/
 
 ### Mac OS ###
 .DS_Store
-
-/log/
-/playgroundApp.properties
-/chat.properties
-/discuss.properties
-/image.properties
-/db/
-/palm2/
