@@ -8,6 +8,7 @@
 package net.longbowxxx.playground.function
 
 import androidx.compose.runtime.Composable
+import kotlinx.serialization.Serializable
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -41,7 +42,7 @@ abstract class ChatFunctionPlugin : DebugLoggable {
             logTrace { "execute(): arguments=$arguments" }
             executeInternal(arguments)
         }.getOrElse { ex ->
-            "failed. exception=$ex"
+            ErrorResponse("error", "$ex").toResponseStr()
         }.also {
             logTrace { "execute(): result=$it" }
         }
@@ -67,4 +68,10 @@ abstract class ChatFunctionPlugin : DebugLoggable {
     protected inline fun <reified T> T.toResponseStr(): String {
         return encodeJson.encodeToString(this)
     }
+
+    @Serializable
+    data class ErrorResponse(
+        val type: String,
+        val reason: String,
+    )
 }

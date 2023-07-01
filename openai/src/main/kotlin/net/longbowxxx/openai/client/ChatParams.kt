@@ -82,7 +82,15 @@ data class OpenAiChatProperty(
     val type: String,
     val description: String? = null,
     val enum: List<String>? = null,
-)
+    val items: OpenAiChatProperty? = null,
+) {
+    companion object {
+        const val STRING_TYPE = "string"
+        const val INTEGER_TYPE = "integer"
+        const val NUMBER_TYPE = "number"
+        const val ARRAY_TYPE = "array"
+    }
+}
 
 @Serializable
 data class OpenAiChatMessage(
