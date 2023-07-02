@@ -42,6 +42,7 @@ abstract class ChatFunctionPlugin : DebugLoggable {
             logTrace { "execute(): arguments=$arguments" }
             executeInternal(arguments)
         }.getOrElse { ex ->
+            logError(ex) { "execute() failed." }
             ErrorResponse("error", "$ex").toResponseStr()
         }.also {
             logTrace { "execute(): result=$it" }
