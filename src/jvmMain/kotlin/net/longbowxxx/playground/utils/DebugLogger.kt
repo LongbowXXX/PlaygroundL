@@ -53,7 +53,7 @@ fun log(level: DebugLogLevel, component: String, throwable: Throwable? = null, l
         debugLogOut
     }
     if (throwable != null) {
-        out?.println("[$component] ${lazyMessage()}, throwable=$throwable, trance=${throwable.stackTrace}")
+        out?.println("[$component] ${lazyMessage()}, throwable=$throwable, trance=${throwable.stackTraceToString()}")
     } else {
         out?.println("[$component] ${lazyMessage()}")
     }

@@ -32,4 +32,15 @@
 -keep class com.google.common.collect.ImmutableMap { *; }
 -dontwarn org.apache.commons.logging.**
 
+# google api client
+# Needed to keep generic types and @Key annotations accessed via reflection
+-keepattributes Signature,RuntimeVisibleAnnotations,AnnotationDefault
+-keepclassmembers class * {
+  @com.google.api.client.util.Key <fields>;
+}
+-keep class com.google.api.client.util.** { *; }
+-keep class com.google.api.client.http.** { *; }
+-keep class com.google.api.client.json.** { *; }
+-keep class io.opencensus.trace.** { *; }
+-keep class com.google.api.services.customsearch.** { *; }
 -keep class net.longbowxxx.** { *; }
