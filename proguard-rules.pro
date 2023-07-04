@@ -44,3 +44,6 @@
 -keep class io.opencensus.trace.** { *; }
 -keep class com.google.api.services.customsearch.** { *; }
 -keep class net.longbowxxx.** { *; }
+
+# JSoup
+-keeppackagenames org.jsoup.nodes
