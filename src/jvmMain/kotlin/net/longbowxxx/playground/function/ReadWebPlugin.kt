@@ -13,6 +13,7 @@ import kotlinx.serialization.Serializable
 import net.longbowxxx.openai.client.OpenAiChatFunction
 import net.longbowxxx.openai.client.OpenAiChatParameter
 import net.longbowxxx.openai.client.OpenAiChatProperty
+import org.jsoup.Jsoup
 import java.net.HttpURLConnection
 import java.net.URL
 
@@ -42,8 +43,9 @@ class ReadWebPlugin : ChatFunctionPlugin() {
                 val urlConnection = url.openConnection() as HttpURLConnection
 
                 try {
-                    val text = urlConnection.inputStream.bufferedReader().readText()
-                    urlString to text
+                    val htmlText = urlConnection.inputStream.bufferedReader().readText()
+                    val planeText = Jsoup.parse(htmlText).text()
+                    urlString to planeText
                 } finally {
                     urlConnection.disconnect()
                 }

@@ -79,6 +79,7 @@ kotlin {
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlinx.coroutine.core.version")}")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${property("kotlinx.serialization.version")}")
                 implementation("io.realm.kotlin:library-base:${property("realm.version")}")
+                implementation("org.jsoup:jsoup:${property("jsoup.version")}")
             }
         }
         val jvmTest by getting {
