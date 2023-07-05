@@ -26,6 +26,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import net.longbowxxx.playground.ui.widget.AudioTransWidget
+import net.longbowxxx.playground.ui.widget.DropdownCheckWidget
 import net.longbowxxx.playground.ui.widget.FileChooseWidget
 import net.longbowxxx.playground.ui.widget.QuickLoadWidget
 import net.longbowxxx.playground.viewmodel.appProperties
@@ -47,6 +48,7 @@ fun ColumnScope.SystemPromptView() {
     val verticalScrollState = rememberScrollState(0)
     var systemMessage by remember { chatProperties.chatSystemPrompt }
     val messageFontSizeSp by remember { appProperties.messageFontSizeSp }
+    val allFunctions by remember { chatViewModel.allFunctions }
 
     Row(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         FileChooseWidget(LOAD_SYSTEM_TEXT) { selectedFile ->
@@ -60,6 +62,11 @@ fun ColumnScope.SystemPromptView() {
         AudioTransWidget(audioViewModel, true) {
             systemPrompt = it
         }
+    }
+
+    val functionStrList = allFunctions.map { it.first.functionSpec.name to it.second }
+    DropdownCheckWidget("FUNCTION", functionStrList) { index, enabled ->
+        chatViewModel.updateFunctionEnabled(index, enabled)
     }
 
     TextField(

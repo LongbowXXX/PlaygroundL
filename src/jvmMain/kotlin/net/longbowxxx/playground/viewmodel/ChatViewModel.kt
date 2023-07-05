@@ -77,10 +77,10 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         }
 
     private val functionLoader = ChatFunctionLoader()
-    val allFunctions = functionLoader.loadPlugins(File("chatFunction"))
+    val allFunctions = mutableStateOf(functionLoader.loadPlugins(File("chatFunction")).map { it to true })
     private val activeFunctions: List<ChatFunctionPlugin>
         get() {
-            return allFunctions
+            return allFunctions.value.filter { it.second }.map { it.first }
         }
 
     fun updateHistory() {
@@ -95,6 +95,12 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             chatHistory.removeHistory(session)
             history.value = chatHistory.getHistory()
         }
+    }
+
+    fun updateFunctionEnabled(index: Int, enabled: Boolean) {
+        val newList = allFunctions.value.toMutableList()
+        newList[index] = newList[index].first to enabled
+        allFunctions.value = newList.toList()
     }
 
     private fun updateMessage(index: Int, message: OpenAiChatMessage) {
