@@ -96,8 +96,7 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 3. 生成された画像はログに出力されています
 
 # GPT-4
-OpenAI の API で GPT-4 は限定メンバーのみ公開されています。  
-GPT-4 を使うためには [waitlist](https://openai.com/waitlist/gpt-4-api) に登録する必要があります。  
+OpenAI の API で GPT-4 は ChatGPT Plus メンバーのみ公開されています。  
 
 # OSS
 本アプリが利用している OSS。  
@@ -119,4 +118,10 @@ GPT-4 を使うためには [waitlist](https://openai.com/waitlist/gpt-4-api) �
 - realm/realm-kotlin  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - io.grpc:grpc-okhttp  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+- org.jsoup:jsoup  
+  [The MIT License](https://github.com/jhy/jsoup/blob/master/LICENSE)
+- com.google.api-client  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+- com.google.apis:google-api-services-customsearch  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)

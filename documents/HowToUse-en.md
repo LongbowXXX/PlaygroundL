@@ -93,8 +93,7 @@ It is similar to CHAT, but only English can be used.
 3. The generated image is also output in the log.
 
 ## GPT-4
-GPT-4 is only available to select members through the OpenAI API.  
-To use GPT-4, you need to register for the [waitlist](https://openai.com/waitlist/gpt-4-api).
+GPT-4 is only available to ChatGPT Plus members through the OpenAI API.  
 
 ## OSS
 The OSS used by this application.  
@@ -116,6 +115,12 @@ The OSS used by this application.
 - realm/realm-kotlin  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 - io.grpc:grpc-okhttp  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+- org.jsoup:jsoup  
+  [The MIT License](https://github.com/jhy/jsoup/blob/master/LICENSE)
+- com.google.api-client  
+  [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
+- com.google.apis:google-api-services-customsearch  
   [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 
 **This document was translated using OpenAI.**

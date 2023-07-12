@@ -67,8 +67,8 @@ fun MessageContentView(index: Int, message: OpenAiChatMessage) {
 
     val content = message.content
     if (message.role == OpenAiChatRoleTypes.FUNCTION && !content.isNullOrEmpty()) {
-        chatViewModel.allFunctions.firstOrNull {
-            it.functionSpec.name == message.name
-        }?.FunctionView(content)
+        chatViewModel.allFunctions.value.firstOrNull {
+            it.first.functionSpec.name == message.name
+        }?.first?.FunctionView(content)
     }
 }

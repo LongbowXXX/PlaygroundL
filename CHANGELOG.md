@@ -1,6 +1,12 @@
 PlaygroundL Change Log
 ===
 
+## [1.6.0]
+### Added
+- Google Custom Search Function
+### Changed
+- Select the functions to use
+
 ## [1.5.0]
 ### Added
 - Add plugin system for function
