@@ -104,6 +104,9 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "PlaygroundL"
             packageVersion = property("package.version") as String
+            windows {
+                iconFile.set(File("src/jvmMain/resources/app-icon.ico"))
+            }
         }
 
         buildTypes.release.proguard {
