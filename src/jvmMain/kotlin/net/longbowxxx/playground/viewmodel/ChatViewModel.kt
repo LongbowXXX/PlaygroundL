@@ -195,11 +195,19 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         plugins: List<ChatFunctionPlugin>?,
         logger: ChatLogger,
     ) {
+        val functions = plugins?.map { it.functionSpec }.let {
+            // function がない場合、Requests の functions は null でないとエラーになる
+            if (it.isNullOrEmpty()) {
+                null
+            } else {
+                it
+            }
+        }
         val historyMessages = createMessages()
         val request = OpenAiChatRequest(
             currentModel,
             messages = historyMessages.filter { it.hasContent },
-            functions = plugins?.map { it.functionSpec },
+            functions = functions,
             stream = true,
             temperature = chatProperties.chatTemperature.value,
             topP = chatProperties.chatTopP.value,
