@@ -13,39 +13,38 @@ import net.longbowxxx.playground.preference.ChatPreference
 import net.longbowxxx.playground.preference.DiscussPreference
 import net.longbowxxx.playground.preference.ImagePreference
 import net.longbowxxx.playground.preference.PlaygroundPreference
-
-const val APP_NAME = "PlaygroundL"
+import net.longbowxxx.playground.utils.appDataDirectory
 
 val appProperties: PlaygroundPreference by lazy {
-    PlaygroundPreference(APP_NAME).apply {
+    PlaygroundPreference(appDataDirectory).apply {
         load()
     }
 }
 
 val chatProperties: ChatPreference by lazy {
-    ChatPreference(APP_NAME).apply {
+    ChatPreference(appDataDirectory).apply {
         load()
     }
 }
 
 val discussProperties: DiscussPreference by lazy {
-    DiscussPreference(APP_NAME).apply {
+    DiscussPreference(appDataDirectory).apply {
         load()
     }
 }
 
 val imageProperties: ImagePreference by lazy {
-    ImagePreference(APP_NAME).apply {
+    ImagePreference(appDataDirectory).apply {
         load()
     }
 }
 
 val chatHistory: ChatHistory by lazy {
-    ChatHistory()
+    ChatHistory(appDataDirectory)
 }
 
 val discussHistory: DiscussHistory by lazy {
-    DiscussHistory()
+    DiscussHistory(appDataDirectory)
 }
 
 val chatViewModel: ChatViewModel by lazy {

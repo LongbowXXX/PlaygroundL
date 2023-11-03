@@ -17,10 +17,11 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
 open class LoggerBase(
-    parentDir: String,
+    appDataDir: File,
+    logCategory: String,
 ) : Closeable {
     companion object {
-        const val LOG_DIR = "log"
+        private const val LOG_DIR = "log"
         private const val HORIZONTAL_LINE = "\n----------------------------------------\n\n"
         private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
     }
@@ -36,7 +37,8 @@ open class LoggerBase(
     init {
         val now = LocalDateTime.now()
         dateTimeStr = now.format(dateTimeFormatter)
-        logDir = File(parentDir, dateTimeStr).apply {
+        val categoryDir = File(appDataDir, "$LOG_DIR/$logCategory")
+        logDir = File(categoryDir, dateTimeStr).apply {
             mkdirs()
         }
         val outFile = File(logDir, "logFile_$dateTimeStr.md")

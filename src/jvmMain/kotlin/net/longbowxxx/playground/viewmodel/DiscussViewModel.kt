@@ -23,6 +23,7 @@ import net.longbowxxx.generativeai.GenerativeAiClient
 import net.longbowxxx.generativeai.GenerativeAiSettings
 import net.longbowxxx.playground.history.DiscussHistory
 import net.longbowxxx.playground.logger.DiscussLogger
+import net.longbowxxx.playground.utils.appDataDirectory
 import java.io.Closeable
 import java.io.File
 import kotlin.coroutines.CoroutineContext
@@ -120,7 +121,7 @@ class DiscussViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : 
             val currentModel = discussProperties.discussModel.value
             requesting.value = true
             val session = currentChatSession
-            val logger = DiscussLogger()
+            val logger = DiscussLogger(appDataDirectory)
             runCatching {
                 val request = DiscussRequest(
                     currentModel,

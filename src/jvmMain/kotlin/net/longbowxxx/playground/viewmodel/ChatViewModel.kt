@@ -36,6 +36,7 @@ import net.longbowxxx.playground.function.ChatFunctionLoader
 import net.longbowxxx.playground.function.ChatFunctionPlugin
 import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.logger.ChatLogger
+import net.longbowxxx.playground.utils.appDataDirectory
 import java.io.Closeable
 import java.io.File
 import kotlin.coroutines.CoroutineContext
@@ -163,7 +164,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
 
             requesting.value = true
             val session = currentChatSession
-            val logger = ChatLogger()
+            val logger = ChatLogger(appDataDirectory)
             val plugins = if (functionEnabled) {
                 activeFunctions
             } else {

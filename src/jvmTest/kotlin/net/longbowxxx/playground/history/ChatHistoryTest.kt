@@ -4,13 +4,15 @@ import kotlinx.coroutines.runBlocking
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import org.junit.jupiter.api.Test
+import java.io.File
 import kotlin.test.assertEquals
 
 class ChatHistoryTest {
 
     @Test
     fun basicFlow() = runBlocking {
-        ChatHistory("build/tmp/db", "testFile.realm").use { history ->
+        val userDir = System.getProperty("user.dir")
+        ChatHistory(File(userDir), "build/tmp/db", "testFile.realm").use { history ->
             history.clearHistory()
             history.saveSession(
                 ChatHistory.ChatHistorySession(

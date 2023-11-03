@@ -22,8 +22,10 @@ import net.longbowxxx.openai.client.OpenAiChatRoleTypes
 import net.longbowxxx.playground.utils.DebugLoggable
 import net.longbowxxx.playground.utils.logInfo
 import org.mongodb.kbson.ObjectId
+import java.io.File
 
-class ChatHistory(dbFileDir: String = DB_DIR, dbFileName: String = DB_FILE_NAME) : RealmBase() {
+class ChatHistory(appDataDir: File, dbFileDir: String = DB_DIR, dbFileName: String = DB_FILE_NAME) :
+    RealmBase(appDataDir) {
     companion object {
         private const val DB_DIR = "db"
         private const val DB_FILE_NAME = "chat-history.realm"

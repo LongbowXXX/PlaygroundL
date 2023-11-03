@@ -10,8 +10,9 @@ package net.longbowxxx.playground.preference
 import androidx.compose.runtime.mutableStateOf
 import net.longbowxxx.generativeai.DISCUSS_MODEL
 import net.longbowxxx.generativeai.DISCUSS_TEMPERATURE_DEFAULT
+import java.io.File
 
-class DiscussPreference(appName: String) : PreferenceBase(appName) {
+class DiscussPreference(appDataDir: File) : PreferenceBase(appDataDir) {
     companion object {
         private const val DISCUSS_REQUEST_TEMPERATURE_KEY = "discuss.request.temperature"
         private const val DISCUSS_REQUEST_MODEL_KEY = "discuss.request.model"

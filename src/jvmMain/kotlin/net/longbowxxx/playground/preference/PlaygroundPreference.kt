@@ -8,8 +8,9 @@
 package net.longbowxxx.playground.preference
 
 import androidx.compose.runtime.mutableStateOf
+import java.io.File
 
-class PlaygroundPreference(appName: String) : PreferenceBase(appName) {
+class PlaygroundPreference(appDataDir: File) : PreferenceBase(appDataDir) {
     companion object {
         private const val API_KEY_KEY = "apikey.encrypted"
         private const val PALM_API_KEY_KEY = "palm.apikey.encrypted"
