@@ -15,7 +15,7 @@ import net.longbowxxx.openai.client.CHAT_TEMPERATURE_DEFAULT
 import net.longbowxxx.openai.client.CHAT_TOP_P_DEFAULT
 import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO_0613
 
-class ChatPreference : PreferenceBase() {
+class ChatPreference(appName: String) : PreferenceBase(appName) {
     companion object {
         private const val CHAT_REQUEST_TEMPERATURE_KEY = "chat.request.temperature"
         private const val CHAT_REQUEST_TOP_P_KEY = "chat.request.topP"

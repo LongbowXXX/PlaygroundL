@@ -9,7 +9,7 @@ package net.longbowxxx.playground.preference
 
 import androidx.compose.runtime.mutableStateOf
 
-class PlaygroundPreference : PreferenceBase() {
+class PlaygroundPreference(appName: String) : PreferenceBase(appName) {
     companion object {
         private const val API_KEY_KEY = "apikey.encrypted"
         private const val PALM_API_KEY_KEY = "palm.apikey.encrypted"

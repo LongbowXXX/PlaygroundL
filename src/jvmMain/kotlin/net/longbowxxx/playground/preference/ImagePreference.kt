@@ -9,7 +9,7 @@ package net.longbowxxx.playground.preference
 
 import androidx.compose.runtime.mutableStateOf
 
-class ImagePreference : PreferenceBase() {
+class ImagePreference(appName: String) : PreferenceBase(appName) {
     companion object {
         private const val IMAGE_CREATE_NUMBER_KEY = "image.create.number"
         private const val IMAGE_EDIT_NUMBER_KEY = "image.edit.number"

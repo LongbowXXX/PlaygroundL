@@ -16,7 +16,9 @@ import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @OptIn(ExperimentalEncodingApi::class)
-abstract class PreferenceBase : Closeable {
+abstract class PreferenceBase(
+    private val appName: String
+) : Closeable {
     protected val properties = Properties()
     protected abstract val fileName: String
     protected abstract val fileComment: String
@@ -24,7 +26,9 @@ abstract class PreferenceBase : Closeable {
     abstract fun load()
     protected fun loadInternal(block: Properties.() -> Unit) {
         runCatching {
-            File(fileName).reader(Charsets.UTF_8).use { reader ->
+            val appDataPath = System.getenv("APPDATA")
+            val file = File("$appDataPath/$appName/$fileName")
+            file.reader(Charsets.UTF_8).use { reader ->
                 properties.load(reader)
                 properties.block()
             }
@@ -36,7 +40,10 @@ abstract class PreferenceBase : Closeable {
     abstract fun save()
     protected fun saveInternal(block: Properties.() -> Unit) {
         properties.block()
-        File(fileName).writer(Charsets.UTF_8).use { writer ->
+        val appDataPath = System.getenv("APPDATA")
+        val file = File("$appDataPath/$appName/$fileName")
+        file.parentFile.mkdirs()
+        file.writer(Charsets.UTF_8).use { writer ->
             properties.store(writer, fileComment)
         }
     }

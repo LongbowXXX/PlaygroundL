@@ -14,26 +14,28 @@ import net.longbowxxx.playground.preference.DiscussPreference
 import net.longbowxxx.playground.preference.ImagePreference
 import net.longbowxxx.playground.preference.PlaygroundPreference
 
+const val APP_NAME = "PlaygroundL"
+
 val appProperties: PlaygroundPreference by lazy {
-    PlaygroundPreference().apply {
+    PlaygroundPreference(APP_NAME).apply {
         load()
     }
 }
 
 val chatProperties: ChatPreference by lazy {
-    ChatPreference().apply {
+    ChatPreference(APP_NAME).apply {
         load()
     }
 }
 
 val discussProperties: DiscussPreference by lazy {
-    DiscussPreference().apply {
+    DiscussPreference(APP_NAME).apply {
         load()
     }
 }
 
 val imageProperties: ImagePreference by lazy {
-    ImagePreference().apply {
+    ImagePreference(APP_NAME).apply {
         load()
     }
 }
