@@ -11,13 +11,15 @@ import kotlinx.serialization.encodeToString
 import net.longbowxxx.generativeai.DiscussMessage
 import net.longbowxxx.generativeai.DiscussPrompt
 import net.longbowxxx.generativeai.DiscussRequest
+import java.io.File
 
 class DiscussLogger(
-    parentDir: String = DISCUSS_LOG_DIR,
-) : LoggerBase(parentDir) {
+    appDataDir: File,
+    logCategory: String = DISCUSS_LOG,
+) : LoggerBase(appDataDir, logCategory) {
 
     companion object {
-        const val DISCUSS_LOG_DIR = "$LOG_DIR/discuss"
+        const val DISCUSS_LOG = "discuss"
     }
 
     suspend fun logRequest(request: DiscussRequest) {

@@ -7,12 +7,12 @@
 
 package net.longbowxxx.generativeai
 
-import com.google.ai.generativelanguage.v1beta2.DiscussServiceClient
-import com.google.ai.generativelanguage.v1beta2.DiscussServiceSettings
-import com.google.ai.generativelanguage.v1beta2.Example
-import com.google.ai.generativelanguage.v1beta2.GenerateMessageRequest
-import com.google.ai.generativelanguage.v1beta2.Message
-import com.google.ai.generativelanguage.v1beta2.MessagePrompt
+import com.google.ai.generativelanguage.v1beta3.DiscussServiceClient
+import com.google.ai.generativelanguage.v1beta3.DiscussServiceSettings
+import com.google.ai.generativelanguage.v1beta3.Example
+import com.google.ai.generativelanguage.v1beta3.GenerateMessageRequest
+import com.google.ai.generativelanguage.v1beta3.Message
+import com.google.ai.generativelanguage.v1beta3.MessagePrompt
 import com.google.api.gax.core.FixedCredentialsProvider
 import com.google.api.gax.grpc.InstantiatingGrpcChannelProvider
 import com.google.api.gax.rpc.FixedHeaderProvider

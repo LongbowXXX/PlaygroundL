@@ -21,8 +21,10 @@ import net.longbowxxx.playground.utils.DebugLoggable
 import net.longbowxxx.playground.utils.logInfo
 import org.mongodb.kbson.BsonObjectId
 import org.mongodb.kbson.ObjectId
+import java.io.File
 
-class DiscussHistory(dbFileDir: String = DB_DIR, dbFileName: String = DB_FILE_NAME) : RealmBase() {
+class DiscussHistory(appDataDir: File, dbFileDir: String = DB_DIR, dbFileName: String = DB_FILE_NAME) :
+    RealmBase(appDataDir) {
     companion object {
         private const val DB_DIR = "db"
         private const val DB_FILE_NAME = "discuss-history.realm"

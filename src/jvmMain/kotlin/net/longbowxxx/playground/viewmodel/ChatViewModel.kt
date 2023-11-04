@@ -36,6 +36,7 @@ import net.longbowxxx.playground.function.ChatFunctionLoader
 import net.longbowxxx.playground.function.ChatFunctionPlugin
 import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.logger.ChatLogger
+import net.longbowxxx.playground.utils.appDataDirectory
 import java.io.Closeable
 import java.io.File
 import kotlin.coroutines.CoroutineContext
@@ -77,7 +78,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         }
 
     private val functionLoader = ChatFunctionLoader()
-    val allFunctions = mutableStateOf(functionLoader.loadPlugins(File("chatFunction")).map { it to true })
+    val allFunctions = mutableStateOf(functionLoader.loadPlugins(File("chatFunction")).map { it to false })
     private val activeFunctions: List<ChatFunctionPlugin>
         get() {
             return allFunctions.value.filter { it.second }.map { it.first }
@@ -163,7 +164,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
 
             requesting.value = true
             val session = currentChatSession
-            val logger = ChatLogger()
+            val logger = ChatLogger(appDataDirectory)
             val plugins = if (functionEnabled) {
                 activeFunctions
             } else {
@@ -194,11 +195,19 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         plugins: List<ChatFunctionPlugin>?,
         logger: ChatLogger,
     ) {
+        val functions = plugins?.map { it.functionSpec }.let {
+            // function がない場合、Requests の functions は null でないとエラーになる
+            if (it.isNullOrEmpty()) {
+                null
+            } else {
+                it
+            }
+        }
         val historyMessages = createMessages()
         val request = OpenAiChatRequest(
             currentModel,
             messages = historyMessages.filter { it.hasContent },
-            functions = plugins?.map { it.functionSpec },
+            functions = functions,
             stream = true,
             temperature = chatProperties.chatTemperature.value,
             topP = chatProperties.chatTopP.value,

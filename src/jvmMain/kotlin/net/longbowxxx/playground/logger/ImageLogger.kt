@@ -17,11 +17,12 @@ import java.net.URL
 import javax.imageio.ImageIO
 
 class ImageLogger(
-    parentDir: String = IMAGE_LOG_DIR,
-) : LoggerBase(parentDir) {
+    appDataDir: File,
+    logCategory: String = IMAGE_LOG,
+) : LoggerBase(appDataDir, logCategory) {
 
     companion object {
-        const val IMAGE_LOG_DIR = "$LOG_DIR/image"
+        const val IMAGE_LOG = "image"
         private const val MASK_FILE_NAME = "mask.png"
         private const val PNG_FILE_FORMAT = "png"
     }

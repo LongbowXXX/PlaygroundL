@@ -25,7 +25,7 @@ import java.io.Closeable
 import java.io.File
 import kotlin.reflect.KClass
 
-abstract class RealmBase : Closeable, CoroutineScope, DebugLoggable {
+abstract class RealmBase(private val appDataDir: File) : Closeable, CoroutineScope, DebugLoggable {
     @OptIn(DelicateCoroutinesApi::class)
     private val dispatcher = newSingleThreadContext("sqlite-thread")
     private val job = Job()
@@ -53,7 +53,7 @@ abstract class RealmBase : Closeable, CoroutineScope, DebugLoggable {
     }
 
     private fun openRealm(): Realm {
-        val absDir = File(System.getProperty("user.dir"), realmDirectory)
+        val absDir = File(appDataDir, realmDirectory)
         val absRealmDirPath = absDir.absolutePath
         logTrace { "openRealm() $schemeVersion, $absRealmDirPath, $realmFileName" }
         val configuration = RealmConfiguration.Builder(schema)

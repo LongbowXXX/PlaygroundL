@@ -8,8 +8,9 @@
 package net.longbowxxx.playground.preference
 
 import androidx.compose.runtime.mutableStateOf
+import java.io.File
 
-class ImagePreference : PreferenceBase() {
+class ImagePreference(appDataDir: File) : PreferenceBase(appDataDir) {
     companion object {
         private const val IMAGE_CREATE_NUMBER_KEY = "image.create.number"
         private const val IMAGE_EDIT_NUMBER_KEY = "image.edit.number"

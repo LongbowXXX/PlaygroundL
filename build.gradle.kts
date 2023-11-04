@@ -104,6 +104,9 @@ compose.desktop {
             targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
             packageName = "PlaygroundL"
             packageVersion = property("package.version") as String
+            windows {
+                iconFile.set(File("src/jvmMain/resources/app-icon.ico"))
+            }
         }
 
         buildTypes.release.proguard {
@@ -117,7 +120,7 @@ tasks.register("downloadPalm2BetaSDK") {
     description = "Since the SDK for PaLM2 is a Beta version, download the file and install it on mavenLocal"
     dependsOn(emptyArray<String>())
     doLast {
-        val baseName = "google-cloud-ai-generativelanguage-v1beta2-java"
+        val baseName = "google-cloud-ai-generativelanguage-v1beta3-java"
         val outFileName = "$baseName.tar.gz"
         val palm2WorkDir = "${rootProject.rootDir}/palm2"
         File(palm2WorkDir).mkdirs()
