@@ -11,9 +11,10 @@ import io.realm.kotlin.MutableRealm
 import io.realm.kotlin.Realm
 import io.realm.kotlin.RealmConfiguration
 import io.realm.kotlin.migration.RealmMigration
-import io.realm.kotlin.types.BaseRealmObject
+import io.realm.kotlin.types.TypedRealmObject
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.newSingleThreadContext
@@ -26,13 +27,13 @@ import java.io.File
 import kotlin.reflect.KClass
 
 abstract class RealmBase(private val appDataDir: File) : Closeable, CoroutineScope, DebugLoggable {
-    @OptIn(DelicateCoroutinesApi::class)
+    @OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     private val dispatcher = newSingleThreadContext("sqlite-thread")
     private val job = Job()
     override val coroutineContext = job + dispatcher
 
     private var realm: Realm? = null
-    protected abstract val schema: Set<KClass<out BaseRealmObject>>
+    protected abstract val schema: Set<KClass<out TypedRealmObject>>
     protected abstract val realmDirectory: String
     protected abstract val realmFileName: String
     protected abstract val schemeVersion: Long
