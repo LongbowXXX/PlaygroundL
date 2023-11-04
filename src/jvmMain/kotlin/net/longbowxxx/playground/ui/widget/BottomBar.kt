@@ -9,12 +9,12 @@ package net.longbowxxx.playground.ui.widget
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -55,46 +55,49 @@ fun BottomBar(
     onSelected: (Int) -> Unit,
 ) {
     val aiChatIcon = painterResource("ai-chat-icon.png")
-    val size48 = Modifier.width(48.dp).height(48.dp)
-    BottomAppBar {
+    val iconModifier = Modifier.width(32.dp).height(32.dp)
+    NavigationBar {
         bottomItems.forEachIndexed { index, item ->
-            BottomNavigationItem(
+            val selectedItem = selectedTab == index
+            NavigationBarItem(
                 icon = {
                     when (item) {
                         CHAT_TEXT ->
                             Icon(
                                 painter = aiChatIcon,
                                 contentDescription = item,
-                                modifier = size48,
+                                modifier = iconModifier,
                             )
 
                         DISCUSS_TEXT ->
                             Icon(
                                 painter = aiChatIcon,
                                 contentDescription = item,
-                                modifier = size48,
+                                modifier = iconModifier,
                             )
 
                         IMAGE_TEXT ->
                             Icon(
                                 imageVector = Icons.Default.Edit,
                                 contentDescription = item,
-                                modifier = size48,
+                                modifier = iconModifier,
                             )
 
                         SETTINGS_TEXT ->
                             Icon(
                                 imageVector = Icons.Default.Settings,
                                 contentDescription = item,
-                                modifier = size48,
+                                modifier = iconModifier,
                             )
                     }
                 },
-                selected = selectedTab == index,
+                selected = selectedItem,
                 onClick = {
                     onSelected(index)
                 },
-                label = { Text(item) },
+                label = {
+                    Text(item)
+                },
             )
         }
     }
