@@ -42,7 +42,6 @@ import java.io.File
 import kotlin.coroutines.CoroutineContext
 
 class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : CoroutineScope, Closeable {
-
     private val job = Job()
     override val coroutineContext: CoroutineContext = dispatcher + job
 
@@ -54,12 +53,13 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     val errorMessage = mutableStateOf("")
     val requesting = mutableStateOf(false)
     val history = mutableStateOf<List<ChatHistory.ChatHistorySession>>(emptyList())
-    val models = listOf(
-        OPENAI_CHAT_MODEL_GPT_35_TURBO_0613,
-        OPENAI_CHAT_MODEL_GPT_35_TURBO,
-        OPENAI_CHAT_MODEL_GPT_4_0613,
-        OPENAI_CHAT_MODEL_GPT_4,
-    )
+    val models =
+        listOf(
+            OPENAI_CHAT_MODEL_GPT_35_TURBO_0613,
+            OPENAI_CHAT_MODEL_GPT_35_TURBO,
+            OPENAI_CHAT_MODEL_GPT_4_0613,
+            OPENAI_CHAT_MODEL_GPT_4,
+        )
     private var currentChatSession = ChatHistory.ChatHistorySession()
 
     val chatPromptFileList: List<File>
@@ -98,13 +98,19 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         }
     }
 
-    fun updateFunctionEnabled(index: Int, enabled: Boolean) {
+    fun updateFunctionEnabled(
+        index: Int,
+        enabled: Boolean,
+    ) {
         val newList = allFunctions.value.toMutableList()
         newList[index] = newList[index].first to enabled
         allFunctions.value = newList.toList()
     }
 
-    private fun updateMessage(index: Int, message: OpenAiChatMessage) {
+    private fun updateMessage(
+        index: Int,
+        message: OpenAiChatMessage,
+    ) {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)
         require(index < newList.size)
@@ -112,7 +118,10 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         messages.value = newList
     }
 
-    fun updateMessageContent(index: Int, content: String) {
+    fun updateMessageContent(
+        index: Int,
+        content: String,
+    ) {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)
         require(index < newList.size)
@@ -129,7 +138,11 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         currentChatSession.messages = newList
     }
 
-    fun addMessage(role: OpenAiChatRoleTypes, content: String? = null, name: String? = null): Int {
+    fun addMessage(
+        role: OpenAiChatRoleTypes,
+        content: String? = null,
+        name: String? = null,
+    ): Int {
         val newList = mutableListOf<OpenAiChatMessage>()
         newList.addAll(messages.value)
         newList.add(OpenAiChatMessage(role, content, null, name))
@@ -154,40 +167,42 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
     fun requestChat() {
         val lastJob = currentRequestJob
         lastJob?.cancel()
-        currentRequestJob = launch {
-            lastJob?.join()
-            // 古いエラーを消す
-            errorMessage.value = ""
+        currentRequestJob =
+            launch {
+                lastJob?.join()
+                // 古いエラーを消す
+                errorMessage.value = ""
 
-            val currentModel = chatProperties.chatModel.value
-            val functionEnabled = currentModel.isFunctionAvailable()
+                val currentModel = chatProperties.chatModel.value
+                val functionEnabled = currentModel.isFunctionAvailable()
 
-            requesting.value = true
-            val session = currentChatSession
-            val logger = ChatLogger(appDataDirectory)
-            val plugins = if (functionEnabled) {
-                activeFunctions
-            } else {
-                null
-            }
-            runCatching {
-                requestInternal(currentModel, plugins, logger)
-                logger.logMessages(session.messages)
+                requesting.value = true
+                val session = currentChatSession
+                val logger = ChatLogger(appDataDirectory)
+                val plugins =
+                    if (functionEnabled) {
+                        activeFunctions
+                    } else {
+                        null
+                    }
+                runCatching {
+                    requestInternal(currentModel, plugins, logger)
+                    logger.logMessages(session.messages)
 
-                launch {
-                    updateChatSessionTitle(session.messages, session)
+                    launch {
+                        updateChatSessionTitle(session.messages, session)
+                    }
+                    Unit
+                }.onFailure {
+                    if (it !is CancellationException) {
+                        errorMessage.value = it.message ?: it.toString()
+                        logger.logError(it)
+                    }
+                }.also {
+                    logger.close()
+                    requesting.value = false
                 }
-                Unit
-            }.onFailure {
-                if (it !is CancellationException) {
-                    errorMessage.value = it.message ?: it.toString()
-                    logger.logError(it)
-                }
-            }.also {
-                logger.close()
-                requesting.value = false
             }
-        }
     }
 
     private suspend fun requestInternal(
@@ -195,26 +210,28 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         plugins: List<ChatFunctionPlugin>?,
         logger: ChatLogger,
     ) {
-        val functions = plugins?.map { it.functionSpec }.let {
-            // function がない場合、Requests の functions は null でないとエラーになる
-            if (it.isNullOrEmpty()) {
-                null
-            } else {
-                it
+        val functions =
+            plugins?.map { it.functionSpec }.let {
+                // function がない場合、Requests の functions は null でないとエラーになる
+                if (it.isNullOrEmpty()) {
+                    null
+                } else {
+                    it
+                }
             }
-        }
         val historyMessages = createMessages()
-        val request = OpenAiChatRequest(
-            currentModel,
-            messages = historyMessages.filter { it.hasContent },
-            functions = functions,
-            stream = true,
-            temperature = chatProperties.chatTemperature.value,
-            topP = chatProperties.chatTopP.value,
-            maxTokens = chatProperties.chatMaxTokens.value,
-            presencePenalty = chatProperties.chatPresencePenalty.value,
-            frequencyPenalty = chatProperties.chatFrequencyPenalty.value,
-        )
+        val request =
+            OpenAiChatRequest(
+                currentModel,
+                messages = historyMessages.filter { it.hasContent },
+                functions = functions,
+                stream = true,
+                temperature = chatProperties.chatTemperature.value,
+                topP = chatProperties.chatTopP.value,
+                maxTokens = chatProperties.chatMaxTokens.value,
+                presencePenalty = chatProperties.chatPresencePenalty.value,
+                frequencyPenalty = chatProperties.chatFrequencyPenalty.value,
+            )
         logger.logRequest(request)
         val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
         val newMessage = client.requestChatWithStreaming(request).correctStreamResponse()
@@ -236,9 +253,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         }
     }
 
-    private suspend fun callFunction(
-        functionCallMessage: OpenAiChatFunctionCallMessage,
-    ): String {
+    private suspend fun callFunction(functionCallMessage: OpenAiChatFunctionCallMessage): String {
         return activeFunctions.firstOrNull { plugin ->
             plugin.functionSpec.name == functionCallMessage.name
         }?.execute(functionCallMessage.arguments) ?: error("not found function : $functionCallMessage")
@@ -275,27 +290,27 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
 
     private fun OpenAiChatMessage.add(delta: OpenAiChatStreamDelta): OpenAiChatMessage {
         val newRole = delta.role ?: this.role
-        val newContent = delta.content?.let {
-            this.content?.let {
-                it + delta.content
-            } ?: delta.content
-        } ?: this.content
+        val newContent =
+            delta.content?.let {
+                this.content?.let {
+                    it + delta.content
+                } ?: delta.content
+            } ?: this.content
         val newFunction = this.functionCall.add(delta.functionCall)
         return OpenAiChatMessage(newRole, newContent, newFunction)
     }
 
-    private fun OpenAiChatFunctionCallMessage?.add(
-        delta: OpenAiChatFunctionCallMessageDelta?,
-    ): OpenAiChatFunctionCallMessage? {
+    private fun OpenAiChatFunctionCallMessage?.add(delta: OpenAiChatFunctionCallMessageDelta?): OpenAiChatFunctionCallMessage? {
         if (this == null && delta == null) {
             return null
         }
         val newName = delta?.name ?: this?.name
-        val newArguments = delta?.arguments?.let { deltaArguments ->
-            this?.arguments?.let { thisArguments ->
-                thisArguments + deltaArguments
-            } ?: deltaArguments
-        } ?: this?.arguments
+        val newArguments =
+            delta?.arguments?.let { deltaArguments ->
+                this?.arguments?.let { thisArguments ->
+                    thisArguments + deltaArguments
+                } ?: deltaArguments
+            } ?: this?.arguments
         return OpenAiChatFunctionCallMessage(newName.orEmpty(), newArguments.orEmpty())
     }
 

@@ -67,27 +67,28 @@ fun ImageCanvasView() {
     Image(
         bitmap = maskImage.toImage().toComposeImageBitmap(),
         contentDescription = null,
-        modifier = Modifier.fillMaxSize().padding(10.dp).aspectRatio(1f, true)
-            .onSizeChanged {
-                canvasSize = it
-                maskImage = BufferedImage(it.width, it.height, BufferedImage.TYPE_INT_ARGB)
-            }
-            .pointerInput(Unit) {
-                // マウスドラッグ中の処理
-                detectDragGestures(
-                    onDragStart = { startOffset ->
-                        drawingLine = drawingLine.addOffset(startOffset)
-                    },
-                    onDragEnd = {
-                        maskLines = maskLines.addLine(drawingLine to strokeWidth)
-                        drawingLine = emptyList()
-                    },
-                ) { change, dragAmount ->
-                    change.consume()
-                    drawingLine = drawingLine.addOffset(dragAmount)
+        modifier =
+            Modifier.fillMaxSize().padding(10.dp).aspectRatio(1f, true)
+                .onSizeChanged {
+                    canvasSize = it
+                    maskImage = BufferedImage(it.width, it.height, BufferedImage.TYPE_INT_ARGB)
                 }
-            }
-            .border(BorderStroke(2.dp, MaterialTheme.colorScheme.tertiary)),
+                .pointerInput(Unit) {
+                    // マウスドラッグ中の処理
+                    detectDragGestures(
+                        onDragStart = { startOffset ->
+                            drawingLine = drawingLine.addOffset(startOffset)
+                        },
+                        onDragEnd = {
+                            maskLines = maskLines.addLine(drawingLine to strokeWidth)
+                            drawingLine = emptyList()
+                        },
+                    ) { change, dragAmount ->
+                        change.consume()
+                        drawingLine = drawingLine.addOffset(dragAmount)
+                    }
+                }
+                .border(BorderStroke(2.dp, MaterialTheme.colorScheme.tertiary)),
     )
 }
 

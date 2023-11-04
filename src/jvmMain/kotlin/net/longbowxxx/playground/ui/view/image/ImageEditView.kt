@@ -52,8 +52,9 @@ fun ColumnScope.ImageEditView() {
 
     Column(modifier = Modifier.weight(1f).fillMaxWidth()) {
         Box(
-            modifier = Modifier.fillMaxWidth().padding(10.dp).weight(1f)
-                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp)),
+            modifier =
+                Modifier.fillMaxWidth().padding(10.dp).weight(1f)
+                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp)),
         ) {
             activeImage?.let { image ->
                 Image(

@@ -114,7 +114,10 @@ class Recorder {
         stopRequested.set(true)
     }
 
-    private fun addWaveHeader(audioData: ByteArray, format: AudioFormat): ByteArray {
+    private fun addWaveHeader(
+        audioData: ByteArray,
+        format: AudioFormat,
+    ): ByteArray {
         val headerSize = 44
         val totalSize = headerSize + audioData.size
         val byteRate = format.sampleSizeInBits * format.channels * format.sampleRate.toInt() / 8

@@ -26,10 +26,11 @@ open class LoggerBase(
         private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
     }
 
-    protected val encodeJson = Json {
-        encodeDefaults = false
-        prettyPrint = true
-    }
+    protected val encodeJson =
+        Json {
+            encodeDefaults = false
+            prettyPrint = true
+        }
     private val writer: BufferedWriter
     protected val dateTimeStr: String
     val logDir: File
@@ -38,9 +39,10 @@ open class LoggerBase(
         val now = LocalDateTime.now()
         dateTimeStr = now.format(dateTimeFormatter)
         val categoryDir = File(appDataDir, "$LOG_DIR/$logCategory")
-        logDir = File(categoryDir, dateTimeStr).apply {
-            mkdirs()
-        }
+        logDir =
+            File(categoryDir, dateTimeStr).apply {
+                mkdirs()
+            }
         val outFile = File(logDir, "logFile_$dateTimeStr.md")
         writer = outFile.bufferedWriter(Charsets.UTF_8)
     }

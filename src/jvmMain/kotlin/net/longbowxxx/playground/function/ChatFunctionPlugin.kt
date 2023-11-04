@@ -22,21 +22,24 @@ abstract class ChatFunctionPlugin : DebugLoggable {
         const val SUCCESS = "success"
     }
 
-    protected val decodeJson = Json {
-        encodeDefaults = false
-        ignoreUnknownKeys = true
-    }
+    protected val decodeJson =
+        Json {
+            encodeDefaults = false
+            ignoreUnknownKeys = true
+        }
 
-    protected val encodeJson = Json {
-        encodeDefaults = false
-        prettyPrint = true
-    }
+    protected val encodeJson =
+        Json {
+            encodeDefaults = false
+            prettyPrint = true
+        }
 
     protected inline fun <reified T> String.toParams(): T {
         return decodeJson.decodeFromString<T>(this)
     }
 
     abstract val functionSpec: OpenAiChatFunction
+
     suspend fun execute(arguments: String): String {
         return runCatching {
             logTrace { "execute(): arguments=$arguments" }

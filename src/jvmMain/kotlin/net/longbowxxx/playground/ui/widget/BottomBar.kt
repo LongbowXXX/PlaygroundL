@@ -31,24 +31,29 @@ private const val DISCUSS_TEXT = "DISCUSS"
 private const val IMAGE_TEXT = "IMAGE"
 private const val SETTINGS_TEXT = "SETTINGS"
 
-private val bottomItems = listOf(
-    CHAT_TEXT,
-    DISCUSS_TEXT,
-    IMAGE_TEXT,
-    SETTINGS_TEXT,
-)
+private val bottomItems =
+    listOf(
+        CHAT_TEXT,
+        DISCUSS_TEXT,
+        IMAGE_TEXT,
+        SETTINGS_TEXT,
+    )
 
-fun Int.toTabName() = when (this) {
-    0 -> CHAT_TEXT
-    1 -> DISCUSS_TEXT
-    2 -> IMAGE_TEXT
-    3 -> SETTINGS_TEXT
-    else -> error("Unknown Tab Index $this")
-}
+fun Int.toTabName() =
+    when (this) {
+        0 -> CHAT_TEXT
+        1 -> DISCUSS_TEXT
+        2 -> IMAGE_TEXT
+        3 -> SETTINGS_TEXT
+        else -> error("Unknown Tab Index $this")
+    }
 
 @Suppress("FunctionName")
 @Composable
-fun BottomBar(selectedTab: Int, onSelected: (Int) -> Unit) {
+fun BottomBar(
+    selectedTab: Int,
+    onSelected: (Int) -> Unit,
+) {
     val aiChatIcon = painterResource("ai-chat-icon.png")
     val size48 = Modifier.width(48.dp).height(48.dp)
     BottomAppBar {
@@ -56,29 +61,33 @@ fun BottomBar(selectedTab: Int, onSelected: (Int) -> Unit) {
             BottomNavigationItem(
                 icon = {
                     when (item) {
-                        CHAT_TEXT -> Icon(
-                            painter = aiChatIcon,
-                            contentDescription = item,
-                            modifier = size48,
-                        )
+                        CHAT_TEXT ->
+                            Icon(
+                                painter = aiChatIcon,
+                                contentDescription = item,
+                                modifier = size48,
+                            )
 
-                        DISCUSS_TEXT -> Icon(
-                            painter = aiChatIcon,
-                            contentDescription = item,
-                            modifier = size48,
-                        )
+                        DISCUSS_TEXT ->
+                            Icon(
+                                painter = aiChatIcon,
+                                contentDescription = item,
+                                modifier = size48,
+                            )
 
-                        IMAGE_TEXT -> Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = item,
-                            modifier = size48,
-                        )
+                        IMAGE_TEXT ->
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = item,
+                                modifier = size48,
+                            )
 
-                        SETTINGS_TEXT -> Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = item,
-                            modifier = size48,
-                        )
+                        SETTINGS_TEXT ->
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = item,
+                                modifier = size48,
+                            )
                     }
                 },
                 selected = selectedTab == index,

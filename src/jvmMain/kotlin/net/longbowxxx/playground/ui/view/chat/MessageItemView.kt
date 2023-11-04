@@ -32,14 +32,18 @@ import net.longbowxxx.playground.viewmodel.chatViewModel
 
 @Suppress("FunctionName")
 @Composable
-fun MessageItemView(index: Int, message: OpenAiChatMessage) {
+fun MessageItemView(
+    index: Int,
+    message: OpenAiChatMessage,
+) {
     val requesting by remember { chatViewModel.requesting }
     val chatMessageFileList = chatViewModel.chatMessageFileList
 
     ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp, 5.dp, 5.dp, 5.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(5.dp, 5.dp, 5.dp, 5.dp),
     ) {
         Column {
             Row(
@@ -66,12 +70,13 @@ fun MessageItemView(index: Int, message: OpenAiChatMessage) {
                     Icon(Icons.Default.Clear, null)
                 }
             }
-            val content = when (message.role) {
-                OpenAiChatRoleTypes.USER -> message.content.orEmpty()
-                OpenAiChatRoleTypes.ASSISTANT -> message.content
-                OpenAiChatRoleTypes.FUNCTION -> message.content.orEmpty()
-                else -> "MessageItemView not supported type ${message.role}"
-            }
+            val content =
+                when (message.role) {
+                    OpenAiChatRoleTypes.USER -> message.content.orEmpty()
+                    OpenAiChatRoleTypes.ASSISTANT -> message.content
+                    OpenAiChatRoleTypes.FUNCTION -> message.content.orEmpty()
+                    else -> "MessageItemView not supported type ${message.role}"
+                }
             if (content != null) {
                 MessageContentView(index, message)
             }

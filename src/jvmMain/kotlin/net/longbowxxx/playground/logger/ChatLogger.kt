@@ -16,7 +16,6 @@ class ChatLogger(
     appDataDir: File,
     logCategory: String = CHAT_LOG,
 ) : LoggerBase(appDataDir, logCategory) {
-
     companion object {
         const val CHAT_LOG = "chat"
     }

@@ -29,7 +29,11 @@ private const val SAVE_BUTTON_TEXT = "SAVE"
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
 @Composable
-fun SecretTextInputWidget(label: String, readOnly: Boolean, onSaved: (String) -> Unit) {
+fun SecretTextInputWidget(
+    label: String,
+    readOnly: Boolean,
+    onSaved: (String) -> Unit,
+) {
     var secretText by remember { mutableStateOf("") }
     Row(
         verticalAlignment = Alignment.CenterVertically,

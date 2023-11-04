@@ -29,7 +29,11 @@ private const val CLOSE_TEXT = "CLOSE"
 
 @Suppress("FunctionName")
 @Composable
-fun DropdownCheckWidget(title: String, items: List<Pair<String, Boolean>>, onChanged: (Int, Boolean) -> Unit) {
+fun DropdownCheckWidget(
+    title: String,
+    items: List<Pair<String, Boolean>>,
+    onChanged: (Int, Boolean) -> Unit,
+) {
     var showDropdown by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.width(200.dp)) {

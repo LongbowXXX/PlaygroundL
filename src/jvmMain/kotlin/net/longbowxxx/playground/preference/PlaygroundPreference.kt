@@ -84,7 +84,12 @@ class PlaygroundPreference(appDataDir: File) : PreferenceBase(appDataDir) {
         }
     }
 
-    fun updateWindowState(left: Int, top: Int, width: Int, height: Int) {
+    fun updateWindowState(
+        left: Int,
+        top: Int,
+        width: Int,
+        height: Int,
+    ) {
         windowLeft = left
         windowTop = top
         windowWidth = width

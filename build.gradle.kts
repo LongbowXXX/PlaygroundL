@@ -22,7 +22,7 @@ repositories {
 allprojects {
     val ktlint by configurations.creating
     dependencies {
-        ktlint("com.pinterest:ktlint:${property("ktlint.version")}") {
+        ktlint("com.pinterest.ktlint:ktlint-cli:${property("ktlint.version")}") {
             attributes {
                 attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
             }

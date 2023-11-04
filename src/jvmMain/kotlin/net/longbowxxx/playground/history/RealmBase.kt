@@ -56,12 +56,13 @@ abstract class RealmBase(private val appDataDir: File) : Closeable, CoroutineSco
         val absDir = File(appDataDir, realmDirectory)
         val absRealmDirPath = absDir.absolutePath
         logTrace { "openRealm() $schemeVersion, $absRealmDirPath, $realmFileName" }
-        val configuration = RealmConfiguration.Builder(schema)
-            .schemaVersion(schemeVersion)
-            .directory(absRealmDirPath)
-            .name(realmFileName)
-            .migration(migration)
-            .build()
+        val configuration =
+            RealmConfiguration.Builder(schema)
+                .schemaVersion(schemeVersion)
+                .directory(absRealmDirPath)
+                .name(realmFileName)
+                .migration(migration)
+                .build()
         return Realm.open(configuration)
     }
 

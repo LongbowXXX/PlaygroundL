@@ -43,9 +43,10 @@ private const val OPEN_APP_DATA_DIR_TEXT = "OPEN APP DATA DIRECTORY"
 fun SettingsScreen() {
     Column(
         verticalArrangement = Arrangement.spacedBy(10.dp),
-        modifier = Modifier.fillMaxSize()
-            .padding(10.dp)
-            .verticalScroll(rememberScrollState()),
+        modifier =
+            Modifier.fillMaxSize()
+                .padding(10.dp)
+                .verticalScroll(rememberScrollState()),
     ) {
         Text(APP_CATEGORY_TEXT, style = MaterialTheme.typography.headlineLarge)
         AppParamsView()

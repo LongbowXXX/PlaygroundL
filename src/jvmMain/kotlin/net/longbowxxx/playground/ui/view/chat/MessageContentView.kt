@@ -34,7 +34,10 @@ private const val CONTENT_TEXT = "CONTENT"
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
 @Composable
-fun MessageContentView(index: Int, message: OpenAiChatMessage) {
+fun MessageContentView(
+    index: Int,
+    message: OpenAiChatMessage,
+) {
     val requesting by remember { chatViewModel.requesting }
     val messageFontSizeSp by remember { appProperties.messageFontSizeSp }
 
@@ -48,19 +51,20 @@ fun MessageContentView(index: Int, message: OpenAiChatMessage) {
         label = {
             Text(CONTENT_TEXT)
         },
-        modifier = Modifier.fillMaxWidth()
-            .onKeyEvent {
-                // Alt + Enter を押すと、request
-                if (it.type == KeyEventType.KeyUp &&
-                    it.key.nativeKeyCode == KeyEvent.VK_ENTER &&
-                    it.isAltPressed
-                ) {
-                    chatViewModel.requestChat()
-                    true
-                } else {
-                    false
-                }
-            },
+        modifier =
+            Modifier.fillMaxWidth()
+                .onKeyEvent {
+                    // Alt + Enter を押すと、request
+                    if (it.type == KeyEventType.KeyUp &&
+                        it.key.nativeKeyCode == KeyEvent.VK_ENTER &&
+                        it.isAltPressed
+                    ) {
+                        chatViewModel.requestChat()
+                        true
+                    } else {
+                        false
+                    }
+                },
         readOnly = requesting,
         textStyle = TextStyle(fontSize = messageFontSizeSp.sp),
     )

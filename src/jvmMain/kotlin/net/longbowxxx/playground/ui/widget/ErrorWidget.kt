@@ -20,7 +20,10 @@ private const val ERROR_TITLE_TEXT = "ERROR"
 @OptIn(ExperimentalMaterialApi::class)
 @Suppress("FunctionName")
 @Composable
-fun ErrorWidget(errorMessage: String, onClosed: () -> Unit) {
+fun ErrorWidget(
+    errorMessage: String,
+    onClosed: () -> Unit,
+) {
     if (errorMessage.isNotEmpty()) {
         AlertDialog(
             onDismissRequest = { onClosed() },

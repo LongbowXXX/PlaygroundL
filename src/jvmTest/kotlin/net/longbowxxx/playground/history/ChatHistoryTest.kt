@@ -8,31 +8,31 @@ import java.io.File
 import kotlin.test.assertEquals
 
 class ChatHistoryTest {
-
     @Test
-    fun basicFlow() = runBlocking {
-        val userDir = System.getProperty("user.dir")
-        ChatHistory(File(userDir), "build/tmp/db", "testFile.realm").use { history ->
-            history.clearHistory()
-            history.saveSession(
-                ChatHistory.ChatHistorySession(
-                    "title",
-                    listOf("category1"),
-                    listOf(
-                        OpenAiChatMessage(
-                            OpenAiChatRoleTypes.ASSISTANT,
-                            "content",
+    fun basicFlow() =
+        runBlocking {
+            val userDir = System.getProperty("user.dir")
+            ChatHistory(File(userDir), "build/tmp/db", "testFile.realm").use { history ->
+                history.clearHistory()
+                history.saveSession(
+                    ChatHistory.ChatHistorySession(
+                        "title",
+                        listOf("category1"),
+                        listOf(
+                            OpenAiChatMessage(
+                                OpenAiChatRoleTypes.ASSISTANT,
+                                "content",
+                            ),
                         ),
                     ),
-                ),
-            )
+                )
 
-            val items = history.getHistory()
-            assertEquals(items.size, 1)
-            history.saveSession(items.first())
-            history.removeHistory(items.first())
-            val items2 = history.getHistory()
-            assertEquals(items2.size, 0)
+                val items = history.getHistory()
+                assertEquals(items.size, 1)
+                history.saveSession(items.first())
+                history.removeHistory(items.first())
+                val items2 = history.getHistory()
+                assertEquals(items2.size, 0)
+            }
         }
-    }
 }

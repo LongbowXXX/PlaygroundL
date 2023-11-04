@@ -61,13 +61,14 @@ class ImageViewModel(
     val requesting = mutableStateOf(false)
     val requestingTranslation = mutableStateOf(false)
     val errorMessage = mutableStateOf("")
-    val maskImage = mutableStateOf(
-        BufferedImage(
-            DEFAULT_SIZE,
-            DEFAULT_SIZE,
-            BufferedImage.TYPE_INT_ARGB,
-        ),
-    )
+    val maskImage =
+        mutableStateOf(
+            BufferedImage(
+                DEFAULT_SIZE,
+                DEFAULT_SIZE,
+                BufferedImage.TYPE_INT_ARGB,
+            ),
+        )
     val maskStrokeWidth = mutableStateOf(DEFAULT_STROKE_WIDTH)
     var maskLines = mutableStateOf(listOf<LineWithStroke>())
     private var currentRequestJob: Job? = null
@@ -76,15 +77,17 @@ class ImageViewModel(
         launch {
             requestingTranslation.value = true
             runCatching {
-                val request = OpenAiChatRequest(
-                    chatProperties.chatModel.value,
-                    messages = listOf(
-                        OpenAiChatMessage(OpenAiChatRoleTypes.SYSTEM, imageProperties.translationPrompt.value, null, null),
-                        OpenAiChatMessage(OpenAiChatRoleTypes.USER, promptJa.value, null, null),
-                    ),
-                    stream = true,
-                    temperature = 0f,
-                )
+                val request =
+                    OpenAiChatRequest(
+                        chatProperties.chatModel.value,
+                        messages =
+                            listOf(
+                                OpenAiChatMessage(OpenAiChatRoleTypes.SYSTEM, imageProperties.translationPrompt.value, null, null),
+                                OpenAiChatMessage(OpenAiChatRoleTypes.USER, promptJa.value, null, null),
+                            ),
+                        stream = true,
+                        temperature = 0f,
+                    )
                 val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
                 client.requestChatWithStreaming(request).correctStreamResponse()
             }.onFailure {
@@ -114,121 +117,128 @@ class ImageViewModel(
         val lastJob = currentRequestJob
         lastJob?.cancel()
 
-        currentRequestJob = launch {
-            lastJob?.join()
-            val logger = ImageLogger(appDataDirectory)
-            runCatching {
-                requesting.value = true
-                clearImages()
-                val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
-                val request = OpenAiCreateImageRequest(
-                    prompt.value,
-                    n = imageProperties.numberOfCreate.value,
-                )
-                logger.logCreateRequest(request)
+        currentRequestJob =
+            launch {
+                lastJob?.join()
+                val logger = ImageLogger(appDataDirectory)
+                runCatching {
+                    requesting.value = true
+                    clearImages()
+                    val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
+                    val request =
+                        OpenAiCreateImageRequest(
+                            prompt.value,
+                            n = imageProperties.numberOfCreate.value,
+                        )
+                    logger.logCreateRequest(request)
 
-                val response = client.requestCreateImage(request)
+                    val response = client.requestCreateImage(request)
 
-                response.data.mapNotNull { imageData -> imageData.url?.toURL() }
-                    .mapIndexed { index, imageUrl ->
-                        val imageFile = logger.logImage(index, imageUrl)
-                        val image = ImageIO.read(imageFile)
-                        addImage(image.toBitmap(), imageFile)
-                    }
-            }.onFailure {
-                errorMessage.value = it.toString()
-                logger.logError(it)
-            }.also {
-                requesting.value = false
-                logger.close()
+                    response.data.mapNotNull { imageData -> imageData.url?.toURL() }
+                        .mapIndexed { index, imageUrl ->
+                            val imageFile = logger.logImage(index, imageUrl)
+                            val image = ImageIO.read(imageFile)
+                            addImage(image.toBitmap(), imageFile)
+                        }
+                }.onFailure {
+                    errorMessage.value = it.toString()
+                    logger.logError(it)
+                }.also {
+                    requesting.value = false
+                    logger.close()
+                }
             }
-        }
     }
 
     fun requestImageVariation() {
         val lastJob = currentRequestJob
         lastJob?.cancel()
 
-        currentRequestJob = launch {
-            lastJob?.join()
+        currentRequestJob =
+            launch {
+                lastJob?.join()
 
-            val logger = ImageLogger(appDataDirectory)
-            runCatching {
-                requesting.value = true
-                val requestImageFile = requireNotNull(activeImage.value).second
-                clearImages()
-                val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
-                val request = OpenAiImageVariationRequest(
-                    image = requestImageFile,
-                    n = imageProperties.numberOfVariation.value,
-                )
-                logger.logVariationRequest(request)
+                val logger = ImageLogger(appDataDirectory)
+                runCatching {
+                    requesting.value = true
+                    val requestImageFile = requireNotNull(activeImage.value).second
+                    clearImages()
+                    val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
+                    val request =
+                        OpenAiImageVariationRequest(
+                            image = requestImageFile,
+                            n = imageProperties.numberOfVariation.value,
+                        )
+                    logger.logVariationRequest(request)
 
-                val response = client.requestImageVariation(request)
-                response.data.mapNotNull { imageData -> imageData.url?.toURL() }
-                    .mapIndexed { index, imageUrl ->
-                        val imageFile = logger.logImage(index, imageUrl)
-                        val image = ImageIO.read(imageFile)
-                        addImage(image.toBitmap(), imageFile)
-                    }
-            }.onFailure {
-                errorMessage.value = it.toString()
-                logger.logError(it)
-            }.also {
-                requesting.value = false
-                logger.close()
+                    val response = client.requestImageVariation(request)
+                    response.data.mapNotNull { imageData -> imageData.url?.toURL() }
+                        .mapIndexed { index, imageUrl ->
+                            val imageFile = logger.logImage(index, imageUrl)
+                            val image = ImageIO.read(imageFile)
+                            addImage(image.toBitmap(), imageFile)
+                        }
+                }.onFailure {
+                    errorMessage.value = it.toString()
+                    logger.logError(it)
+                }.also {
+                    requesting.value = false
+                    logger.close()
+                }
             }
-        }
     }
 
     fun requestEditImage() {
         val lastJob = currentRequestJob
         lastJob?.cancel()
 
-        currentRequestJob = launch {
-            lastJob?.join()
+        currentRequestJob =
+            launch {
+                lastJob?.join()
 
-            val logger = ImageLogger(appDataDirectory)
-            runCatching {
-                requesting.value = true
+                val logger = ImageLogger(appDataDirectory)
+                runCatching {
+                    requesting.value = true
 
-                val maskFile = logger.logMaskImage(maskImage.value.toMaskImage())
+                    val maskFile = logger.logMaskImage(maskImage.value.toMaskImage())
 
-                val requestImageFile = requireNotNull(activeImage.value).second
-                clearImages()
-                val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
-                val request = OpenAiEditImageRequest(
-                    image = requestImageFile,
-                    mask = maskFile,
-                    prompt = prompt.value,
-                    n = imageProperties.numberOfEdit.value,
-                )
-                logger.logEditImageRequest(request)
+                    val requestImageFile = requireNotNull(activeImage.value).second
+                    clearImages()
+                    val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
+                    val request =
+                        OpenAiEditImageRequest(
+                            image = requestImageFile,
+                            mask = maskFile,
+                            prompt = prompt.value,
+                            n = imageProperties.numberOfEdit.value,
+                        )
+                    logger.logEditImageRequest(request)
 
-                val response = client.requestEditImage(request)
-                response.data.mapNotNull { imageData -> imageData.url?.toURL() }
-                    .mapIndexed { index, imageUrl ->
-                        val imageFile = logger.logImage(index, imageUrl)
-                        val image = ImageIO.read(imageFile)
-                        addImage(image.toBitmap(), imageFile)
-                    }
-            }.onFailure {
-                errorMessage.value = it.toString()
-                logger.logError(it)
-            }.also {
-                requesting.value = false
-                logger.close()
+                    val response = client.requestEditImage(request)
+                    response.data.mapNotNull { imageData -> imageData.url?.toURL() }
+                        .mapIndexed { index, imageUrl ->
+                            val imageFile = logger.logImage(index, imageUrl)
+                            val image = ImageIO.read(imageFile)
+                            addImage(image.toBitmap(), imageFile)
+                        }
+                }.onFailure {
+                    errorMessage.value = it.toString()
+                    logger.logError(it)
+                }.also {
+                    requesting.value = false
+                    logger.close()
+                }
             }
-        }
     }
 
     fun clearMaskImage() {
         maskLines.value = emptyList()
-        maskImage.value = BufferedImage(
-            maskImage.value.width,
-            maskImage.value.height,
-            BufferedImage.TYPE_INT_ARGB,
-        )
+        maskImage.value =
+            BufferedImage(
+                maskImage.value.width,
+                maskImage.value.height,
+                BufferedImage.TYPE_INT_ARGB,
+            )
     }
 
     private fun BufferedImage.toMaskImage(): BufferedImage {
@@ -252,7 +262,10 @@ class ImageViewModel(
         }
     }
 
-    private fun addImage(image: Bitmap, file: File) {
+    private fun addImage(
+        image: Bitmap,
+        file: File,
+    ) {
         val newList = responseImages.value.toMutableList()
         newList.add(image to file)
         responseImages.value = newList

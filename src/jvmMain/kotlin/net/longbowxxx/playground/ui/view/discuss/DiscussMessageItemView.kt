@@ -45,15 +45,19 @@ private const val CONTENT_TEXT = "CONTENT IN ENGLISH"
 @OptIn(ExperimentalMaterial3Api::class)
 @Suppress("FunctionName")
 @Composable
-fun DiscussMessageItemView(index: Int, message: DiscussMessage) {
+fun DiscussMessageItemView(
+    index: Int,
+    message: DiscussMessage,
+) {
     val requesting by remember { discussViewModel.requesting }
     val messageFontSizeSp by remember { appProperties.messageFontSizeSp }
     val chatMessageFileList = discussViewModel.chatMessageFileList
 
     ElevatedCard(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(5.dp, 5.dp, 5.dp, 0.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(5.dp, 5.dp, 5.dp, 0.dp),
     ) {
         Column(
             modifier = Modifier.padding(10.dp),
@@ -86,19 +90,20 @@ fun DiscussMessageItemView(index: Int, message: DiscussMessage) {
                 label = {
                     Text(CONTENT_TEXT)
                 },
-                modifier = Modifier.fillMaxWidth()
-                    .onKeyEvent {
-                        // Alt + Enter を押すと、request
-                        if (it.type == KeyEventType.KeyUp &&
-                            it.key.nativeKeyCode == KeyEvent.VK_ENTER &&
-                            it.isAltPressed
-                        ) {
-                            discussViewModel.requestChat()
-                            true
-                        } else {
-                            false
-                        }
-                    },
+                modifier =
+                    Modifier.fillMaxWidth()
+                        .onKeyEvent {
+                            // Alt + Enter を押すと、request
+                            if (it.type == KeyEventType.KeyUp &&
+                                it.key.nativeKeyCode == KeyEvent.VK_ENTER &&
+                                it.isAltPressed
+                            ) {
+                                discussViewModel.requestChat()
+                                true
+                            } else {
+                                false
+                            }
+                        },
                 readOnly = requesting,
                 textStyle = TextStyle(fontSize = messageFontSizeSp.sp),
             )

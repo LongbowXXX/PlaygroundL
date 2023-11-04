@@ -134,8 +134,7 @@ class DiscussHistory(appDataDir: File, dbFileDir: String = DB_DIR, dbFileName: S
         }
     }
 
-    private fun DiscussMessageData.toSession() =
-        DiscussMessage(author, content)
+    private fun DiscussMessageData.toSession() = DiscussMessage(author, content)
 
     class DiscussHistoryData : RealmObject {
         @PrimaryKey

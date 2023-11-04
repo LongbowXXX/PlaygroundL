@@ -16,7 +16,10 @@ import javax.swing.filechooser.FileNameExtensionFilter
 
 @Suppress("FunctionName")
 @Composable
-fun FileChooseWidget(label: String, onSelected: (String?) -> Unit) {
+fun FileChooseWidget(
+    label: String,
+    onSelected: (String?) -> Unit,
+) {
     TextButton({
         val filePath = showFileChooserDialog()
         onSelected(filePath)

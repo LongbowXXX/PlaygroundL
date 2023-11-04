@@ -57,7 +57,9 @@ fun String.isFunctionAvailable(): Boolean {
 }
 
 fun ofFunctionCallNone() = JsonPrimitive("none")
+
 fun ofFunctionCallAuto() = JsonPrimitive("auto")
+
 fun ofFunctionCallForce(name: String) = JsonObject(mapOf("name" to JsonPrimitive(name)))
 
 @Serializable

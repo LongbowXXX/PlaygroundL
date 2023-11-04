@@ -19,38 +19,41 @@ import java.net.URL
 
 class ReadWebPlugin : ChatFunctionPlugin() {
     override val functionSpec: OpenAiChatFunction
-        get() = OpenAiChatFunction(
-            "read_web_from_url",
-            "read web from URL",
-            OpenAiChatParameter.OpenAiChatParameterObject(
-                mapOf(
-                    "dataUrls" to OpenAiChatProperty(
-                        OpenAiChatProperty.ARRAY_TYPE,
-                        "URLs to read",
-                        null,
-                        OpenAiChatProperty(OpenAiChatProperty.STRING_TYPE),
+        get() =
+            OpenAiChatFunction(
+                "read_web_from_url",
+                "read web from URL",
+                OpenAiChatParameter.OpenAiChatParameterObject(
+                    mapOf(
+                        "dataUrls" to
+                            OpenAiChatProperty(
+                                OpenAiChatProperty.ARRAY_TYPE,
+                                "URLs to read",
+                                null,
+                                OpenAiChatProperty(OpenAiChatProperty.STRING_TYPE),
+                            ),
                     ),
+                    listOf("dataUrls"),
                 ),
-                listOf("dataUrls"),
-            ),
-        )
+            )
 
     override suspend fun executeInternal(arguments: String): String {
         val param = arguments.toParams<ReadWebArgs>()
-        val texts = withContext(Dispatchers.IO) {
-            param.dataUrls.map { urlString ->
-                val url = URL(urlString)
-                val urlConnection = url.openConnection() as HttpURLConnection
+        val texts =
+            withContext(Dispatchers.IO) {
+                param.dataUrls.map { urlString ->
+                    val url = URL(urlString)
+                    val urlConnection = url.openConnection() as HttpURLConnection
 
-                try {
-                    val htmlText = urlConnection.inputStream.bufferedReader().readText()
-                    val planeText = Jsoup.parse(htmlText).text()
-                    urlString to planeText
-                } finally {
-                    urlConnection.disconnect()
+                    try {
+                        val htmlText = urlConnection.inputStream.bufferedReader().readText()
+                        val planeText = Jsoup.parse(htmlText).text()
+                        urlString to planeText
+                    } finally {
+                        urlConnection.disconnect()
+                    }
                 }
             }
-        }
         return ReadWebResponse(
             SUCCESS,
             texts.map {

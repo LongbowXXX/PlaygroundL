@@ -9,7 +9,7 @@ package net.longbowxxx.playground.preference
 
 import java.io.Closeable
 import java.io.File
-import java.util.*
+import java.util.Properties
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 import kotlin.io.encoding.Base64
@@ -24,6 +24,7 @@ abstract class PreferenceBase(
     protected abstract val fileComment: String
 
     abstract fun load()
+
     protected fun loadInternal(block: Properties.() -> Unit) {
         runCatching {
             val file = File(appDataDir, fileName)
@@ -37,6 +38,7 @@ abstract class PreferenceBase(
     }
 
     abstract fun save()
+
     protected fun saveInternal(block: Properties.() -> Unit) {
         properties.block()
         val file = File(appDataDir, fileName)
@@ -45,7 +47,10 @@ abstract class PreferenceBase(
         }
     }
 
-    protected fun Properties.getFloatProperty(key: String, defaultValue: Float): Float {
+    protected fun Properties.getFloatProperty(
+        key: String,
+        defaultValue: Float,
+    ): Float {
         return if (containsKey(key)) {
             getProperty(key).toFloatOrNull() ?: defaultValue
         } else {
@@ -53,7 +58,10 @@ abstract class PreferenceBase(
         }
     }
 
-    protected fun Properties.getIntProperty(key: String, defaultValue: Int): Int {
+    protected fun Properties.getIntProperty(
+        key: String,
+        defaultValue: Int,
+    ): Int {
         return if (containsKey(key)) {
             getProperty(key).toIntOrNull() ?: defaultValue
         } else {
@@ -62,7 +70,10 @@ abstract class PreferenceBase(
     }
 
     @Suppress("SameParameterValue")
-    protected fun Properties.getOrDefaultSecretProperty(key: String, defaultValue: String): String {
+    protected fun Properties.getOrDefaultSecretProperty(
+        key: String,
+        defaultValue: String,
+    ): String {
         return if (containsKey(key)) {
             val encryptedValue = getProperty(key)
             runCatching {
@@ -76,7 +87,10 @@ abstract class PreferenceBase(
     }
 
     @Suppress("SameParameterValue")
-    protected fun Properties.setSecretProperty(key: String, value: String) {
+    protected fun Properties.setSecretProperty(
+        key: String,
+        value: String,
+    ) {
         if (value.isNotEmpty()) {
             val encryptedValue = encrypt(value)
             setProperty(key, encryptedValue)
@@ -86,8 +100,9 @@ abstract class PreferenceBase(
     }
 
     private fun salt(): String {
-        val output = Runtime.getRuntime().exec("wmic baseboard get serialnumber")
-            .inputStream.bufferedReader().readText().trim()
+        val output =
+            Runtime.getRuntime().exec("wmic baseboard get serialnumber")
+                .inputStream.bufferedReader().readText().trim()
         val a = output.substringAfterLast(" ").hashCode()
         val b = System.getProperty("user.dir").hashCode()
         val c = System.getenv("COMPUTERNAME").hashCode()
