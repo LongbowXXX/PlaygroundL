@@ -28,7 +28,7 @@ private const val APP_CATEGORY_TEXT = "APP SETTINGS"
 private const val CHAT_CATEGORY_TEXT = "CHAT SETTINGS"
 private const val IMAGE_CATEGORY_TEXT = "IMAGE SETTINGS"
 private const val APPLICATION_LOGO_TEXT = "APPLICATION LOGO"
-private const val LOGO_DESCRIPTION_TEXT = "Image created by GPT-4 and DALL-E2"
+private const val LOGO_DESCRIPTION_TEXT = "Image created by GPT-4 and DALL-E3"
 
 @Suppress("FunctionName")
 @Composable

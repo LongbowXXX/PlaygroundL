@@ -78,7 +78,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
         }
 
     private val functionLoader = ChatFunctionLoader()
-    val allFunctions = mutableStateOf(functionLoader.loadPlugins(File("chatFunction")).map { it to true })
+    val allFunctions = mutableStateOf(functionLoader.loadPlugins(File("chatFunction")).map { it to false })
     private val activeFunctions: List<ChatFunctionPlugin>
         get() {
             return allFunctions.value.filter { it.second }.map { it.first }
