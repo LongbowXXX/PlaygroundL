@@ -101,7 +101,7 @@ fun MessageItemView(
     }
 }
 
-fun OpenAiChatRoleTypes.toDisplayText(): String {
+private fun OpenAiChatRoleTypes.toDisplayText(): String {
     return when (this) {
         OpenAiChatRoleTypes.USER -> "USER"
         OpenAiChatRoleTypes.ASSISTANT -> "ASSISTANT"

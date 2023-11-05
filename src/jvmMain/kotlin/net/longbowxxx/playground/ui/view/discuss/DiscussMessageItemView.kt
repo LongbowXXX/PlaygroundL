@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -31,6 +34,7 @@ import androidx.compose.ui.input.key.key
 import androidx.compose.ui.input.key.nativeKeyCode
 import androidx.compose.ui.input.key.onKeyEvent
 import androidx.compose.ui.input.key.type
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,11 +58,11 @@ fun DiscussMessageItemView(
     val chatMessageFileList = discussViewModel.chatMessageFileList
 
     ElevatedCard(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(5.dp, 5.dp, 5.dp, 0.dp),
+        Modifier.fillMaxWidth().padding(5.dp),
     ) {
+        val aiChatIcon = painterResource("ai-chat-icon.png")
+        val roleIconModifier = Modifier.width(32.dp).height(32.dp)
+
         Column(
             modifier = Modifier.padding(10.dp),
         ) {
@@ -67,7 +71,17 @@ fun DiscussMessageItemView(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(message.author)
+                Row(
+                    modifier = Modifier.width(150.dp).padding(horizontal = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    when (message.author) {
+                        "0" -> Icon(Icons.Default.Person, null, roleIconModifier)
+                        "1" -> Icon(aiChatIcon, null, roleIconModifier)
+                        else -> error("Invalid type selected.")
+                    }
+                    Text(message.author.toDisplayText())
+                }
 
                 QuickLoadWidget(chatMessageFileList) {
                     val newContent = it.readText(Charsets.UTF_8)
@@ -108,5 +122,13 @@ fun DiscussMessageItemView(
                 textStyle = TextStyle(fontSize = messageFontSizeSp.sp),
             )
         }
+    }
+}
+
+private fun String.toDisplayText(): String {
+    return when (this) {
+        "0" -> "USER"
+        "1" -> "ASSISTANT"
+        else -> error("Invalid type selected.")
     }
 }
