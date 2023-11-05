@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -24,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
@@ -38,12 +42,10 @@ fun MessageItemView(
 ) {
     val requesting by remember { chatViewModel.requesting }
     val chatMessageFileList = chatViewModel.chatMessageFileList
-
+    val aiChatIcon = painterResource("ai-chat-icon.png")
+    val roleIconModifier = Modifier.width(32.dp).height(32.dp)
     ElevatedCard(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(5.dp, 5.dp, 5.dp, 5.dp),
+        Modifier.fillMaxWidth().padding(5.dp),
     ) {
         Column {
             Row(
@@ -51,7 +53,18 @@ fun MessageItemView(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(message.role.toDisplayText(), modifier = Modifier.width(150.dp).padding(horizontal = 10.dp))
+                Row(
+                    modifier = Modifier.width(150.dp).padding(horizontal = 10.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    when (message.role) {
+                        OpenAiChatRoleTypes.USER -> Icon(Icons.Default.Person, null, roleIconModifier)
+                        OpenAiChatRoleTypes.ASSISTANT -> Icon(aiChatIcon, null, roleIconModifier)
+                        OpenAiChatRoleTypes.FUNCTION -> Icon(Icons.Default.Settings, null, roleIconModifier)
+                        OpenAiChatRoleTypes.SYSTEM -> error("Invalid type SYSTEM selected.")
+                    }
+                    Text(message.role.toDisplayText())
+                }
 
                 Text(
                     message.name.orEmpty(),

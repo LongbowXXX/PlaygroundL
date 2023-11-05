@@ -27,10 +27,9 @@ fun MessageFunctionCallView(functionCall: OpenAiChatFunctionCallMessage) {
         """
         ## FunctionCall
         ### name:
-        ${functionCall.name}functionCall.name}
-        ### arguments:
-        ${functionCall.arguments}functionCall.arguments}
-        """.trimIndent()
+        ${functionCall.name}
+        ### arguments:        
+        """.trimIndent() + functionCall.arguments
 
     val messageFontSizeSp by remember { appProperties.messageFontSizeSp }
     TextField(
