@@ -33,7 +33,10 @@ import net.longbowxxx.playground.viewmodel.discussViewModel
 
 @Suppress("FunctionName")
 @Composable
-fun DiscussHistorySelectorWidget(buttonText: String, onSelected: (DiscussHistory.DiscussHistorySession) -> Unit) {
+fun DiscussHistorySelectorWidget(
+    buttonText: String,
+    onSelected: (DiscussHistory.DiscussHistorySession) -> Unit,
+) {
     var showModelDropdown by remember { mutableStateOf(false) }
     val chatHistory by remember { discussViewModel.history }
     val requesting by remember { discussViewModel.requesting }

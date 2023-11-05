@@ -1,6 +1,14 @@
 PlaygroundL Change Log
 ===
 
+## [1.7.0]
+### Changed
+- Change UI design.
+- Change application data directory to Windows-AppData.
+- Update Palm2 SDK beta2 to beta3.
+### Fixed
+- Fixed a problem when not using any functions.
+
 ## [1.6.0]
 ### Added
 - Google Custom Search Function

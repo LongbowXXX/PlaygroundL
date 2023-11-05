@@ -11,23 +11,38 @@ import java.io.PrintStream
 
 interface DebugLoggable
 
-fun DebugLoggable.logTrace(throwable: Throwable? = null, lazyMessage: () -> String) {
+fun DebugLoggable.logTrace(
+    throwable: Throwable? = null,
+    lazyMessage: () -> String,
+) {
     log(DebugLogLevel.TRACE, this.javaClass.simpleName, throwable, lazyMessage)
 }
 
-fun DebugLoggable.logDebug(throwable: Throwable? = null, lazyMessage: () -> String) {
+fun DebugLoggable.logDebug(
+    throwable: Throwable? = null,
+    lazyMessage: () -> String,
+) {
     log(DebugLogLevel.DEBUG, this.javaClass.simpleName, throwable, lazyMessage)
 }
 
-fun DebugLoggable.logInfo(throwable: Throwable? = null, lazyMessage: () -> String) {
+fun DebugLoggable.logInfo(
+    throwable: Throwable? = null,
+    lazyMessage: () -> String,
+) {
     log(DebugLogLevel.INFO, this.javaClass.simpleName, throwable, lazyMessage)
 }
 
-fun DebugLoggable.logWarn(throwable: Throwable? = null, lazyMessage: () -> String) {
+fun DebugLoggable.logWarn(
+    throwable: Throwable? = null,
+    lazyMessage: () -> String,
+) {
     log(DebugLogLevel.WARN, this.javaClass.simpleName, throwable, lazyMessage)
 }
 
-fun DebugLoggable.logError(throwable: Throwable? = null, lazyMessage: () -> String) {
+fun DebugLoggable.logError(
+    throwable: Throwable? = null,
+    lazyMessage: () -> String,
+) {
     log(DebugLogLevel.ERROR, this.javaClass.simpleName, throwable, lazyMessage)
 }
 
@@ -43,15 +58,21 @@ enum class DebugLogLevel {
     ERROR,
 }
 
-fun log(level: DebugLogLevel, component: String, throwable: Throwable? = null, lazyMessage: () -> String) {
+fun log(
+    level: DebugLogLevel,
+    component: String,
+    throwable: Throwable? = null,
+    lazyMessage: () -> String,
+) {
     if (level.ordinal < debugLogOutputLevel.ordinal) {
         return
     }
-    val out = if (level.ordinal >= DebugLogLevel.WARN.ordinal) {
-        debugLogErrorOut
-    } else {
-        debugLogOut
-    }
+    val out =
+        if (level.ordinal >= DebugLogLevel.WARN.ordinal) {
+            debugLogErrorOut
+        } else {
+            debugLogOut
+        }
     if (throwable != null) {
         out?.println("[$component] ${lazyMessage()}, throwable=$throwable, trance=${throwable.stackTraceToString()}")
     } else {

@@ -19,7 +19,11 @@ import net.longbowxxx.playground.viewmodel.AudioViewModel
 
 @Suppress("FunctionName")
 @Composable
-fun AudioTransWidget(audioViewModel: AudioViewModel, isTranscription: Boolean, onResult: (String) -> Unit) {
+fun AudioTransWidget(
+    audioViewModel: AudioViewModel,
+    isTranscription: Boolean,
+    onResult: (String) -> Unit,
+) {
     var transText by remember { audioViewModel.transText }
     val micImage = painterResource("mic-icon.png")
     val audioState by remember { audioViewModel.state }
@@ -36,11 +40,12 @@ fun AudioTransWidget(audioViewModel: AudioViewModel, isTranscription: Boolean, o
         },
         enabled = audioState != AudioViewModel.State.REQUESTING && micAvailable,
     ) {
-        val color = when (audioState) {
-            AudioViewModel.State.STOPPED -> MaterialTheme.colorScheme.primary
-            AudioViewModel.State.RECORDING -> MaterialTheme.colorScheme.error
-            AudioViewModel.State.REQUESTING -> MaterialTheme.colorScheme.primary
-        }
+        val color =
+            when (audioState) {
+                AudioViewModel.State.STOPPED -> MaterialTheme.colorScheme.primary
+                AudioViewModel.State.RECORDING -> MaterialTheme.colorScheme.error
+                AudioViewModel.State.REQUESTING -> MaterialTheme.colorScheme.primary
+            }
 
         Icon(micImage, null, tint = color)
     }

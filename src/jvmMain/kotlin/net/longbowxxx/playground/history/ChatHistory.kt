@@ -164,13 +164,15 @@ class ChatHistory(appDataDir: File, dbFileDir: String = DB_DIR, dbFileName: Stri
     }
 
     private fun OpenAiChatRoleTypes.toInt(): Int = this.ordinal
+
     private fun Int.toOpenAiChatRoleTypes(): OpenAiChatRoleTypes = OpenAiChatRoleTypes.values()[this]
 
     private fun ChatFunctionCallData.toOpenAiChatFunctionCall(): OpenAiChatFunctionCallMessage =
         OpenAiChatFunctionCallMessage(name, arguments)
 
-    private fun OpenAiChatFunctionCallMessage.toChatFunctionCallData() = ChatFunctionCallData().apply {
-        name = this@toChatFunctionCallData.name
-        arguments = this@toChatFunctionCallData.arguments
-    }
+    private fun OpenAiChatFunctionCallMessage.toChatFunctionCallData() =
+        ChatFunctionCallData().apply {
+            name = this@toChatFunctionCallData.name
+            arguments = this@toChatFunctionCallData.arguments
+        }
 }

@@ -33,7 +33,10 @@ import net.longbowxxx.playground.viewmodel.chatViewModel
 
 @Suppress("FunctionName")
 @Composable
-fun ChatHistorySelectorWidget(buttonText: String, onSelected: (ChatHistory.ChatHistorySession) -> Unit) {
+fun ChatHistorySelectorWidget(
+    buttonText: String,
+    onSelected: (ChatHistory.ChatHistorySession) -> Unit,
+) {
     var showModelDropdown by remember { mutableStateOf(false) }
     val chatHistory by remember { chatViewModel.history }
     val requesting by remember { chatViewModel.requesting }

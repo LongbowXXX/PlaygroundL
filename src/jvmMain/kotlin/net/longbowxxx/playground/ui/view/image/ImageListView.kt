@@ -47,8 +47,9 @@ fun ColumnScope.ImageListView() {
         modifier = Modifier.weight(0.5f).fillMaxWidth(),
     ) {
         LazyRow(
-            modifier = Modifier.padding(10.dp)
-                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp)),
+            modifier =
+                Modifier.padding(10.dp)
+                    .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp)),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             state = listState,
         ) {

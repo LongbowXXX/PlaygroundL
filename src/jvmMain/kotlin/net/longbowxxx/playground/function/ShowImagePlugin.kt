@@ -29,16 +29,17 @@ import javax.imageio.ImageIO
 
 class ShowImagePlugin : ChatFunctionPlugin() {
     override val functionSpec: OpenAiChatFunction
-        get() = OpenAiChatFunction(
-            "show_image",
-            "show image",
-            OpenAiChatParameter.OpenAiChatParameterObject(
-                mapOf(
-                    "image_uri" to OpenAiChatProperty("string", "URI to show"),
+        get() =
+            OpenAiChatFunction(
+                "show_image",
+                "show image",
+                OpenAiChatParameter.OpenAiChatParameterObject(
+                    mapOf(
+                        "image_uri" to OpenAiChatProperty("string", "URI to show"),
+                    ),
+                    listOf("image_uri"),
                 ),
-                listOf("image_uri"),
-            ),
-        )
+            )
 
     override suspend fun executeInternal(arguments: String): String {
         return withContext(Dispatchers.IO) {

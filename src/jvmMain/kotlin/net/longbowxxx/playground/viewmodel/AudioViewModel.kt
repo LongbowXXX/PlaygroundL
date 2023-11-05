@@ -44,28 +44,31 @@ class AudioViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Co
 
         lastTransJob?.cancel()
 
-        transJob = launch {
-            lastTransJob?.join()
-            state.value = State.RECORDING
-            runCatching {
-                val audioData = recorder.recordAudio()
-                state.value = State.REQUESTING
+        transJob =
+            launch {
+                lastTransJob?.join()
+                state.value = State.RECORDING
+                runCatching {
+                    val audioData = recorder.recordAudio()
+                    state.value = State.REQUESTING
 
-                val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
-                val request = OpenAiAudioRequest(
-                    audioData,
-                )
-                val response = when (isTranscription) {
-                    true -> client.requestAudioTranscription(request)
-                    false -> client.requestAudioTranslation(request)
+                    val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
+                    val request =
+                        OpenAiAudioRequest(
+                            audioData,
+                        )
+                    val response =
+                        when (isTranscription) {
+                            true -> client.requestAudioTranscription(request)
+                            false -> client.requestAudioTranslation(request)
+                        }
+
+                    transText.value = (response as OpenAiAudioResponse.Json).text
+                }.also {
+                    recorder.stopRecord()
+                    state.value = State.STOPPED
                 }
-
-                transText.value = (response as OpenAiAudioResponse.Json).text
-            }.also {
-                recorder.stopRecord()
-                state.value = State.STOPPED
             }
-        }
     }
 
     fun stopRecording() {

@@ -23,13 +23,13 @@ import net.longbowxxx.playground.viewmodel.appProperties
 @Suppress("FunctionName")
 @Composable
 fun MessageFunctionCallView(functionCall: OpenAiChatFunctionCallMessage) {
-    val content = """
-## FunctionCall
-### name:
-${functionCall.name}
-### arguments:
-${functionCall.arguments}
-    """.trimIndent()
+    val content =
+        """
+        ## FunctionCall
+        ### name:
+        ${functionCall.name}
+        ### arguments:        
+        """.trimIndent() + functionCall.arguments
 
     val messageFontSizeSp by remember { appProperties.messageFontSizeSp }
     TextField(

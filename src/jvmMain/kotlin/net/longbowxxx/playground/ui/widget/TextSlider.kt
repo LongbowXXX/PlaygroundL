@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import kotlin.math.roundToInt
 
+@Suppress("FunctionName")
 @Composable
 fun TextSlider(
     title: String,

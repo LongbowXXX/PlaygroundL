@@ -25,16 +25,9 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 [Google generative AI](https://developers.generativeai.google/) で、waitlist に登録し、利用権を得たら [API Key を発行](https://developers.generativeai.google/products/palm)してください。  
 
 # ファイルの説明
+## Exe のあるディレクトリ
 - PlaygroundL.exe    
   アプリ起動するための exe ファイル。  
-- playgroundApp.properties  
-  アプリの設定ファイル。アプリにより自動生成されます。  
-- chat.properties  
-  CHAT (Open AI) 関連の設定ファイル。アプリにより自動生成されます。
-- discuss.properties  
-  DISCUSS (Google generative AI) 関連の設定ファイル。アプリにより自動生成されます。
-- image.properties  
-  IMAGE 関連の設定ファイル。アプリにより自動生成されます。
 - chatPrompt ディレクトリ  
   プロンプトのサンプルです。  
   ここに置かれたファイルは CHAT SYSTEM の QUICK LOAD から呼び出せます。  
@@ -44,6 +37,17 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 - chatFunction ディレクトリ
   function 定義のサンプルです。
   ここで置かれたファイルに定義された function は CHAT から呼び出されます。
+
+## AppData ディレクトリ
+`<UserDir>/AppData/Roaming/PlaygroundL` にアプリの設定データ作成されます。  
+- playgroundApp.properties  
+  アプリの設定ファイル。アプリにより自動生成されます。
+- chat.properties  
+  CHAT (Open AI) 関連の設定ファイル。アプリにより自動生成されます。
+- discuss.properties  
+  DISCUSS (Google generative AI) 関連の設定ファイル。アプリにより自動生成されます。
+- image.properties  
+  IMAGE 関連の設定ファイル。アプリにより自動生成されます。
 - db ディレクトリ  
   アプリが利用する DataBase ファイル。アプリにより自動生成されます。
 - log ディレクトリ  

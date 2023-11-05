@@ -7,7 +7,7 @@
 
 package net.longbowxxx.playground.utils
 
-import java.util.*
+import java.util.UUID
 
 fun randomShortId(): String {
     return UUID.randomUUID().toString().substring(0, 8)

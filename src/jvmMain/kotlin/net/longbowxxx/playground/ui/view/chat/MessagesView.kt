@@ -55,8 +55,9 @@ fun ColumnScope.MessagesView() {
     val lastMessageSize = messages.lastOrNull()?.content?.length ?: 0
 
     LazyColumn(
-        modifier = Modifier.weight(1f).padding(10.dp)
-            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp)),
+        modifier =
+            Modifier.weight(1f).padding(10.dp)
+                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp)),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         state = listState,
     ) {
@@ -104,10 +105,11 @@ fun ColumnScope.MessagesView() {
                         chatViewModel.requestChat()
                     }
                 },
-                colors = when (requesting) {
-                    true -> tertiaryButtonColors()
-                    false -> ButtonDefaults.buttonColors()
-                },
+                colors =
+                    when (requesting) {
+                        true -> tertiaryButtonColors()
+                        false -> ButtonDefaults.buttonColors()
+                    },
             ) {
                 if (requesting) {
                     Text(CANCEL_TEXT)

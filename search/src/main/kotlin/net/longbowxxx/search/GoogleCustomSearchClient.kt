@@ -22,18 +22,20 @@ class GoogleCustomSearchClient(
             val httpTransport = GoogleNetHttpTransport.newTrustedTransport()
             val jsonFactory = GsonFactory.getDefaultInstance()
 
-            val customsearch = CustomSearchAPI.Builder(httpTransport, jsonFactory, null)
-                // .setApplicationName("TestProject")
-                .build()
+            val customsearch =
+                CustomSearchAPI.Builder(httpTransport, jsonFactory, null)
+                    // .setApplicationName("TestProject")
+                    .build()
 
             val list = customsearch.cse().list().setCx(settings.cx).setKey(settings.apiKey).setQ(request.text).execute().items
-            val results = list.map {
-                SearchResult(
-                    it.link,
-                    it.title,
-                    it.snippet,
-                )
-            }
+            val results =
+                list.map {
+                    SearchResult(
+                        it.link,
+                        it.title,
+                        it.snippet,
+                    )
+                }
             SearchResponse((results))
         }.also {
             logSearchResponse { "search() : response=$it" }

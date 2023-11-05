@@ -11,8 +11,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.google.api-client:google-api-client:${property("google.api.client")}")
-    implementation("com.google.apis:google-api-services-customsearch:${property("google.services.customsearch")}")
+    implementation("com.google.api-client:google-api-client:${property("google.api.client.version")}")
+    implementation("com.google.apis:google-api-services-customsearch:${property("google.services.customsearch.version")}")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlinx.coroutine.core.version")}")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testImplementation("org.junit.jupiter:junit-jupiter")

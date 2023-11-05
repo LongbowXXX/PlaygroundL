@@ -20,28 +20,31 @@ import net.longbowxxx.search.SearchRequest
 
 class WebSearchPlugin : ChatFunctionPlugin() {
     override val functionSpec: OpenAiChatFunction
-        get() = OpenAiChatFunction(
-            "search_web",
-            "search for information from the web",
-            OpenAiChatParameter.OpenAiChatParameterObject(
-                mapOf(
-                    "query" to OpenAiChatProperty("string", "query for search"),
+        get() =
+            OpenAiChatFunction(
+                "search_web",
+                "search for information from the web",
+                OpenAiChatParameter.OpenAiChatParameterObject(
+                    mapOf(
+                        "query" to OpenAiChatProperty("string", "query for search"),
+                    ),
+                    listOf("query"),
                 ),
-                listOf("query"),
-            ),
-        )
+            )
 
     override suspend fun executeInternal(arguments: String): String {
         val param = arguments.toParams<WebSearchArgs>()
-        val searchResult = withContext(Dispatchers.IO) {
-            val client = SearchClient(
-                GoogleCustomSearchClientSettings(
-                    appProperties.googleApiKey,
-                    appProperties.googleCustomSearchCx,
-                ),
-            )
-            client.search(SearchRequest(param.query))
-        }
+        val searchResult =
+            withContext(Dispatchers.IO) {
+                val client =
+                    SearchClient(
+                        GoogleCustomSearchClientSettings(
+                            appProperties.googleApiKey,
+                            appProperties.googleCustomSearchCx,
+                        ),
+                    )
+                client.search(SearchRequest(param.query))
+            }
         return WebSearchResponse(
             SUCCESS,
             searchResult.results.map {

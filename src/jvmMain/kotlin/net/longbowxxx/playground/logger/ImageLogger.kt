@@ -20,7 +20,6 @@ class ImageLogger(
     appDataDir: File,
     logCategory: String = IMAGE_LOG,
 ) : LoggerBase(appDataDir, logCategory) {
-
     companion object {
         const val IMAGE_LOG = "image"
         private const val MASK_FILE_NAME = "mask.png"
@@ -63,7 +62,10 @@ class ImageLogger(
         }
     }
 
-    suspend fun logImage(index: Int, imageUrl: URL): File {
+    suspend fun logImage(
+        index: Int,
+        imageUrl: URL,
+    ): File {
         return writeLog {
             if (index == 0) {
                 write("# Response\n")

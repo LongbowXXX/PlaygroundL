@@ -20,28 +20,30 @@ import java.io.File
 
 class SaveStringToFileFunctionPlugin : ChatFunctionPlugin() {
     override val functionSpec: OpenAiChatFunction
-        get() = OpenAiChatFunction(
-            "save_string_to_file",
-            "save string data to a file",
-            OpenAiChatParameter.OpenAiChatParameterObject(
-                mapOf(
-                    "file_name" to OpenAiChatProperty("string", "File name to save data"),
-                    "data" to OpenAiChatProperty("string", "Data to save to file"),
+        get() =
+            OpenAiChatFunction(
+                "save_string_to_file",
+                "save string data to a file",
+                OpenAiChatParameter.OpenAiChatParameterObject(
+                    mapOf(
+                        "file_name" to OpenAiChatProperty("string", "File name to save data"),
+                        "data" to OpenAiChatProperty("string", "Data to save to file"),
+                    ),
+                    listOf("file_name", "data"),
                 ),
-                listOf("file_name", "data"),
-            ),
-        )
+            )
 
     override suspend fun executeInternal(arguments: String): String {
         val param = arguments.toParams<SaveStringToFileArgs>()
-        val file = withContext(Dispatchers.IO) {
-            val shortId = randomShortId()
-            File("log/save", "${param.fileName}-$shortId").also {
-                logTrace { "save to file. ${it.absolutePath}" }
-            }.apply {
-                writeText(param.data, Charsets.UTF_8)
+        val file =
+            withContext(Dispatchers.IO) {
+                val shortId = randomShortId()
+                File("log/save", "${param.fileName}-$shortId").also {
+                    logTrace { "save to file. ${it.absolutePath}" }
+                }.apply {
+                    writeText(param.data, Charsets.UTF_8)
+                }
             }
-        }
         return SaveStringToFileResponse(SUCCESS, file.toURI().toASCIIString()).toResponseStr()
     }
 }

@@ -17,7 +17,6 @@ class DiscussLogger(
     appDataDir: File,
     logCategory: String = DISCUSS_LOG,
 ) : LoggerBase(appDataDir, logCategory) {
-
     companion object {
         const val DISCUSS_LOG = "discuss"
     }

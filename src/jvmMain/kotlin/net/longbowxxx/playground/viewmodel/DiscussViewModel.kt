@@ -41,9 +41,10 @@ class DiscussViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : 
     val errorMessage = mutableStateOf("")
     val requesting = mutableStateOf(false)
     val history = mutableStateOf<List<DiscussHistory.DiscussHistorySession>>(emptyList())
-    val models = listOf(
-        DISCUSS_MODEL,
-    )
+    val models =
+        listOf(
+            DISCUSS_MODEL,
+        )
     private var currentChatSession = DiscussHistory.DiscussHistorySession()
 
     val chatPromptFileList: List<File>
@@ -75,7 +76,10 @@ class DiscussViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : 
         }
     }
 
-    fun updateMessage(index: Int, message: DiscussMessage) {
+    fun updateMessage(
+        index: Int,
+        message: DiscussMessage,
+    ) {
         val newList = mutableListOf<DiscussMessage>()
         newList.addAll(messages.value)
         require(index < newList.size)
@@ -92,7 +96,10 @@ class DiscussViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : 
         currentChatSession.messages = newList
     }
 
-    fun addMessage(author: String, content: String = ""): Int {
+    fun addMessage(
+        author: String,
+        content: String = "",
+    ): Int {
         val newList = mutableListOf<DiscussMessage>()
         newList.addAll(messages.value)
         newList.add(DiscussMessage(author, content))
@@ -113,48 +120,51 @@ class DiscussViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : 
     fun requestChat() {
         val lastJob = currentRequestJob
         lastJob?.cancel()
-        currentRequestJob = launch {
-            lastJob?.join()
-            // 古いエラーを消す
-            errorMessage.value = ""
+        currentRequestJob =
+            launch {
+                lastJob?.join()
+                // 古いエラーを消す
+                errorMessage.value = ""
 
-            val currentModel = discussProperties.discussModel.value
-            requesting.value = true
-            val session = currentChatSession
-            val logger = DiscussLogger(appDataDirectory)
-            runCatching {
-                val request = DiscussRequest(
-                    currentModel,
-                    prompt = DiscussPrompt(
-                        messages.value,
-                        examples = emptyList(),
-                        context = discussProperties.discussContext.value,
-                    ),
-                    temperature = discussProperties.discussTemperature.value,
-                    candidateCount = 1,
-                )
-                val client = GenerativeAiClient(GenerativeAiSettings(appProperties.palmApiKey))
-                val response = client.requestDiscuss(request)
-                val newMessage = response.candidates.first()
-                addMessage(newMessage.author, newMessage.content)
+                val currentModel = discussProperties.discussModel.value
+                requesting.value = true
+                val session = currentChatSession
+                val logger = DiscussLogger(appDataDirectory)
+                runCatching {
+                    val request =
+                        DiscussRequest(
+                            currentModel,
+                            prompt =
+                                DiscussPrompt(
+                                    messages.value,
+                                    examples = emptyList(),
+                                    context = discussProperties.discussContext.value,
+                                ),
+                            temperature = discussProperties.discussTemperature.value,
+                            candidateCount = 1,
+                        )
+                    val client = GenerativeAiClient(GenerativeAiSettings(appProperties.palmApiKey))
+                    val response = client.requestDiscuss(request)
+                    val newMessage = response.candidates.first()
+                    addMessage(newMessage.author, newMessage.content)
 
-                val latestMessages = messages.value
-                session.messages = latestMessages
-                logger.logRequest(request)
-                logger.logMessages(latestMessages)
-                launch {
-                    updateDiscussSessionTitle(latestMessages, session)
+                    val latestMessages = messages.value
+                    session.messages = latestMessages
+                    logger.logRequest(request)
+                    logger.logMessages(latestMessages)
+                    launch {
+                        updateDiscussSessionTitle(latestMessages, session)
+                    }
+                    // レスポンスが終わったら、次の入力用のメッセージ追加
+                    addMessage(USER_AUTHOR)
+                }.onFailure {
+                    errorMessage.value = it.message ?: it.toString()
+                    logger.logError(it)
+                }.also {
+                    logger.close()
+                    requesting.value = false
                 }
-                // レスポンスが終わったら、次の入力用のメッセージ追加
-                addMessage(USER_AUTHOR)
-            }.onFailure {
-                errorMessage.value = it.message ?: it.toString()
-                logger.logError(it)
-            }.also {
-                logger.close()
-                requesting.value = false
             }
-        }
     }
 
     fun restoreOldSession(session: DiscussHistory.DiscussHistorySession) {

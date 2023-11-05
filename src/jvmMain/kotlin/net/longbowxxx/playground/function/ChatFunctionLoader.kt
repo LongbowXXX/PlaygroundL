@@ -12,21 +12,23 @@ import net.longbowxxx.playground.utils.logInfo
 import java.io.File
 
 class ChatFunctionLoader : DebugLoggable {
-    private val nativePlugins = listOf(
-        SaveStringToFileFunctionPlugin(),
-        CreateImageFunctionPlugin(),
-        ShowImagePlugin(),
-        WebSearchPlugin(),
-        ReadDataPlugin(),
-        ReadWebPlugin(),
-    )
+    private val nativePlugins =
+        listOf(
+            SaveStringToFileFunctionPlugin(),
+            CreateImageFunctionPlugin(),
+            ShowImagePlugin(),
+            WebSearchPlugin(),
+            ReadDataPlugin(),
+            ReadWebPlugin(),
+        )
 
     fun loadPlugins(directory: File): List<ChatFunctionPlugin> {
-        val allPlugins = directory.walkTopDown().filter {
-            it.isDirectory
-        }.mapNotNull { pluginDirectory ->
-            loadPlugin(pluginDirectory)
-        }.toMutableList()
+        val allPlugins =
+            directory.walkTopDown().filter {
+                it.isDirectory
+            }.mapNotNull { pluginDirectory ->
+                loadPlugin(pluginDirectory)
+            }.toMutableList()
         allPlugins.addAll(
             nativePlugins,
         )

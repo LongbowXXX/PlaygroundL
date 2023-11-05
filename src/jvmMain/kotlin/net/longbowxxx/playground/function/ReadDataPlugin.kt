@@ -18,31 +18,34 @@ import java.net.URI
 
 class ReadDataPlugin : ChatFunctionPlugin() {
     override val functionSpec: OpenAiChatFunction
-        get() = OpenAiChatFunction(
-            "read_data_from_uri",
-            "read data from URI",
-            OpenAiChatParameter.OpenAiChatParameterObject(
-                mapOf(
-                    "dataUris" to OpenAiChatProperty(
-                        OpenAiChatProperty.ARRAY_TYPE,
-                        "URIs to read",
-                        null,
-                        OpenAiChatProperty(OpenAiChatProperty.STRING_TYPE),
+        get() =
+            OpenAiChatFunction(
+                "read_data_from_uri",
+                "read data from URI",
+                OpenAiChatParameter.OpenAiChatParameterObject(
+                    mapOf(
+                        "dataUris" to
+                            OpenAiChatProperty(
+                                OpenAiChatProperty.ARRAY_TYPE,
+                                "URIs to read",
+                                null,
+                                OpenAiChatProperty(OpenAiChatProperty.STRING_TYPE),
+                            ),
                     ),
+                    listOf("dataUris"),
                 ),
-                listOf("dataUris"),
-            ),
-        )
+            )
 
     override suspend fun executeInternal(arguments: String): String {
         val param = arguments.toParams<ReadDataArgs>()
-        val texts = withContext(Dispatchers.IO) {
-            param.dataUris.map { uriString ->
-                File(URI(uriString)).readText(Charsets.UTF_8).let { text ->
-                    uriString to text
+        val texts =
+            withContext(Dispatchers.IO) {
+                param.dataUris.map { uriString ->
+                    File(URI(uriString)).readText(Charsets.UTF_8).let { text ->
+                        uriString to text
+                    }
                 }
             }
-        }
         return ReadDataResponse(
             SUCCESS,
             texts.map {

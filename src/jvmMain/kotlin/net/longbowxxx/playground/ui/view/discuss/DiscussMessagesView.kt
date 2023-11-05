@@ -49,8 +49,9 @@ fun ColumnScope.DiscussMessagesView() {
     val lastMessageSize = messages.lastOrNull()?.content?.length ?: 0
 
     LazyColumn(
-        modifier = Modifier.weight(1f).padding(10.dp)
-            .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp)),
+        modifier =
+            Modifier.weight(1f).padding(10.dp)
+                .background(MaterialTheme.colorScheme.primaryContainer, RoundedCornerShape(10.dp)),
         verticalArrangement = Arrangement.spacedBy(4.dp),
         state = listState,
     ) {

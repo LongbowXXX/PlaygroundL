@@ -50,10 +50,11 @@ private const val TITLE_TEXT = "PLAYGROUND"
 @Preview
 fun ApplicationScope.PlaygroundWindow() {
     var selectedTabName by remember { mutableStateOf("") }
-    val windowState = rememberWindowState(
-        position = WindowPosition(appProperties.windowLeft.dp, appProperties.windowTop.dp),
-        size = DpSize(appProperties.windowWidth.dp, appProperties.windowHeight.dp),
-    )
+    val windowState =
+        rememberWindowState(
+            position = WindowPosition(appProperties.windowLeft.dp, appProperties.windowTop.dp),
+            size = DpSize(appProperties.windowWidth.dp, appProperties.windowHeight.dp),
+        )
 
     Window(
         onCloseRequest = {
@@ -93,12 +94,13 @@ fun PlaygroundScreen(onTabSelected: (String) -> Unit) {
         ) {
             // padding は bottomBar を考慮
             Column(
-                modifier = Modifier.padding(
-                    10.dp,
-                    10.dp,
-                    10.dp,
-                    76.dp,
-                ).fillMaxSize(),
+                modifier =
+                    Modifier.padding(
+                        10.dp,
+                        10.dp,
+                        10.dp,
+                        76.dp,
+                    ).fillMaxSize(),
             ) {
                 onTabSelected(selectedTab.toTabName())
                 when (selectedTab) {

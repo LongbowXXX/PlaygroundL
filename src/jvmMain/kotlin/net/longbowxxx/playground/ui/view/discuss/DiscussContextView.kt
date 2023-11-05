@@ -69,10 +69,11 @@ fun ColumnScope.DiscussContextView() {
         label = {
             Text(CONTEXT_LABEL_TEXT)
         },
-        modifier = Modifier.fillMaxWidth()
-            .verticalScroll(verticalScrollState)
-            .weight(1f)
-            .padding(10.dp),
+        modifier =
+            Modifier.fillMaxWidth()
+                .verticalScroll(verticalScrollState)
+                .weight(1f)
+                .padding(10.dp),
         readOnly = requesting,
         textStyle = TextStyle(fontSize = messageFontSizeSp.sp),
     )

@@ -9,12 +9,12 @@ package net.longbowxxx.playground.ui.widget
 
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -31,61 +31,73 @@ private const val DISCUSS_TEXT = "DISCUSS"
 private const val IMAGE_TEXT = "IMAGE"
 private const val SETTINGS_TEXT = "SETTINGS"
 
-private val bottomItems = listOf(
-    CHAT_TEXT,
-    DISCUSS_TEXT,
-    IMAGE_TEXT,
-    SETTINGS_TEXT,
-)
+private val bottomItems =
+    listOf(
+        CHAT_TEXT,
+        DISCUSS_TEXT,
+        IMAGE_TEXT,
+        SETTINGS_TEXT,
+    )
 
-fun Int.toTabName() = when (this) {
-    0 -> CHAT_TEXT
-    1 -> DISCUSS_TEXT
-    2 -> IMAGE_TEXT
-    3 -> SETTINGS_TEXT
-    else -> error("Unknown Tab Index $this")
-}
+fun Int.toTabName() =
+    when (this) {
+        0 -> CHAT_TEXT
+        1 -> DISCUSS_TEXT
+        2 -> IMAGE_TEXT
+        3 -> SETTINGS_TEXT
+        else -> error("Unknown Tab Index $this")
+    }
 
 @Suppress("FunctionName")
 @Composable
-fun BottomBar(selectedTab: Int, onSelected: (Int) -> Unit) {
+fun BottomBar(
+    selectedTab: Int,
+    onSelected: (Int) -> Unit,
+) {
     val aiChatIcon = painterResource("ai-chat-icon.png")
-    val size48 = Modifier.width(48.dp).height(48.dp)
-    BottomAppBar {
+    val iconModifier = Modifier.width(32.dp).height(32.dp)
+    NavigationBar {
         bottomItems.forEachIndexed { index, item ->
-            BottomNavigationItem(
+            val selectedItem = selectedTab == index
+            NavigationBarItem(
                 icon = {
                     when (item) {
-                        CHAT_TEXT -> Icon(
-                            painter = aiChatIcon,
-                            contentDescription = item,
-                            modifier = size48,
-                        )
+                        CHAT_TEXT ->
+                            Icon(
+                                painter = aiChatIcon,
+                                contentDescription = item,
+                                modifier = iconModifier,
+                            )
 
-                        DISCUSS_TEXT -> Icon(
-                            painter = aiChatIcon,
-                            contentDescription = item,
-                            modifier = size48,
-                        )
+                        DISCUSS_TEXT ->
+                            Icon(
+                                painter = aiChatIcon,
+                                contentDescription = item,
+                                modifier = iconModifier,
+                            )
 
-                        IMAGE_TEXT -> Icon(
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = item,
-                            modifier = size48,
-                        )
+                        IMAGE_TEXT ->
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = item,
+                                modifier = iconModifier,
+                            )
 
-                        SETTINGS_TEXT -> Icon(
-                            imageVector = Icons.Default.Settings,
-                            contentDescription = item,
-                            modifier = size48,
-                        )
+                        SETTINGS_TEXT ->
+                            Icon(
+                                imageVector = Icons.Default.Settings,
+                                contentDescription = item,
+                                modifier = iconModifier,
+                            )
                     }
                 },
-                selected = selectedTab == index,
+                selected = selectedItem,
                 onClick = {
                     onSelected(index)
                 },
-                label = { Text(item) },
+                label = {
+                    Text(item)
+                },
             )
         }
     }

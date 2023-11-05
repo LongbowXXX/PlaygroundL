@@ -27,7 +27,10 @@ private const val QUICK_LOAD_TEXT = "QUICK LOAD…"
 
 @Suppress("FunctionName")
 @Composable
-fun QuickLoadWidget(fileList: List<File>, onSelected: (file: File) -> Unit) {
+fun QuickLoadWidget(
+    fileList: List<File>,
+    onSelected: (file: File) -> Unit,
+) {
     var showModelDropdown by remember { mutableStateOf(false) }
 
     Box(modifier = Modifier.width(140.dp)) {
