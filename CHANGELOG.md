@@ -3,7 +3,7 @@ PlaygroundL Change Log
 
 ## [1.7.0]
 ### Changed
-- Change application icon and ai-chat icon.
+- Change UI design.
 - Change application data directory to Windows-AppData.
 - Update Palm2 SDK beta2 to beta3.
 ### Fixed
