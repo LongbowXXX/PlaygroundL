@@ -61,7 +61,7 @@ fun ChatParamsView() {
         TextSlider(
             "$MAX_TOKENS_TEXT : $maxTokens",
             maxTokens.toFloat(),
-            1f..2048f,
+            1f..4095f,
         ) {
             maxTokens = it.roundToInt()
         }
