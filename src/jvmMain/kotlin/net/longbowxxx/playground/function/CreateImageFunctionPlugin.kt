@@ -26,7 +26,7 @@ class CreateImageFunctionPlugin : ChatFunctionPlugin() {
         get() =
             OpenAiChatFunction(
                 "create_image",
-                "Generate images using DALL·E 2",
+                "Generate images using DALL·E 3",
                 OpenAiChatParameter.OpenAiChatParameterObject(
                     mapOf(
                         "image_name" to
@@ -39,9 +39,8 @@ class CreateImageFunctionPlugin : ChatFunctionPlugin() {
                                 "string",
                                 "the prompt for image generation in English. Ex: Tokyo tower.",
                             ),
-                        "number_of_images" to OpenAiChatProperty("integer", "number of images to generate"),
                     ),
-                    listOf("prompt", "image_name", "number_of_images"),
+                    listOf("prompt", "image_name"),
                 ),
             )
 
@@ -49,9 +48,8 @@ class CreateImageFunctionPlugin : ChatFunctionPlugin() {
         val imageArgs = arguments.toParams<CreateImageArgs>()
         val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
         val request =
-            OpenAiCreateImageRequest(
+            OpenAiCreateImageRequest.ofDallE3(
                 imageArgs.prompt,
-                n = imageArgs.numberOfImages,
             )
         val response = client.requestCreateImage(request)
 
@@ -76,8 +74,6 @@ data class CreateImageArgs(
     val prompt: String,
     @SerialName("image_name")
     val imageName: String,
-    @SerialName("number_of_images")
-    val numberOfImages: Int,
 )
 
 @Serializable
