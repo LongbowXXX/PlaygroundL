@@ -17,6 +17,7 @@ pluginManagement {
 }
 
 rootProject.name = "PlaygroundL"
+include("app")
 include("openai")
 include("generativeai")
 include("search")

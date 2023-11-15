@@ -1,12 +1,8 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import java.net.URL
 
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization")
-    id("org.jetbrains.compose")
-    id("io.realm.kotlin")
+    kotlin("jvm")
     id("org.jetbrains.dokka")
 }
 
@@ -21,7 +17,7 @@ repositories {
     mavenLocal()
 }
 
-allprojects {
+subprojects {
     apply(plugin = "org.jetbrains.dokka")
     val ktlint by configurations.creating
     dependencies {
@@ -79,58 +75,6 @@ allprojects {
     }
 }
 
-kotlin {
-    jvm {
-        jvmToolchain(17)
-        withJava()
-    }
-    sourceSets {
-        val jvmMain by getting {
-            dependencies {
-                implementation(compose.desktop.currentOs)
-                implementation(project(":openai"))
-                implementation(project(":generativeai"))
-                implementation(project(":search"))
-                implementation("org.jetbrains.compose.material3:material3-desktop:${property("compose.version")}")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlinx.coroutine.core.version")}")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${property("kotlinx.serialization.version")}")
-                implementation("io.realm.kotlin:library-base:${property("realm.version")}")
-                implementation("org.jsoup:jsoup:${property("jsoup.version")}")
-            }
-        }
-        val jvmTest by getting {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-junit5")
-                implementation("org.junit.jupiter:junit-jupiter")
-            }
-        }
-    }
-}
-
-tasks.withType<Test>().configureEach {
-    if (name == "jvmTest") {
-        useJUnitPlatform()
-    }
-}
-
-compose.desktop {
-    application {
-        mainClass = "net.longbowxxx.playground.MainKt"
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "PlaygroundL"
-            packageVersion = property("package.version") as String
-            windows {
-                iconFile.set(File("src/jvmMain/resources/app-icon.ico"))
-            }
-        }
-
-        buildTypes.release.proguard {
-            configurationFiles.from("proguard-rules.pro")
-        }
-    }
-}
-
 tasks.register("downloadPalm2BetaSDK") {
     group = "build"
     description = "Since the SDK for PaLM2 is a Beta version, download the file and install it on mavenLocal"
@@ -157,13 +101,6 @@ tasks.register("downloadPalm2BetaSDK") {
             args("publishToMavenLocal")
         }
     }
-}
-
-tasks.register<Copy>("copyArtifacts") {
-    group = "release"
-    from("$buildDir/compose/binaries/main-release/app/PlaygroundL")
-    into("$buildDir/tmp/release")
-    dependsOn("createReleaseDistributable")
 }
 
 tasks.register<Copy>("copyDocuments") {
@@ -196,7 +133,7 @@ tasks.register<Zip>("zipArtifacts") {
     destinationDirectory.set(file("$buildDir/release"))
     archiveFileName.set("${project.name}-${rootProject.property("package.version")}.zip")
 
-    dependsOn("copyArtifacts")
+    dependsOn("app:copyArtifacts")
     dependsOn("copyDocuments")
     dependsOn("copyChatPrompt")
     dependsOn("copyChatMessage")
