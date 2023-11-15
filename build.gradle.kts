@@ -1,4 +1,5 @@
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import java.net.URL
 
 plugins {
@@ -6,6 +7,7 @@ plugins {
     kotlin("plugin.serialization")
     id("org.jetbrains.compose")
     id("io.realm.kotlin")
+    id("org.jetbrains.dokka")
 }
 
 group = "net.longbowxxx.playground"
@@ -20,6 +22,7 @@ repositories {
 }
 
 allprojects {
+    apply(plugin = "org.jetbrains.dokka")
     val ktlint by configurations.creating
     dependencies {
         ktlint("com.pinterest.ktlint:ktlint-cli:${property("ktlint.version")}") {
@@ -59,6 +62,19 @@ allprojects {
             "**/src/**/*.kt",
             "**.kts",
             "!**/build/**",
+        )
+    }
+
+    tasks.withType<AbstractDokkaTask>().configureEach {
+        val dokkaBaseConfiguration = """
+        {
+           "footerMessage": "Copyright (c) 2023 LongbowXXX"
+        }
+        """
+        pluginsMapConfiguration.set(
+            mapOf(
+                "org.jetbrains.dokka.base.DokkaBase" to dokkaBaseConfiguration
+            )
         )
     }
 }
