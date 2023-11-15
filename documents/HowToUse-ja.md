@@ -24,6 +24,9 @@ https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
 ## Google generative AI
 [Google generative AI](https://developers.generativeai.google/) で、waitlist に登録し、利用権を得たら [API Key を発行](https://developers.generativeai.google/products/palm)してください。  
 
+## Google Custom Search API
+OpenAI Chat の function 機能で、Google 検索と連動したい場合は、Google Cloud Platform の[Custom Search API](https://developers.google.com/custom-search/v1/overview) の API Key と 検索 Engine ID が必要になります。 
+
 # ファイルの説明
 ## Exe のあるディレクトリ
 - PlaygroundL.exe    

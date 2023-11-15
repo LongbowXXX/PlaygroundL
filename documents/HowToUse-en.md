@@ -24,6 +24,9 @@ You need to obtain an API KEY from [OpenAI](https://openai.com/) (paid).
 ### Google generative AI
 Register for the waitlist at [Google generative AI](https://developers.generativeai.google/) and, once you have obtained the license, generate an [API Key](https://developers.generativeai.google/products/palm).
 
+### Google Custom Search API
+If you want to use OpenAI Chat's function to work with Google search, use the API Key and Search Engine ID of Google Cloud Platform's [Custom Search API](https://developers.google.com/custom-search/v1/overview). will become necessary.
+
 ## Description of Files
 - PlaygroundL.exe  
   Exe file to launch the application.

@@ -1,6 +1,12 @@
 PlaygroundL Change Log
 ===
 
+## [1.8.0]
+### Added
+- dokka document.
+### Changed
+- Update OpenAI models (1106, DALL-E3) .
+
 ## [1.7.0]
 ### Changed
 - Change UI design.
