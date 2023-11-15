@@ -7,7 +7,14 @@
 
 package net.longbowxxx.playground.ui
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.desktop.ui.tooling.preview.Preview
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -16,17 +23,21 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ApplicationScope
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowPosition
 import androidx.compose.ui.window.rememberWindowState
+import kotlinx.coroutines.delay
 import net.longbowxxx.playground.ui.view.chat.ChatScreen
 import net.longbowxxx.playground.ui.view.discuss.DiscussScreen
 import net.longbowxxx.playground.ui.view.image.ImageScreen
@@ -111,5 +122,45 @@ fun PlaygroundScreen(onTabSelected: (String) -> Unit) {
                 }
             }
         }
+    }
+    SplashLogo()
+}
+
+@Suppress("FunctionName")
+@Composable
+fun SplashLogo() {
+    var showSplash by remember { mutableStateOf(true) }
+
+    // アニメーションの状態を管理する
+    val splashAlpha by animateFloatAsState(
+        targetValue = if (showSplash) 1f else 0f,
+        animationSpec = tween(durationMillis = 1000),
+    )
+
+    // ロゴ画像を表示するコンポーザブル
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        AnimatedVisibility(
+            visible = showSplash,
+            enter = fadeIn(initialAlpha = 0f),
+            exit = fadeOut(targetAlpha = 0f),
+        ) {
+            // ここでロゴ画像を読み込む
+            Image(
+                appLogo,
+                contentDescription = "App Logo",
+                modifier =
+                    Modifier.graphicsLayer {
+                        alpha = splashAlpha
+                        scaleX = 0.7f
+                        scaleY = 0.7f
+                    },
+            )
+        }
+    }
+
+    // 3秒後にスプラッシュ画面を非表示にする
+    LaunchedEffect(Unit) {
+        delay(2000)
+        showSplash = false
     }
 }

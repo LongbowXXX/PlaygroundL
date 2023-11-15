@@ -34,10 +34,11 @@ fun ImageParamsView() {
     var numberOfVariation by remember { imageProperties.numberOfVariation }
     var translationPrompt by remember { imageProperties.translationPrompt }
 
+    // DALL-E 3 は、現時点では同時に一つしか画像を生成できない
     TextSlider(
         "$NUM_OF_CREATE_TEXT : $numberOfCreate",
         numberOfCreate.toFloat(),
-        1f..10f,
+        1f..1f,
     ) {
         numberOfCreate = it.roundToInt()
     }

@@ -82,7 +82,12 @@ class ImageViewModel(
                         chatProperties.chatModel.value,
                         messages =
                             listOf(
-                                OpenAiChatMessage(OpenAiChatRoleTypes.SYSTEM, imageProperties.translationPrompt.value, null, null),
+                                OpenAiChatMessage(
+                                    OpenAiChatRoleTypes.SYSTEM,
+                                    imageProperties.translationPrompt.value,
+                                    null,
+                                    null,
+                                ),
                                 OpenAiChatMessage(OpenAiChatRoleTypes.USER, promptJa.value, null, null),
                             ),
                         stream = true,
@@ -126,7 +131,7 @@ class ImageViewModel(
                     clearImages()
                     val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
                     val request =
-                        OpenAiCreateImageRequest(
+                        OpenAiCreateImageRequest.ofDallE3(
                             prompt.value,
                             n = imageProperties.numberOfCreate.value,
                         )
