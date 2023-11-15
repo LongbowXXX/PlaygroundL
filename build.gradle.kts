@@ -17,8 +17,27 @@ repositories {
     mavenLocal()
 }
 
-subprojects {
+allprojects {
     apply(plugin = "org.jetbrains.dokka")
+    tasks.withType<AbstractDokkaTask>().configureEach {
+        val dokkaBaseConfiguration = """
+        {
+           "footerMessage": "Copyright (c) 2023 LongbowXXX"
+        }
+        """
+        pluginsMapConfiguration.set(
+            mapOf(
+                "org.jetbrains.dokka.base.DokkaBase" to dokkaBaseConfiguration
+            )
+        )
+    }
+}
+
+tasks.dokkaHtmlMultiModule {
+    includes.from("README.md", "HowToUse.md")
+}
+
+subprojects {
     val ktlint by configurations.creating
     dependencies {
         ktlint("com.pinterest.ktlint:ktlint-cli:${property("ktlint.version")}") {
@@ -60,19 +79,6 @@ subprojects {
             "!**/build/**",
         )
     }
-
-    tasks.withType<AbstractDokkaTask>().configureEach {
-        val dokkaBaseConfiguration = """
-        {
-           "footerMessage": "Copyright (c) 2023 LongbowXXX"
-        }
-        """
-        pluginsMapConfiguration.set(
-            mapOf(
-                "org.jetbrains.dokka.base.DokkaBase" to dokkaBaseConfiguration
-            )
-        )
-    }
 }
 
 tasks.register("downloadPalm2BetaSDK") {
@@ -103,12 +109,6 @@ tasks.register("downloadPalm2BetaSDK") {
     }
 }
 
-tasks.register<Copy>("copyDocuments") {
-    group = "release"
-    from("$rootDir/documents")
-    into("$buildDir/tmp/release")
-}
-
 tasks.register<Copy>("copyChatPrompt") {
     group = "release"
     from("$rootDir/chatPrompt")
@@ -134,7 +134,6 @@ tasks.register<Zip>("zipArtifacts") {
     archiveFileName.set("${project.name}-${rootProject.property("package.version")}.zip")
 
     dependsOn("app:copyArtifacts")
-    dependsOn("copyDocuments")
     dependsOn("copyChatPrompt")
     dependsOn("copyChatMessage")
     dependsOn("copyChatFunction")

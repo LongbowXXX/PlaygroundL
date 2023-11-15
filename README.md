@@ -1,26 +1,22 @@
-PlaygroundL
-===
+# PlaygroundL
+
 This is a playground for testing AI such as OpenAI and Google Palm2.  
 Please refer to the documentation for each API: [OpenAI Documentation](https://platform.openai.com/docs/introduction) and [Google Documentation](https://developers.generativeai.google/api/python/google/generativeai).
 
-# Environment
+## Environment
 It runs on Windows 11 environment.  
 JAVA 17 is required for the application to run.
 
-The application has been tested in an environment where Amazon Corretto 17 JDK is set in JAVA_HOME.  
-https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html
+The application has been tested in an environment where [Amazon Corretto 17 JDK](https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html) is set in JAVA_HOME.  
 
-# Development Environment Setup
+## Development Environment Setup
 Download and install Google Palm2 SDK to the local repository, otherwise the build will not pass.  
 Please run the following command:
 ```
 > gradlew.bat downloadPalm2BetaSDK 
 ```
 
-# How to Use the Application
-Please refer to [HowToUse-en.md](documents/HowToUse-en.md).  
-
-# OSS
+## OSS
 Open-source software used in this application.
 
 - org.jetbrains.compose.desktop:desktop-jvm-windows-x64  
