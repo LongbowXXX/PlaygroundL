@@ -59,14 +59,14 @@ val imageViewModel: ImageViewModel by lazy {
     ImageViewModel()
 }
 
-fun createAudioViewModel() = AudioViewModel().also { audioViewModels.add(it) }
+fun createAudioViewModel() = SpeechRecognitionViewModel().also { speechRecognitionViewModels.add(it) }
 
-private val audioViewModels = mutableListOf<AudioViewModel>()
+private val speechRecognitionViewModels = mutableListOf<SpeechRecognitionViewModel>()
 
 fun closeViewModelAndProperties() {
     chatViewModel.close()
     imageViewModel.close()
-    audioViewModels.forEach { it.close() }
+    speechRecognitionViewModels.forEach { it.close() }
     chatProperties.close()
     imageProperties.close()
     appProperties.close()

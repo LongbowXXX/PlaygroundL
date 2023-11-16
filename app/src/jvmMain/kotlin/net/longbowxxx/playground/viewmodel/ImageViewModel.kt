@@ -43,6 +43,9 @@ typealias Line = List<Offset>
 
 typealias LineWithStroke = Pair<Line, Float>
 
+/**
+ * ViewModel for OpenAI image functions.
+ */
 class ImageViewModel(
     dispatcher: CoroutineDispatcher = Dispatchers.Default,
 ) : CoroutineScope, Closeable {

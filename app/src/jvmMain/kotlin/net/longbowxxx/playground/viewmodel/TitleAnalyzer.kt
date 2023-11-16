@@ -22,6 +22,9 @@ import net.longbowxxx.playground.history.DiscussHistory
 import net.longbowxxx.playground.utils.DebugLogLevel
 import net.longbowxxx.playground.utils.log
 
+/**
+ * Update chat session title.
+ */
 suspend fun updateChatSessionTitle(
     messages: List<OpenAiChatMessage>,
     session: ChatHistory.ChatHistorySession,
@@ -91,6 +94,9 @@ suspend fun updateChatSessionTitle(
     }
 }
 
+/**
+ * Update discuss session title.
+ */
 suspend fun updateDiscussSessionTitle(
     messages: List<DiscussMessage>,
     session: DiscussHistory.DiscussHistorySession,

@@ -28,6 +28,9 @@ import java.io.Closeable
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * ViewModel of Google Palm2 Discuss function.
+ */
 class DiscussViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : CoroutineScope, Closeable {
     private val job = Job()
     override val coroutineContext: CoroutineContext = dispatcher + job

@@ -15,36 +15,36 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.painterResource
-import net.longbowxxx.playground.viewmodel.AudioViewModel
+import net.longbowxxx.playground.viewmodel.SpeechRecognitionViewModel
 
 @Suppress("FunctionName")
 @Composable
 fun AudioTransWidget(
-    audioViewModel: AudioViewModel,
+    speechRecognitionViewModel: SpeechRecognitionViewModel,
     isTranscription: Boolean,
     onResult: (String) -> Unit,
 ) {
-    var transText by remember { audioViewModel.transText }
+    var transText by remember { speechRecognitionViewModel.transText }
     val micImage = painterResource("mic-icon.png")
-    val audioState by remember { audioViewModel.state }
-    val micAvailable = audioViewModel.isMicAvailable
+    val audioState by remember { speechRecognitionViewModel.state }
+    val micAvailable = speechRecognitionViewModel.isMicAvailable
     TextButton(
         {
             when (audioState) {
-                AudioViewModel.State.STOPPED -> audioViewModel.startTrans(isTranscription)
-                AudioViewModel.State.RECORDING -> audioViewModel.stopRecording()
+                SpeechRecognitionViewModel.State.STOPPED -> speechRecognitionViewModel.startTrans(isTranscription)
+                SpeechRecognitionViewModel.State.RECORDING -> speechRecognitionViewModel.stopRecording()
                 else -> {
                     // nothing to do
                 }
             }
         },
-        enabled = audioState != AudioViewModel.State.REQUESTING && micAvailable,
+        enabled = audioState != SpeechRecognitionViewModel.State.REQUESTING && micAvailable,
     ) {
         val color =
             when (audioState) {
-                AudioViewModel.State.STOPPED -> MaterialTheme.colorScheme.primary
-                AudioViewModel.State.RECORDING -> MaterialTheme.colorScheme.error
-                AudioViewModel.State.REQUESTING -> MaterialTheme.colorScheme.primary
+                SpeechRecognitionViewModel.State.STOPPED -> MaterialTheme.colorScheme.primary
+                SpeechRecognitionViewModel.State.RECORDING -> MaterialTheme.colorScheme.error
+                SpeechRecognitionViewModel.State.REQUESTING -> MaterialTheme.colorScheme.primary
             }
 
         Icon(micImage, null, tint = color)

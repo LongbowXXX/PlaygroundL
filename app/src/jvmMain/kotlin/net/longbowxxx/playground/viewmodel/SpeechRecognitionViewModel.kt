@@ -23,7 +23,10 @@ import net.longbowxxx.playground.recorder.Recorder
 import java.io.Closeable
 import kotlin.coroutines.CoroutineContext
 
-class AudioViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : CoroutineScope, Closeable {
+/**
+ * ViewModel for OpenAI speech recognition function.
+ */
+class SpeechRecognitionViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : CoroutineScope, Closeable {
     private val job = Job()
     override val coroutineContext: CoroutineContext = dispatcher + job
 
