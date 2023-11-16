@@ -1,11 +1,9 @@
-import org.jetbrains.compose.desktop.application.dsl.TargetFormat
+import org.jetbrains.dokka.gradle.AbstractDokkaTask
 import java.net.URL
 
 plugins {
-    kotlin("multiplatform")
-    kotlin("plugin.serialization")
-    id("org.jetbrains.compose")
-    id("io.realm.kotlin")
+    kotlin("jvm")
+    id("org.jetbrains.dokka")
 }
 
 group = "net.longbowxxx.playground"
@@ -20,9 +18,47 @@ repositories {
 }
 
 allprojects {
+    apply(plugin = "org.jetbrains.dokka")
+    tasks.withType<AbstractDokkaTask>().configureEach {
+        val dokkaBaseConfiguration = """
+        {
+           "footerMessage": "Copyright (c) 2023 LongbowXXX"
+        }
+        """
+        pluginsMapConfiguration.set(
+            mapOf(
+                "org.jetbrains.dokka.base.DokkaBase" to dokkaBaseConfiguration
+            )
+        )
+    }
+}
+
+tasks.dokkaHtmlMultiModule {
+    includes.from("README.md", "HowToUse.md")
+
+    val mv00 = file("images/00-Setup-API-Key.mp4").toString().replace("\\", "\\\\")
+    val mv10 = file("images/10-OpenAI-Chat.mp4").toString().replace("\\", "\\\\")
+    val mv11 = file("images/11_OpenAI-Chat-Function-1.mp4").toString().replace("\\", "\\\\")
+    val mv12 = file("images/12_OpenAI-Chat-Function-2.mp4").toString().replace("\\", "\\\\")
+    val mv15 = file("images/15_OpenAI-Chat-Restore-Old-Session.mp4").toString().replace("\\", "\\\\")
+    val mv20 = file("images/20_PaLM2-Discuss-Service.mp4").toString().replace("\\", "\\\\")
+    val mv30 = file("images/30_OpenAI-Image.mp4").toString().replace("\\", "\\\\")
+    val dokkaBaseConfiguration = """
+        {
+            "customAssets": ["$mv00","$mv10","$mv11","$mv12","$mv15","$mv20","$mv30"]
+        }
+        """
+    pluginsMapConfiguration.set(
+        mapOf(
+            "org.jetbrains.dokka.base.DokkaBase" to dokkaBaseConfiguration
+        )
+    )
+}
+
+subprojects {
     val ktlint by configurations.creating
     dependencies {
-        ktlint("com.pinterest:ktlint:${property("ktlint.version")}") {
+        ktlint("com.pinterest.ktlint:ktlint-cli:${property("ktlint.version")}") {
             attributes {
                 attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling.EXTERNAL))
             }
@@ -63,59 +99,12 @@ allprojects {
     }
 }
 
-kotlin {
-    jvm {
-        jvmToolchain(17)
-        withJava()
-    }
-    sourceSets {
-        val jvmMain by getting {
-            dependencies {
-                implementation(compose.desktop.currentOs)
-                implementation(project(":openai"))
-                implementation(project(":generativeai"))
-                implementation("org.jetbrains.compose.material3:material3-desktop:${property("compose.version")}")
-                implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlinx.coroutine.core.version")}")
-                implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${property("kotlinx.serialization.version")}")
-                implementation("io.realm.kotlin:library-base:${property("realm.version")}")
-            }
-        }
-        val jvmTest by getting {
-            dependencies {
-                implementation("org.jetbrains.kotlin:kotlin-test-junit5")
-                implementation("org.junit.jupiter:junit-jupiter")
-            }
-        }
-    }
-}
-
-tasks.withType<Test>().configureEach {
-    if (name == "jvmTest") {
-        useJUnitPlatform()
-    }
-}
-
-compose.desktop {
-    application {
-        mainClass = "net.longbowxxx.playground.MainKt"
-        nativeDistributions {
-            targetFormats(TargetFormat.Dmg, TargetFormat.Msi, TargetFormat.Deb)
-            packageName = "PlaygroundL"
-            packageVersion = property("package.version") as String
-        }
-
-        buildTypes.release.proguard {
-            configurationFiles.from("proguard-rules.pro")
-        }
-    }
-}
-
 tasks.register("downloadPalm2BetaSDK") {
     group = "build"
     description = "Since the SDK for PaLM2 is a Beta version, download the file and install it on mavenLocal"
     dependsOn(emptyArray<String>())
     doLast {
-        val baseName = "google-cloud-ai-generativelanguage-v1beta2-java"
+        val baseName = "google-cloud-ai-generativelanguage-v1beta3-java"
         val outFileName = "$baseName.tar.gz"
         val palm2WorkDir = "${rootProject.rootDir}/palm2"
         File(palm2WorkDir).mkdirs()
@@ -136,19 +125,6 @@ tasks.register("downloadPalm2BetaSDK") {
             args("publishToMavenLocal")
         }
     }
-}
-
-tasks.register<Copy>("copyArtifacts") {
-    group = "release"
-    from("$buildDir/compose/binaries/main-release/app/PlaygroundL")
-    into("$buildDir/tmp/release")
-    dependsOn("createReleaseDistributable")
-}
-
-tasks.register<Copy>("copyDocuments") {
-    group = "release"
-    from("$rootDir/documents")
-    into("$buildDir/tmp/release")
 }
 
 tasks.register<Copy>("copyChatPrompt") {
@@ -175,8 +151,7 @@ tasks.register<Zip>("zipArtifacts") {
     destinationDirectory.set(file("$buildDir/release"))
     archiveFileName.set("${project.name}-${rootProject.property("package.version")}.zip")
 
-    dependsOn("copyArtifacts")
-    dependsOn("copyDocuments")
+    dependsOn("app:copyArtifacts")
     dependsOn("copyChatPrompt")
     dependsOn("copyChatMessage")
     dependsOn("copyChatFunction")

@@ -47,17 +47,24 @@ const val OPENAI_CHAT_MODEL_GPT_35_TURBO = "gpt-3.5-turbo"
 const val OPENAI_CHAT_MODEL_GPT_4 = "gpt-4"
 const val OPENAI_CHAT_MODEL_GPT_35_TURBO_0613 = "gpt-3.5-turbo-0613"
 const val OPENAI_CHAT_MODEL_GPT_4_0613 = "gpt-4-0613"
+const val OPENAI_CHAT_MODEL_GPT_35_TURBO_1106 = "gpt-3.5-turbo-1106"
+const val OPENAI_CHAT_MODEL_GPT_4_1106_PREVIEW = "gpt-4-1106-preview"
+const val OPENAI_CHAT_MODEL_GPT_4_VISION_PREVIEW = "gpt-4-vision-preview"
 
 fun String.isFunctionAvailable(): Boolean {
     return when (this) {
         OPENAI_CHAT_MODEL_GPT_35_TURBO_0613 -> true
+        OPENAI_CHAT_MODEL_GPT_35_TURBO_1106 -> true
         OPENAI_CHAT_MODEL_GPT_4_0613 -> true
+        OPENAI_CHAT_MODEL_GPT_4_1106_PREVIEW -> true
         else -> false
     }
 }
 
 fun ofFunctionCallNone() = JsonPrimitive("none")
+
 fun ofFunctionCallAuto() = JsonPrimitive("auto")
+
 fun ofFunctionCallForce(name: String) = JsonObject(mapOf("name" to JsonPrimitive(name)))
 
 @Serializable
@@ -82,7 +89,15 @@ data class OpenAiChatProperty(
     val type: String,
     val description: String? = null,
     val enum: List<String>? = null,
-)
+    val items: OpenAiChatProperty? = null,
+) {
+    companion object {
+        const val STRING_TYPE = "string"
+        const val INTEGER_TYPE = "integer"
+        const val NUMBER_TYPE = "number"
+        const val ARRAY_TYPE = "array"
+    }
+}
 
 @Serializable
 data class OpenAiChatMessage(

@@ -1,6 +1,30 @@
 PlaygroundL Change Log
 ===
 
+## [1.8.1]
+### Added
+- Update document for GitHub Pages.
+
+## [1.8.0]
+### Added
+- dokka document.
+### Changed
+- Update OpenAI models (1106, DALL-E3) .
+
+## [1.7.0]
+### Changed
+- Change UI design.
+- Change application data directory to Windows-AppData.
+- Update Palm2 SDK beta2 to beta3.
+### Fixed
+- Fixed a problem when not using any functions.
+
+## [1.6.0]
+### Added
+- Google Custom Search Function
+### Changed
+- Select the functions to use
+
 ## [1.5.0]
 ### Added
 - Add plugin system for function

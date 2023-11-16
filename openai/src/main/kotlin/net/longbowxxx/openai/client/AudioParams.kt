@@ -8,7 +8,7 @@
 package net.longbowxxx.openai.client
 
 import kotlinx.serialization.Serializable
-import java.util.*
+import java.util.Locale
 
 const val AUDIO_MODEL = "whisper-1"
 

@@ -16,14 +16,19 @@ interface OpenAiClient {
         }
     }
 
-    fun requestChatWithStreaming(request: OpenAiChatRequest): Flow<OpenAiChatStreamResponse>
+    suspend fun requestChatWithStreaming(request: OpenAiChatRequest): Flow<OpenAiChatStreamResponse>
+
     suspend fun requestCreateImage(request: OpenAiCreateImageRequest): OpenAiImageResponse
+
     suspend fun requestEditImage(request: OpenAiEditImageRequest): OpenAiImageResponse
+
     suspend fun requestImageVariation(request: OpenAiImageVariationRequest): OpenAiImageResponse
 
     suspend fun requestAudioTranscription(request: OpenAiAudioRequest): OpenAiAudioResponse
 
     suspend fun requestAudioTranslation(request: OpenAiAudioRequest): OpenAiAudioResponse
+
+    suspend fun requestEmbedding(request: OpenAiEmbeddingRequest): OpenAiEmbeddingResponse
 }
 
 data class OpenAiSettings(
