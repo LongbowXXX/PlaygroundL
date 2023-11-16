@@ -44,7 +44,7 @@
                     </a>
             </div>
             <div class="library-version">
-1.8.0            </div>
+1.8.1            </div>
         </div>
     </div>
     <div class="navigation-controls">
@@ -60,6 +60,220 @@
 <div class="main-content" id="content" pageIds="PlaygroundL::.ext/allModules///PointingToDeclaration//0">
   <div class="breadcrumbs"></div>
   <div class="cover ">
+    <div class="cover ">
+      <h1 class="">PlaygroundL</h1>
+      <p class="paragraph">This is a playground for testing AI such as OpenAI and Google Palm2.<br>Please refer to the documentation for each API: <a href="https://platform.openai.com/docs/introduction">OpenAI Documentation</a> and <a href="https://developers.generativeai.google/api/python/google/generativeai">Google Documentation</a>.</p>
+      <h2 class=""> Environment</h2>
+      <p class="paragraph">It runs on Windows 11 environment.<br>JAVA 17 is required for the application to run.</p>
+      <p class="paragraph">The application has been tested in an environment where <a href="https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html">Amazon Corretto 17 JDK</a> is set in JAVA_HOME.  </p>
+      <h2 class=""> Development Environment Setup</h2>
+      <p class="paragraph">Download and install Google Palm2 SDK to the local repository, otherwise the build will not pass.<br>Please run the following command:</p>
+      <div class="sample-container">
+        <pre><code class="block lang-kotlin" theme="idea">&gt; gradlew.bat downloadPalm2BetaSDK </code></pre>
+<span class="top-right-position"><span class="copy-icon"></span>
+          <div class="copy-popup-wrapper popup-to-left"><span class="copy-popup-icon"></span><span>Content copied to clipboard</span></div>
+        </span></div>
+      <h2 class=""> OSS</h2>
+      <p class="paragraph">Open-source software used in this application.</p>
+      <ul>
+        <li>
+          <p class="paragraph">org.jetbrains.compose.desktop:desktop-jvm-windows-x64<br> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License, Version 2.0</a></p>
+        </li>
+        <li>
+          <p class="paragraph">org.jetbrains.compose.material3:material3-desktop<br> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License, Version 2.0</a></p>
+        </li>
+        <li>
+          <p class="paragraph">org.jetbrains.kotlin:kotlin-stdlib-common<br> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License, Version 2.0</a></p>
+        </li>
+        <li>
+          <p class="paragraph">org.jetbrains.kotlin:kotlin-stdlib-jdk8<br> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License, Version 2.0</a></p>
+        </li>
+        <li>
+          <p class="paragraph">org.jetbrains.kotlinx:kotlinx-coroutines-core<br> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License, Version 2.0</a></p>
+        </li>
+        <li>
+          <p class="paragraph">org.jetbrains.kotlinx:kotlinx-serialization-json<br> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License, Version 2.0</a></p>
+        </li>
+        <li>
+          <p class="paragraph">com.squareup.okhttp3:okhttp<br> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License, Version 2.0</a></p>
+        </li>
+        <li>
+          <p class="paragraph">realm/realm-kotlin<br> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License, Version 2.0</a></p>
+        </li>
+        <li>
+          <p class="paragraph">io.grpc:grpc-okhttp<br> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License, Version 2.0</a></p>
+        </li>
+        <li>
+          <p class="paragraph">org.jsoup:jsoup<br> <a href="https://github.com/jhy/jsoup/blob/master/LICENSE">The MIT License</a></p>
+        </li>
+        <li>
+          <p class="paragraph">com.google.api-client<br> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License, Version 2.0</a></p>
+        </li>
+        <li>
+          <p class="paragraph">com.google.apis:google-api-services-customsearch<br> <a href="http://www.apache.org/licenses/LICENSE-2.0.txt">Apache License, Version 2.0</a></p>
+        </li>
+      </ul>
+      <p class="paragraph">This document was translated using OpenAI.</p>
+      <h1 class="">How to Use Playground</h1>
+      <p class="paragraph">This is a Playground for testing AI.</p>
+      <h2 class=""> Operating Environment</h2>
+      <p class="paragraph">It runs on Windows 11.<br>JAVA 17 is required for the application to run.  </p>
+      <p class="paragraph">It has been tested in an environment where <a href="https://docs.aws.amazon.com/corretto/latest/corretto-17-ug/downloads-list.html">Amazon Corretto 17 JDK</a> is set in JAVA_HOME.  </p>
+      <h2 class=""> Preparations</h2>
+      <h3 class=""> OpenAI</h3>
+      <p class="paragraph">You need to obtain an API KEY from <a href="https://openai.com/">OpenAI</a> (paid).</p>
+      <ol>
+        <li>
+          <p class="paragraph">Create an OpenAI account.<br>   You will need a phone number that can receive SMS messages for authentication.</p>
+        </li>
+        <li>
+          <p class="paragraph">Register a payment method in Billing under Manage account.<br>   Register the credit card or other payment method you will use for payment.</p>
+        </li>
+        <li>
+          <p class="paragraph">Generate an API key under API keys.<br>   It is only displayed at the time of generation, so please save it in a secure location.</p>
+        </li>
+        <li>
+          <p class="paragraph">Set the limits under Usage limits in Billing.</p>
+        </li>
+      </ol>
+      <h3 class=""> Google generative AI</h3>
+      <p class="paragraph">Register for the waitlist at <a href="https://developers.generativeai.google/">Google generative AI</a> and, once you have obtained the license, generate an <a href="https://developers.generativeai.google/products/palm">API Key</a>.</p>
+      <h3 class=""> Google Custom Search API</h3>
+      <p class="paragraph">If you want to use OpenAI Chat's function to work with Google search, use the API Key and Search Engine ID of Google Cloud Platform's <a href="https://developers.google.com/custom-search/v1/overview">Custom Search API</a>. will become necessary.</p>
+      <h2 class=""> Description of Files</h2>
+      <h3 class=""> Directory with Exe</h3>
+      <ul>
+        <li>
+          <p class="paragraph">PlaygroundL.exe<br>  Exe file to launch the application.</p>
+        </li>
+        <li>
+          <p class="paragraph">chatPrompt directory<br>  Sample prompts. Files placed here can be called from QUICK LOAD in CHAT SYSTEM.</p>
+        </li>
+        <li>
+          <p class="paragraph">chatMessage directory<br>  Sample user message templates. Files placed here can be called from QUICK LOAD in CHAT MESSAGE.</p>
+        </li>
+        <li>
+          <p class="paragraph">chatFunction directory<br>  Sample function definitions. Functions defined in files placed here are called from CHAT.</p>
+        </li>
+      </ul>
+      <h3 class=""> AppData directory</h3>
+      <p class="paragraph">App configuration data will be created in <code class="lang-kotlin">&lt;UserDir&gt;/AppData/Roaming/PlaygroundL</code>.  </p>
+      <ul>
+        <li>
+          <p class="paragraph">playgroundApp.properties<br>  The application's configuration file. It is automatically generated by the application.</p>
+        </li>
+        <li>
+          <p class="paragraph">chat.properties<br>  Configuration file related to CHAT (Open AI). It is automatically generated by the application.</p>
+        </li>
+        <li>
+          <p class="paragraph">discuss.properties<br>  Configuration file related to DISCUSS (Google generative AI). It is automatically generated by the application.</p>
+        </li>
+        <li>
+          <p class="paragraph">image.properties<br>  Configuration file related to IMAGE. It is automatically generated by the application.</p>
+        </li>
+        <li>
+          <p class="paragraph">db directory<br>  DataBase files used by the application. They are automatically generated by the application.</p>
+        </li>
+        <li>
+          <p class="paragraph">log directory<br>  Log files of the application. They are automatically generated by the application.</p>
+        </li>
+      </ul>
+      <h2 class=""> How to Use the Application</h2>
+      <h3 class=""> Starting the Application</h3>
+      <ol>
+        <li>
+          <p class="paragraph">Start run.bat.</p>
+        </li>
+        <li>
+          <p class="paragraph">Set the API Key in SETTINGS under OPENAI_API_KEY and click Save.<br>   For security reasons, the input field disappears when you save it.  </p>
+        </li>
+      </ol>
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/00-Setup-API-Key.mp4"></video></div>      <h2 class=""> How to Use the CHAT Feature</h2>
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/10-OpenAI-Chat.mp4"></video></div>
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/11_OpenAI-Chat-Function-1.mp4"></video></div>
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/12_OpenAI-Chat-Function-2.mp4"></video></div>
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/15_OpenAI-Chat-Restore-Old-Session.mp4"></video></div>      <h3 class=""> Interacting with the ASSISTANT</h3>
+      <ol>
+        <li>
+          <p class="paragraph">Select CHAT in the BottomBar.</p>
+        </li>
+        <li>
+          <p class="paragraph">Enter the prompt in SYSTEM.<br>   You can also load it from a file by clicking LOAD SYSTEM PROMPT.</p>
+        </li>
+        <li>
+          <p class="paragraph">Enter the user's message in USER's CONTENT.</p>
+        </li>
+        <li>
+          <p class="paragraph">Click SUBMIT to see the response from the ASSISTANT.</p>
+        </li>
+      </ol>
+      <h3 class=""> Starting a New Session</h3>
+      <ol>
+        <li>
+          <p class="paragraph">Click NEW SESSION.</p>
+        </li>
+      </ol>
+      <h3 class=""> Restoring an Old Chat Session</h3>
+      <ol>
+        <li>
+          <p class="paragraph">Click RESTORE OLD CHAT...</p>
+        </li>
+        <li>
+          <p class="paragraph">Select the session you want to restore from the list.</p>
+        </li>
+      </ol>
+      <h2 class=""> How to Use the DISCUSS Feature</h2>
+      <p class="paragraph">It is similar to CHAT, but only English can be used.  </p>
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/20_PaLM2-Discuss-Service.mp4"></video></div>      <h2 class=""> How to Use the IMAGE Feature</h2>
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/30_OpenAI-Image.mp4"></video></div>      <h3 class=""> Image Generation</h3>
+      <ol>
+        <li>
+          <p class="paragraph">Select IMAGE in the BottomBar.</p>
+        </li>
+        <li>
+          <p class="paragraph">Enter the prompt in PROMPT.</p>
+        </li>
+        <li>
+          <p class="paragraph">Click CREATE and wait a few seconds to see the generated image.</p>
+        </li>
+        <li>
+          <p class="paragraph">The generated image is also output in the log.</p>
+        </li>
+      </ol>
+      <h3 class=""> Image Editing</h3>
+      <ol>
+        <li>
+          <p class="paragraph">Select the image you want to edit from the list of generated images.</p>
+        </li>
+        <li>
+          <p class="paragraph">Drag over the area you want AI to edit to fill it.</p>
+        </li>
+        <li>
+          <p class="paragraph">Enter the desired editing content in PROMPT.</p>
+        </li>
+        <li>
+          <p class="paragraph">Click EDIT and wait a few seconds to see the edited image.</p>
+        </li>
+        <li>
+          <p class="paragraph">The generated image is also output in the log.</p>
+        </li>
+      </ol>
+      <h3 class=""> Creating Image Variations</h3>
+      <ol>
+        <li>
+          <p class="paragraph">Select the image you want to edit from the list of generated images.</p>
+        </li>
+        <li>
+          <p class="paragraph">Click VARIATION and wait a few seconds to see the image.</p>
+        </li>
+        <li>
+          <p class="paragraph">The generated image is also output in the log.</p>
+        </li>
+      </ol>
+      <h2 class=""> GPT-4</h2>
+      <p class="paragraph">GPT-4 is only available to ChatGPT Plus members through the OpenAI API.  </p>
+      <p class="paragraph"><strong>This document was translated using OpenAI.</strong></p>
+    </div>
     <h2 class="">All modules:</h2>
     <div class="table"><a data-name="1551721612%2FMain%2F0" anchor-label="app" id="1551721612%2FMain%2F0" data-filterable-set=""></a>
       <div class="table-row">
