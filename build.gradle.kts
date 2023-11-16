@@ -35,6 +35,24 @@ allprojects {
 
 tasks.dokkaHtmlMultiModule {
     includes.from("README.md", "HowToUse.md")
+
+    val mv00 = file("images/00-Setup-API-Key.mp4").toString().replace("\\", "\\\\")
+    val mv10 = file("images/10-OpenAI-Chat.mp4").toString().replace("\\", "\\\\")
+    val mv11 = file("images/11_OpenAI-Chat-Function-1.mp4").toString().replace("\\", "\\\\")
+    val mv12 = file("images/12_OpenAI-Chat-Function-2.mp4").toString().replace("\\", "\\\\")
+    val mv15 = file("images/15_OpenAI-Chat-Restore-Old-Session.mp4").toString().replace("\\", "\\\\")
+    val mv20 = file("images/20_PaLM2-Discuss-Service.mp4").toString().replace("\\", "\\\\")
+    val mv30 = file("images/30_OpenAI-Image.mp4").toString().replace("\\", "\\\\")
+    val dokkaBaseConfiguration = """
+        {
+            "customAssets": ["$mv00","$mv10","$mv11","$mv12","$mv15","$mv20","$mv30"]
+        }
+        """
+    pluginsMapConfiguration.set(
+        mapOf(
+            "org.jetbrains.dokka.base.DokkaBase" to dokkaBaseConfiguration
+        )
+    )
 }
 
 subprojects {

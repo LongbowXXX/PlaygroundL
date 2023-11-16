@@ -57,9 +57,16 @@ App configuration data will be created in `<UserDir>/AppData/Roaming/PlaygroundL
 ### Starting the Application
 1. Start run.bat.
 2. Set the API Key in SETTINGS under OPENAI_API_KEY and click Save.  
-   For security reasons, the input field disappears when you save it.
+   For security reasons, the input field disappears when you save it.  
+
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/00-Setup-API-Key.mp4"></video></div>
 
 ## How to Use the CHAT Feature
+
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/10-OpenAI-Chat.mp4"></video></div>
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/11_OpenAI-Chat-Function-1.mp4"></video></div>
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/12_OpenAI-Chat-Function-2.mp4"></video></div>
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/15_OpenAI-Chat-Restore-Old-Session.mp4"></video></div>
 
 ### Interacting with the ASSISTANT
 1. Select CHAT in the BottomBar.
@@ -78,7 +85,11 @@ App configuration data will be created in `<UserDir>/AppData/Roaming/PlaygroundL
 ## How to Use the DISCUSS Feature
 It is similar to CHAT, but only English can be used.  
 
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/20_PaLM2-Discuss-Service.mp4"></video></div>
+
 ## How to Use the IMAGE Feature
+
+<div style="width: 60%;"><video controls style="width: 100%;" src="images/30_OpenAI-Image.mp4"></video></div>
 
 ### Image Generation
 1. Select IMAGE in the BottomBar.
