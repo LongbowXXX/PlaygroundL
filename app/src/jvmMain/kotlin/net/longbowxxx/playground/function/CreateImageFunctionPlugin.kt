@@ -21,7 +21,7 @@ import net.longbowxxx.playground.utils.toURL
 import net.longbowxxx.playground.viewmodel.appProperties
 import java.io.File
 
-class CreateImageFunctionPlugin : ChatFunctionPlugin() {
+class CreateImageFunctionPlugin(private val appDataDir: File) : ChatFunctionPlugin() {
     override val functionSpec: OpenAiChatFunction
         get() =
             OpenAiChatFunction(
@@ -59,7 +59,8 @@ class CreateImageFunctionPlugin : ChatFunctionPlugin() {
                     // 画像をファイルに保存する
                     val shortId = randomShortId()
                     val imageName = "${imageArgs.imageName}-$shortId.png"
-                    val file = File("log/cache", imageName)
+                    val logDir = File(appDataDir, "log/images")
+                    val file = File(logDir, imageName)
                     file.parentFile.mkdirs()
                     imageUrl.copyTo(file)
                     file.toURI().toASCIIString()

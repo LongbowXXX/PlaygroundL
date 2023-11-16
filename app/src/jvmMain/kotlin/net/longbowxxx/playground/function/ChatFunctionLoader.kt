@@ -8,6 +8,7 @@
 package net.longbowxxx.playground.function
 
 import net.longbowxxx.playground.utils.DebugLoggable
+import net.longbowxxx.playground.utils.appDataDirectory
 import net.longbowxxx.playground.utils.logInfo
 import java.io.File
 
@@ -15,7 +16,7 @@ class ChatFunctionLoader : DebugLoggable {
     private val nativePlugins =
         listOf(
             SaveStringToFileFunctionPlugin(),
-            CreateImageFunctionPlugin(),
+            CreateImageFunctionPlugin(appDataDirectory),
             ShowImagePlugin(),
             WebSearchPlugin(),
             ReadDataPlugin(),
