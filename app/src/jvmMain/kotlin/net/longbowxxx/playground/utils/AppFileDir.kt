@@ -11,6 +11,9 @@ import java.io.File
 
 const val APP_NAME = "PlaygroundL"
 
+/**
+ * Data directory for this app.
+ */
 val appDataDirectory: File by lazy {
     val appDataPath = System.getenv("APPDATA")
     File("$appDataPath/$APP_NAME/").apply {

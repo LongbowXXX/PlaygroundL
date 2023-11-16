@@ -10,6 +10,9 @@ package net.longbowxxx.playground
 import androidx.compose.ui.window.application
 import net.longbowxxx.playground.ui.PlaygroundWindow
 
+/**
+ * It all starts here.
+ */
 fun main() =
     application {
         PlaygroundWindow()

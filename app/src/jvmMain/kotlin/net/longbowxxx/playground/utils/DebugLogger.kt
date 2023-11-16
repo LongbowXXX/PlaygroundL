@@ -9,6 +9,9 @@ package net.longbowxxx.playground.utils
 
 import java.io.PrintStream
 
+/**
+ * Markers for using the Debug log function.
+ */
 interface DebugLoggable
 
 fun DebugLoggable.logTrace(

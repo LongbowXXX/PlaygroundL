@@ -1,6 +1,10 @@
 PlaygroundL Change Log
 ===
 
+## [1.8.2]
+### Added
+- Update document for GitHub Pages.
+
 ## [1.8.1]
 ### Added
 - Update document for GitHub Pages.

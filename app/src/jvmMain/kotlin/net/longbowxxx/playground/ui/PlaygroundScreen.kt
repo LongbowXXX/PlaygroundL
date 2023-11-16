@@ -126,6 +126,9 @@ fun PlaygroundScreen(onTabSelected: (String) -> Unit) {
     SplashLogo()
 }
 
+/**
+ * Show splash logo when app starts.
+ */
 @Suppress("FunctionName")
 @Composable
 fun SplashLogo() {

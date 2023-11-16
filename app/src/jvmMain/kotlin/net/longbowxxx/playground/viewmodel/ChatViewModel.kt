@@ -43,6 +43,9 @@ import java.io.Closeable
 import java.io.File
 import kotlin.coroutines.CoroutineContext
 
+/**
+ * ViewModel of OpenAI Chat function.
+ */
 class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : CoroutineScope, Closeable {
     private val job = Job()
     override val coroutineContext: CoroutineContext = dispatcher + job

@@ -22,7 +22,7 @@ allprojects {
     tasks.withType<AbstractDokkaTask>().configureEach {
         val dokkaBaseConfiguration = """
         {
-           "footerMessage": "Copyright (c) 2023 LongbowXXX"
+            "footerMessage": "Copyright (c) 2023 LongbowXXX"
         }
         """
         pluginsMapConfiguration.set(
@@ -45,7 +45,8 @@ tasks.dokkaHtmlMultiModule {
     val mv30 = file("images/30_OpenAI-Image.mp4").toString().replace("\\", "\\\\")
     val dokkaBaseConfiguration = """
         {
-            "customAssets": ["$mv00","$mv10","$mv11","$mv12","$mv15","$mv20","$mv30"]
+            "customAssets": ["$mv00","$mv10","$mv11","$mv12","$mv15","$mv20","$mv30"],
+            "footerMessage": "Copyright (c) 2023 LongbowXXX"
         }
         """
     pluginsMapConfiguration.set(
