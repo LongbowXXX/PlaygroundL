@@ -7,11 +7,20 @@
 
 package net.longbowxxx.playground.function
 
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.longbowxxx.openai.client.OpenAiChatFunction
 import java.io.File
 
+/**
+ * Chat function plugin.
+ *
+ * @property functionSpec Function spec.
+ * @constructor Create mock Chat function plugin
+ * @param functionSpec Function spec.
+ * @param response Response.
+ * @see OpenAiChatFunction
+ * @see ChatFunctionPlugin
+ */
 class MockFunctionPlugin(override val functionSpec: OpenAiChatFunction, private val response: String) : ChatFunctionPlugin() {
     companion object {
         private const val FUNCTION_FILE = "function.json"

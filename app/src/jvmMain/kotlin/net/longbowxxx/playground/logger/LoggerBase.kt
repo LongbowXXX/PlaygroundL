@@ -16,6 +16,13 @@ import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
+/**
+ * Base class for logger.
+ *
+ * @constructor
+ * @param appDataDir Application data directory.
+ * @param logCategory Log category.
+ */
 open class LoggerBase(
     appDataDir: File,
     logCategory: String,
@@ -26,6 +33,9 @@ open class LoggerBase(
         private val dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd_HH-mm-ss")
     }
 
+    /**
+     * JSON encoder.
+     */
     protected val encodeJson =
         Json {
             encodeDefaults = false
@@ -47,6 +57,12 @@ open class LoggerBase(
         writer = outFile.bufferedWriter(Charsets.UTF_8)
     }
 
+    /**
+     * Write log.
+     *
+     * @param block Write block.
+     * @return Result of block.
+     */
     protected suspend fun <T> writeLog(block: BufferedWriter.() -> T): T {
         return withContext(Dispatchers.IO) {
             writer.block().also {
@@ -55,6 +71,11 @@ open class LoggerBase(
         }
     }
 
+    /**
+     * Write error log.
+     *
+     * @param throwable Throwable.
+     */
     suspend fun logError(throwable: Throwable) {
         writeLog {
             write("# ERROR\n")
@@ -63,6 +84,9 @@ open class LoggerBase(
         }
     }
 
+    /**
+     * append horizontal line.
+     */
     protected fun BufferedWriter.appendHorizontalLine() {
         write(HORIZONTAL_LINE)
     }

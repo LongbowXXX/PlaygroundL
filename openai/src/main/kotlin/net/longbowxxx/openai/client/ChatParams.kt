@@ -67,6 +67,12 @@ fun ofFunctionCallAuto() = JsonPrimitive("auto")
 
 fun ofFunctionCallForce(name: String) = JsonObject(mapOf("name" to JsonPrimitive(name)))
 
+/**
+ * Chat function.
+ * @property name Function name.
+ * @property description Function description.
+ * @property parameters Function parameters.
+ */
 @Serializable
 data class OpenAiChatFunction(
     val name: String,
@@ -74,8 +80,16 @@ data class OpenAiChatFunction(
     val parameters: OpenAiChatParameter,
 )
 
+/**
+ * Chat function's parameter.
+ */
 @Serializable
 sealed class OpenAiChatParameter {
+    /**
+     * Chat function's parameter object.
+     * @property properties Properties.
+     * @property required Required properties.
+     */
     @Serializable
     @SerialName("object")
     data class OpenAiChatParameterObject(
@@ -84,6 +98,13 @@ sealed class OpenAiChatParameter {
     ) : OpenAiChatParameter()
 }
 
+/**
+ * Chat parameter's property.
+ * @property type Property type.
+ * @property description Property description.
+ * @property enum Enum.
+ * @property items Items.
+ */
 @Serializable
 data class OpenAiChatProperty(
     val type: String,
@@ -99,6 +120,13 @@ data class OpenAiChatProperty(
     }
 }
 
+/**
+ * Chat message.
+ * @property role Role.
+ * @property content Content.
+ * @property functionCall Function call.
+ * @property name Name.
+ */
 @Serializable
 data class OpenAiChatMessage(
     val role: OpenAiChatRoleTypes,
@@ -113,14 +141,27 @@ data class OpenAiChatMessage(
         }
 }
 
+/**
+ * Update message's content.
+ * @param newContent New content.
+ * @return Updated message.
+ */
 fun OpenAiChatMessage.updateContent(newContent: String?) = OpenAiChatMessage(role, newContent, functionCall, name)
 
+/**
+ * Function call message.
+ * @property name Function name.
+ * @property arguments Function arguments.
+ */
 @Serializable
 data class OpenAiChatFunctionCallMessage(
     val name: String,
     val arguments: String,
 )
 
+/**
+ * Chat role types.
+ */
 @Serializable
 enum class OpenAiChatRoleTypes {
     @SerialName("system")
@@ -136,6 +177,14 @@ enum class OpenAiChatRoleTypes {
     FUNCTION,
 }
 
+/**
+ * Chat stream response.
+ * @property id ID.
+ * @property object Object.
+ * @property created Created.
+ * @property model Model.
+ * @property choices Choices.
+ */
 @Serializable
 data class OpenAiChatStreamResponse(
     val id: String,
@@ -145,6 +194,12 @@ data class OpenAiChatStreamResponse(
     val choices: List<OpenAiChatStreamChoice>,
 )
 
+/**
+ * Chat stream choice.
+ * @property delta Delta.
+ * @property index Index.
+ * @property finishReason Finish reason.
+ */
 @Serializable
 data class OpenAiChatStreamChoice(
     val delta: OpenAiChatStreamDelta,
@@ -153,6 +208,12 @@ data class OpenAiChatStreamChoice(
     val finishReason: String? = null,
 )
 
+/**
+ * Chat stream delta.
+ * @property role Role.
+ * @property content Content.
+ * @property functionCall Function call.
+ */
 @Serializable
 data class OpenAiChatStreamDelta(
     val role: OpenAiChatRoleTypes? = null,
@@ -161,6 +222,11 @@ data class OpenAiChatStreamDelta(
     val functionCall: OpenAiChatFunctionCallMessageDelta? = null,
 )
 
+/**
+ * Chat stream delta's function call.
+ * @property name Function name.
+ * @property arguments Function arguments.
+ */
 @Serializable
 data class OpenAiChatFunctionCallMessageDelta(
     val name: String? = null,

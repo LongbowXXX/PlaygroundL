@@ -17,6 +17,11 @@ import net.longbowxxx.playground.utils.DebugLoggable
 import net.longbowxxx.playground.utils.logError
 import net.longbowxxx.playground.utils.logTrace
 
+/**
+ * Chat function plugin base class.
+ *
+ * @see OpenAiChatFunction
+ */
 abstract class ChatFunctionPlugin : DebugLoggable {
     companion object {
         const val SUCCESS = "success"
@@ -38,6 +43,9 @@ abstract class ChatFunctionPlugin : DebugLoggable {
         return decodeJson.decodeFromString<T>(this)
     }
 
+    /**
+     * Function spec.
+     */
     abstract val functionSpec: OpenAiChatFunction
 
     suspend fun execute(arguments: String): String {

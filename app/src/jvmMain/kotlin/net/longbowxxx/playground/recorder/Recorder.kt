@@ -23,6 +23,9 @@ import javax.sound.sampled.DataLine
 import javax.sound.sampled.TargetDataLine
 import kotlin.math.abs
 
+/**
+ * Audio recorder.
+ */
 class Recorder {
     companion object {
         private const val DEFAULT_RECORD_MAX_DURATION_MILLIS = 60_000L
@@ -46,6 +49,13 @@ class Recorder {
 
     private val stopRequested = AtomicBoolean(false)
 
+    /**
+     * Record audio.
+     *
+     * @param maxDurationMillis Maximum recording time in milliseconds.
+     * @param silenceThresholdMillis Silence threshold in milliseconds.
+     * @return Recorded audio data.
+     */
     suspend fun recordAudio(
         maxDurationMillis: Long = DEFAULT_RECORD_MAX_DURATION_MILLIS,
         silenceThresholdMillis: Long = DEFAULT_SILENCE_DURATION_THRESHOLD_MILLIS,
@@ -110,6 +120,9 @@ class Recorder {
         }
     }
 
+    /**
+     * Stop recording.
+     */
     fun stopRecord() {
         stopRequested.set(true)
     }

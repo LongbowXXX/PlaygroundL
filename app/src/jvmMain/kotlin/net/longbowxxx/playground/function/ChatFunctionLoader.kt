@@ -12,6 +12,9 @@ import net.longbowxxx.playground.utils.appDataDirectory
 import net.longbowxxx.playground.utils.logInfo
 import java.io.File
 
+/**
+ * Chat function loader.
+ */
 class ChatFunctionLoader : DebugLoggable {
     private val nativePlugins =
         listOf(
@@ -23,6 +26,11 @@ class ChatFunctionLoader : DebugLoggable {
             ReadWebPlugin(),
         )
 
+    /**
+     * Load plugins from directory.
+     *
+     * @param directory Plugin directory.
+     */
     fun loadPlugins(directory: File): List<ChatFunctionPlugin> {
         val allPlugins =
             directory.walkTopDown().filter {

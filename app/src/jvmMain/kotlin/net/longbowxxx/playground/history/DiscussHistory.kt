@@ -23,6 +23,14 @@ import org.mongodb.kbson.BsonObjectId
 import org.mongodb.kbson.ObjectId
 import java.io.File
 
+/**
+ * Manage chat history with Realm.
+ *
+ * @constructor
+ * @param appDataDir Application data directory.
+ * @param dbFileDir Directory name to save Realm file.
+ * @param dbFileName Realm file name.
+ */
 class DiscussHistory(appDataDir: File, dbFileDir: String = DB_DIR, dbFileName: String = DB_FILE_NAME) :
     RealmBase(appDataDir) {
     companion object {

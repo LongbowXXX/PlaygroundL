@@ -24,6 +24,8 @@ import net.longbowxxx.playground.utils.log
 
 /**
  * Update chat session title.
+ * @param messages Messages.
+ * @param session Session.
  */
 suspend fun updateChatSessionTitle(
     messages: List<OpenAiChatMessage>,
@@ -96,6 +98,8 @@ suspend fun updateChatSessionTitle(
 
 /**
  * Update discuss session title.
+ * @param messages Messages.
+ * @param session Session.
  */
 suspend fun updateDiscussSessionTitle(
     messages: List<DiscussMessage>,

@@ -10,10 +10,16 @@ package net.longbowxxx.playground.utils
 import java.io.PrintStream
 
 /**
- * Markers for using the Debug log function.
+ * Debug loggable interface.
  */
 interface DebugLoggable
 
+/**
+ * Log message with trace level.
+ *
+ * @param throwable Throwable.
+ * @param lazyMessage Log message.
+ */
 fun DebugLoggable.logTrace(
     throwable: Throwable? = null,
     lazyMessage: () -> String,
@@ -21,6 +27,12 @@ fun DebugLoggable.logTrace(
     log(DebugLogLevel.TRACE, this.javaClass.simpleName, throwable, lazyMessage)
 }
 
+/**
+ * Log message with debug level.
+ *
+ * @param throwable Throwable.
+ * @param lazyMessage Log message.
+ */
 fun DebugLoggable.logDebug(
     throwable: Throwable? = null,
     lazyMessage: () -> String,
@@ -28,6 +40,12 @@ fun DebugLoggable.logDebug(
     log(DebugLogLevel.DEBUG, this.javaClass.simpleName, throwable, lazyMessage)
 }
 
+/**
+ * Log message with info level.
+ *
+ * @param throwable Throwable.
+ * @param lazyMessage Log message.
+ */
 fun DebugLoggable.logInfo(
     throwable: Throwable? = null,
     lazyMessage: () -> String,
@@ -35,6 +53,12 @@ fun DebugLoggable.logInfo(
     log(DebugLogLevel.INFO, this.javaClass.simpleName, throwable, lazyMessage)
 }
 
+/**
+ * Log message with warn level.
+ *
+ * @param throwable Throwable.
+ * @param lazyMessage Log message.
+ */
 fun DebugLoggable.logWarn(
     throwable: Throwable? = null,
     lazyMessage: () -> String,
@@ -42,6 +66,12 @@ fun DebugLoggable.logWarn(
     log(DebugLogLevel.WARN, this.javaClass.simpleName, throwable, lazyMessage)
 }
 
+/**
+ * Log message with error level.
+ *
+ * @param throwable Throwable.
+ * @param lazyMessage Log message.
+ */
 fun DebugLoggable.logError(
     throwable: Throwable? = null,
     lazyMessage: () -> String,
@@ -49,10 +79,24 @@ fun DebugLoggable.logError(
     log(DebugLogLevel.ERROR, this.javaClass.simpleName, throwable, lazyMessage)
 }
 
+/**
+ * Debug log output level.
+ */
 var debugLogOutputLevel: DebugLogLevel = DebugLogLevel.TRACE
+
+/**
+ * Debug log output stream.
+ */
 var debugLogOut: PrintStream? = System.out
+
+/**
+ * Debug log error output stream.
+ */
 var debugLogErrorOut: PrintStream? = System.err
 
+/**
+ * Debug log level.
+ */
 enum class DebugLogLevel {
     TRACE,
     DEBUG,
@@ -61,6 +105,14 @@ enum class DebugLogLevel {
     ERROR,
 }
 
+/**
+ * Log message.
+ *
+ * @param level Log level.
+ * @param component Log component.
+ * @param throwable Throwable.
+ * @param lazyMessage Log message.
+ */
 fun log(
     level: DebugLogLevel,
     component: String,

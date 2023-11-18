@@ -26,7 +26,14 @@ import java.io.Closeable
 import java.io.File
 import kotlin.reflect.KClass
 
+/**
+ * Realm base class.
+ *
+ * @constructor Create Realm base class.
+ * @param appDataDir Application data directory to save Realm file.
+ */
 abstract class RealmBase(private val appDataDir: File) : Closeable, CoroutineScope, DebugLoggable {
+    // Realm is not thread safe, so use single thread context
     @OptIn(DelicateCoroutinesApi::class, ExperimentalCoroutinesApi::class)
     private val dispatcher = newSingleThreadContext("sqlite-thread")
     private val job = Job()
@@ -39,6 +46,12 @@ abstract class RealmBase(private val appDataDir: File) : Closeable, CoroutineSco
     protected abstract val schemeVersion: Long
     protected abstract val migration: RealmMigration
 
+    /**
+     * Read from Realm.
+     *
+     * @param block Realm read block.
+     * @return R Realm read result.
+     */
     protected suspend fun <R> readFromRealm(block: Realm.() -> R): R {
         return withContext(coroutineContext) {
             val realmInstance = realm ?: openRealm().also { realm = it }
@@ -46,6 +59,12 @@ abstract class RealmBase(private val appDataDir: File) : Closeable, CoroutineSco
         }
     }
 
+    /**
+     * Write to Realm.
+     *
+     * @param block Realm write block.
+     * @return R Realm write result.
+     */
     protected suspend fun <R> writeToRealm(block: MutableRealm.() -> R): R {
         return withContext(coroutineContext) {
             val realmInstance = realm ?: openRealm().also { realm = it }

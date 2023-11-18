@@ -15,6 +15,12 @@ import javax.crypto.spec.SecretKeySpec
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
+/**
+ * Preference base class.
+ *
+ * @constructor Create preference base class.
+ * @param appDataDir Application data directory.
+ */
 @OptIn(ExperimentalEncodingApi::class)
 abstract class PreferenceBase(
     private val appDataDir: File,
@@ -23,8 +29,16 @@ abstract class PreferenceBase(
     protected abstract val fileName: String
     protected abstract val fileComment: String
 
+    /**
+     * Load preference.
+     */
     abstract fun load()
 
+    /**
+     * Load preference with block.
+     *
+     * @param block Block to load preference.
+     */
     protected fun loadInternal(block: Properties.() -> Unit) {
         runCatching {
             val file = File(appDataDir, fileName)
@@ -37,8 +51,16 @@ abstract class PreferenceBase(
         }
     }
 
+    /**
+     * Save preference.
+     */
     abstract fun save()
 
+    /**
+     * Save preference with block.
+     *
+     * @param block Block to save preference.
+     */
     protected fun saveInternal(block: Properties.() -> Unit) {
         properties.block()
         val file = File(appDataDir, fileName)
@@ -47,6 +69,12 @@ abstract class PreferenceBase(
         }
     }
 
+    /**
+     * Get float property.
+     *
+     * @param key Property key.
+     * @param defaultValue Default value.
+     */
     protected fun Properties.getFloatProperty(
         key: String,
         defaultValue: Float,
@@ -58,6 +86,12 @@ abstract class PreferenceBase(
         }
     }
 
+    /**
+     * Get int property.
+     *
+     * @param key Property key.
+     * @param defaultValue Default value.
+     */
     protected fun Properties.getIntProperty(
         key: String,
         defaultValue: Int,
@@ -69,6 +103,12 @@ abstract class PreferenceBase(
         }
     }
 
+    /**
+     * Get secret property.
+     *
+     * @param key Property key.
+     * @param defaultValue Default value.
+     */
     @Suppress("SameParameterValue")
     protected fun Properties.getOrDefaultSecretProperty(
         key: String,
@@ -86,6 +126,12 @@ abstract class PreferenceBase(
         }
     }
 
+    /**
+     * Set secret property.
+     *
+     * @param key Property key.
+     * @param value Property value.
+     */
     @Suppress("SameParameterValue")
     protected fun Properties.setSecretProperty(
         key: String,

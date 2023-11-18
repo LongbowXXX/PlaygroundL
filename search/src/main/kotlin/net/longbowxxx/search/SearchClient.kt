@@ -7,6 +7,9 @@
 
 package net.longbowxxx.search
 
+/**
+ * Search client.
+ */
 interface SearchClient {
     companion object {
         operator fun invoke(settings: GoogleCustomSearchClientSettings): GoogleCustomSearchClient {
@@ -14,5 +17,11 @@ interface SearchClient {
         }
     }
 
+    /**
+     * Search.
+     *
+     * @param request Request parameters.
+     * @return Response.
+     */
     suspend fun search(request: SearchRequest): SearchResponse
 }
