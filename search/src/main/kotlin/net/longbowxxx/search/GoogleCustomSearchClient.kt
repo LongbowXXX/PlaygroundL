@@ -13,9 +13,21 @@ import com.google.api.services.customsearch.v1.CustomSearchAPI
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
+/**
+ * Google Custom Search client.
+ *
+ * @constructor
+ * @param settings Settings.
+ */
 class GoogleCustomSearchClient(
     private val settings: GoogleCustomSearchClientSettings,
 ) : SearchClient {
+    /**
+     * Search.
+     *
+     * @param request Request parameters.
+     * @return Response.
+     */
     override suspend fun search(request: SearchRequest): SearchResponse {
         return withContext(Dispatchers.IO) {
             logSearchRequest { "search() : request=$request" }
@@ -43,6 +55,12 @@ class GoogleCustomSearchClient(
     }
 }
 
+/**
+ * Google Custom Search client settings.
+ *
+ * @property apiKey API key.
+ * @property cx Custom search engine ID.
+ */
 data class GoogleCustomSearchClientSettings(
     val apiKey: String,
     val cx: String,

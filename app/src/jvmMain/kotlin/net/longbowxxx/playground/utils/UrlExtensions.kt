@@ -10,6 +10,11 @@ package net.longbowxxx.playground.utils
 import java.io.File
 import java.net.URL
 
+/**
+ * Copy URL to file.
+ *
+ * @param outFile Output file.
+ */
 fun URL.copyTo(outFile: File) {
     openStream().use { input ->
         outFile.outputStream().use { output ->
@@ -18,6 +23,11 @@ fun URL.copyTo(outFile: File) {
     }
 }
 
+/**
+ * Convert string to URL.
+ *
+ * @return URL.
+ */
 fun String.toURL(): URL {
     return URL(this)
 }

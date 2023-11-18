@@ -7,6 +7,9 @@
 
 package net.longbowxxx.generativeai
 
+/**
+ * Generative AI client.
+ */
 interface GenerativeAiClient {
     companion object {
         operator fun invoke(settings: GenerativeAiSettings): GenerativeAiClient {
@@ -14,9 +17,20 @@ interface GenerativeAiClient {
         }
     }
 
+    /**
+     * Request discuss.
+     *
+     * @param discussRequest Request parameters.
+     * @return Response.
+     */
     suspend fun requestDiscuss(discussRequest: DiscussRequest): DiscussResponse
 }
 
+/**
+ * Generative AI client settings.
+ *
+ * @property apiKey API key.
+ */
 data class GenerativeAiSettings(
     val apiKey: String,
 )

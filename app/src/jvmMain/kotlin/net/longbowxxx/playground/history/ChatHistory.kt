@@ -24,6 +24,14 @@ import net.longbowxxx.playground.utils.logInfo
 import org.mongodb.kbson.ObjectId
 import java.io.File
 
+/**
+ * Manage chat history with Realm.
+ *
+ * @constructor Create chat history.
+ * @param appDataDir Application data directory.
+ * @param dbFileDir Directory name to save Realm file.
+ * @param dbFileName Realm file name.
+ */
 class ChatHistory(appDataDir: File, dbFileDir: String = DB_DIR, dbFileName: String = DB_FILE_NAME) :
     RealmBase(appDataDir) {
     companion object {
@@ -41,7 +49,7 @@ class ChatHistory(appDataDir: File, dbFileDir: String = DB_DIR, dbFileName: Stri
 
     class ChatMigration : AutomaticSchemaMigration, DebugLoggable {
         override fun migrate(migrationContext: AutomaticSchemaMigration.MigrationContext) {
-            // schemaのバージョンが上がったら、マイグレーションコードを実装すること
+            // if schema version is updated, implement migration code
             logInfo { "migrate() migrationContext=$migrationContext" }
         }
     }
@@ -69,7 +77,7 @@ class ChatHistory(appDataDir: File, dbFileDir: String = DB_DIR, dbFileName: Stri
     }
 
     suspend fun saveSession(session: ChatHistorySession) {
-        // 一度も対話していないものは記録しない
+        // if there is no message from assistant, do not save
         val hasAssistantMessage = session.messages.any { it.role == OpenAiChatRoleTypes.ASSISTANT }
         if (!hasAssistantMessage) {
             return
