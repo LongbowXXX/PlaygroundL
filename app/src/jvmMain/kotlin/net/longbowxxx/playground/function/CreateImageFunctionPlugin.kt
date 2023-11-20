@@ -15,6 +15,7 @@ import net.longbowxxx.openai.client.OpenAiChatProperty
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiCreateImageRequest
 import net.longbowxxx.openai.client.OpenAiSettings
+import net.longbowxxx.openai.client.function.ChatFunctionPlugin
 import net.longbowxxx.playground.viewmodel.appProperties
 import net.longbowxxx.utils.copyTo
 import net.longbowxxx.utils.randomShortId

@@ -13,6 +13,7 @@ import kotlinx.serialization.Serializable
 import net.longbowxxx.openai.client.OpenAiChatFunction
 import net.longbowxxx.openai.client.OpenAiChatParameter
 import net.longbowxxx.openai.client.OpenAiChatProperty
+import net.longbowxxx.openai.client.function.ChatFunctionPlugin
 import org.jsoup.Jsoup
 import java.net.HttpURLConnection
 import java.net.URL

@@ -15,7 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.asComposeImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
-import net.longbowxxx.playground.function.ChatFunctionPlugin
+import net.longbowxxx.openai.client.function.ChatFunctionPlugin
 import net.longbowxxx.playground.function.ShowImageResponse
 import net.longbowxxx.utils.toURL
 import org.jetbrains.skiko.toBitmap

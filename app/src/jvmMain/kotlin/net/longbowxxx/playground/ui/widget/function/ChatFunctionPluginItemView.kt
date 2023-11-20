@@ -10,7 +10,7 @@ package net.longbowxxx.playground.ui.widget.function
 import androidx.compose.runtime.Composable
 import kotlinx.serialization.json.Json
 import net.longbowxxx.openai.client.OpenAiChatFunction
-import net.longbowxxx.playground.function.ChatFunctionPlugin
+import net.longbowxxx.openai.client.function.ChatFunctionPlugin
 import net.longbowxxx.utils.DebugLoggable
 import net.longbowxxx.utils.logError
 

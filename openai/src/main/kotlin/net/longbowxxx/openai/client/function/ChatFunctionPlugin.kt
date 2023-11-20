@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.function
+package net.longbowxxx.openai.client.function
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString

@@ -12,6 +12,8 @@ repositories {
 }
 
 dependencies {
+    implementation(project(":utils"))
+
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlinx.coroutine.core.version")}")
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${property("kotlinx.serialization.version")}")
     implementation("com.squareup.okhttp3:okhttp:${property("okhttp3.version")}")

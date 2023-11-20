@@ -7,7 +7,7 @@
 
 package net.longbowxxx.playground.ui.widget.function
 
-import net.longbowxxx.playground.function.ChatFunctionPlugin
+import net.longbowxxx.openai.client.function.ChatFunctionPlugin
 import net.longbowxxx.playground.function.ShowImagePlugin
 import net.longbowxxx.playground.viewmodel.chatViewModel
 

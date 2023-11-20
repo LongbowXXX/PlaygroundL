@@ -7,6 +7,7 @@
 
 package net.longbowxxx.playground.function
 
+import net.longbowxxx.openai.client.function.ChatFunctionPlugin
 import net.longbowxxx.utils.DebugLoggable
 import net.longbowxxx.utils.logInfo
 import java.io.File

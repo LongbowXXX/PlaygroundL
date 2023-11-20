@@ -14,6 +14,7 @@ import kotlinx.serialization.Serializable
 import net.longbowxxx.openai.client.OpenAiChatFunction
 import net.longbowxxx.openai.client.OpenAiChatParameter
 import net.longbowxxx.openai.client.OpenAiChatProperty
+import net.longbowxxx.openai.client.function.ChatFunctionPlugin
 
 class ShowImagePlugin : ChatFunctionPlugin() {
     override val functionSpec: OpenAiChatFunction

@@ -32,11 +32,11 @@ import net.longbowxxx.openai.client.OpenAiChatStreamDelta
 import net.longbowxxx.openai.client.OpenAiChatStreamResponse
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
+import net.longbowxxx.openai.client.function.ChatFunctionPlugin
 import net.longbowxxx.openai.client.isFunctionAvailable
 import net.longbowxxx.openai.client.updateContent
 import net.longbowxxx.playground.appDataDirectory
 import net.longbowxxx.playground.function.ChatFunctionLoader
-import net.longbowxxx.playground.function.ChatFunctionPlugin
 import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.logger.ChatLogger
 import java.io.Closeable

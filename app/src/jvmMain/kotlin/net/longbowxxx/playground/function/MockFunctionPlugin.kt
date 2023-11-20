@@ -9,6 +9,7 @@ package net.longbowxxx.playground.function
 
 import kotlinx.serialization.json.Json
 import net.longbowxxx.openai.client.OpenAiChatFunction
+import net.longbowxxx.openai.client.function.ChatFunctionPlugin
 import java.io.File
 
 /**

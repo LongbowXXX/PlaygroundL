@@ -76,6 +76,8 @@ subprojects {
             "**.kts",
             "!**/build/**",
         )
+
+        dependsOn("ktlintFormat")
     }
 
     afterEvaluate {
