@@ -17,8 +17,8 @@ import io.realm.kotlin.types.RealmObject
 import io.realm.kotlin.types.annotations.Index
 import io.realm.kotlin.types.annotations.PrimaryKey
 import net.longbowxxx.generativeai.DiscussMessage
-import net.longbowxxx.playground.utils.DebugLoggable
-import net.longbowxxx.playground.utils.logInfo
+import net.longbowxxx.utils.DebugLoggable
+import net.longbowxxx.utils.logInfo
 import org.mongodb.kbson.BsonObjectId
 import org.mongodb.kbson.ObjectId
 import java.io.File

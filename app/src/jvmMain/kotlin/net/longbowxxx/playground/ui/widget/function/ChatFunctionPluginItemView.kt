@@ -11,8 +11,8 @@ import androidx.compose.runtime.Composable
 import kotlinx.serialization.json.Json
 import net.longbowxxx.openai.client.OpenAiChatFunction
 import net.longbowxxx.playground.function.ChatFunctionPlugin
-import net.longbowxxx.playground.utils.DebugLoggable
-import net.longbowxxx.playground.utils.logError
+import net.longbowxxx.utils.DebugLoggable
+import net.longbowxxx.utils.logError
 
 abstract class ChatFunctionPluginItemView(
     parent: ChatFunctionPlugin,

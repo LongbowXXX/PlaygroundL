@@ -7,13 +7,13 @@
 
 package net.longbowxxx.playground.viewmodel
 
+import net.longbowxxx.playground.appDataDirectory
 import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.history.DiscussHistory
 import net.longbowxxx.playground.preference.ChatPreference
 import net.longbowxxx.playground.preference.DiscussPreference
 import net.longbowxxx.playground.preference.ImagePreference
 import net.longbowxxx.playground.preference.PlaygroundPreference
-import net.longbowxxx.playground.utils.appDataDirectory
 
 /**
  * Application properties.

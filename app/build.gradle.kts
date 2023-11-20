@@ -30,6 +30,7 @@ kotlin {
                 implementation(project(":openai"))
                 implementation(project(":generativeai"))
                 implementation(project(":search"))
+                implementation(project(":utils"))
                 implementation("org.jetbrains.compose.material3:material3-desktop:${property("compose.version")}")
                 implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${property("kotlinx.coroutine.core.version")}")
                 implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:${property("kotlinx.serialization.version")}")

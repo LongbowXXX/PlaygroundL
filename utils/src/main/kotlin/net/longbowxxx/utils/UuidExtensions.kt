@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.utils
+package net.longbowxxx.utils
 
 import java.util.UUID
 

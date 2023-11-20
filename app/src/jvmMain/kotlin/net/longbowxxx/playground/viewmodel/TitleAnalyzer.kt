@@ -19,8 +19,8 @@ import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiSettings
 import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.history.DiscussHistory
-import net.longbowxxx.playground.utils.DebugLogLevel
-import net.longbowxxx.playground.utils.log
+import net.longbowxxx.utils.DebugLogLevel
+import net.longbowxxx.utils.log
 
 /**
  * Update chat session title.

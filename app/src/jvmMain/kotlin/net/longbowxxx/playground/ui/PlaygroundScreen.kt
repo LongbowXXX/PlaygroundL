@@ -48,10 +48,10 @@ import net.longbowxxx.playground.ui.widget.DISCUSS_TAB
 import net.longbowxxx.playground.ui.widget.IMAGE_TAB
 import net.longbowxxx.playground.ui.widget.SETTING_TAB
 import net.longbowxxx.playground.ui.widget.toTabName
-import net.longbowxxx.playground.utils.DebugLogLevel
-import net.longbowxxx.playground.utils.log
 import net.longbowxxx.playground.viewmodel.appProperties
 import net.longbowxxx.playground.viewmodel.closeViewModelAndProperties
+import net.longbowxxx.utils.DebugLogLevel
+import net.longbowxxx.utils.log
 import kotlin.math.roundToInt
 
 private const val TITLE_TEXT = "PLAYGROUND"

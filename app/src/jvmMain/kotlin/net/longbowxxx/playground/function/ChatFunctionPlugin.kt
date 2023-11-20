@@ -11,9 +11,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import net.longbowxxx.openai.client.OpenAiChatFunction
-import net.longbowxxx.playground.utils.DebugLoggable
-import net.longbowxxx.playground.utils.logError
-import net.longbowxxx.playground.utils.logTrace
+import net.longbowxxx.utils.DebugLoggable
+import net.longbowxxx.utils.logError
+import net.longbowxxx.utils.logTrace
 
 /**
  * Chat function plugin base class.

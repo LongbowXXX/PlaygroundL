@@ -15,10 +15,10 @@ import net.longbowxxx.openai.client.OpenAiChatProperty
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiCreateImageRequest
 import net.longbowxxx.openai.client.OpenAiSettings
-import net.longbowxxx.playground.utils.copyTo
-import net.longbowxxx.playground.utils.randomShortId
-import net.longbowxxx.playground.utils.toURL
 import net.longbowxxx.playground.viewmodel.appProperties
+import net.longbowxxx.utils.copyTo
+import net.longbowxxx.utils.randomShortId
+import net.longbowxxx.utils.toURL
 import java.io.File
 
 class CreateImageFunctionPlugin(private val appDataDir: File) : ChatFunctionPlugin() {

@@ -14,8 +14,8 @@ import kotlinx.serialization.Serializable
 import net.longbowxxx.openai.client.OpenAiChatFunction
 import net.longbowxxx.openai.client.OpenAiChatParameter
 import net.longbowxxx.openai.client.OpenAiChatProperty
-import net.longbowxxx.playground.utils.logTrace
-import net.longbowxxx.playground.utils.randomShortId
+import net.longbowxxx.utils.logTrace
+import net.longbowxxx.utils.randomShortId
 import java.io.File
 
 class SaveStringToFileFunctionPlugin : ChatFunctionPlugin() {

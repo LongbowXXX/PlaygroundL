@@ -19,8 +19,8 @@ import io.realm.kotlin.types.annotations.PrimaryKey
 import net.longbowxxx.openai.client.OpenAiChatFunctionCallMessage
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
-import net.longbowxxx.playground.utils.DebugLoggable
-import net.longbowxxx.playground.utils.logInfo
+import net.longbowxxx.utils.DebugLoggable
+import net.longbowxxx.utils.logInfo
 import org.mongodb.kbson.ObjectId
 import java.io.File
 

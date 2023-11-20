@@ -26,9 +26,9 @@ import net.longbowxxx.openai.client.OpenAiCreateImageRequest
 import net.longbowxxx.openai.client.OpenAiEditImageRequest
 import net.longbowxxx.openai.client.OpenAiImageVariationRequest
 import net.longbowxxx.openai.client.OpenAiSettings
+import net.longbowxxx.playground.appDataDirectory
 import net.longbowxxx.playground.logger.ImageLogger
-import net.longbowxxx.playground.utils.appDataDirectory
-import net.longbowxxx.playground.utils.toURL
+import net.longbowxxx.utils.toURL
 import org.jetbrains.skia.Bitmap
 import org.jetbrains.skiko.toBitmap
 import java.awt.image.BufferedImage

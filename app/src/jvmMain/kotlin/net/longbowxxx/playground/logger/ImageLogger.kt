@@ -10,7 +10,7 @@ package net.longbowxxx.playground.logger
 import net.longbowxxx.openai.client.OpenAiCreateImageRequest
 import net.longbowxxx.openai.client.OpenAiEditImageRequest
 import net.longbowxxx.openai.client.OpenAiImageVariationRequest
-import net.longbowxxx.playground.utils.copyTo
+import net.longbowxxx.utils.copyTo
 import java.awt.image.BufferedImage
 import java.io.File
 import java.net.URL

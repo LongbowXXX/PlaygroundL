@@ -17,7 +17,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import net.longbowxxx.playground.function.ChatFunctionPlugin
 import net.longbowxxx.playground.function.ShowImageResponse
-import net.longbowxxx.playground.utils.toURL
+import net.longbowxxx.utils.toURL
 import org.jetbrains.skiko.toBitmap
 import java.io.File
 import javax.imageio.ImageIO

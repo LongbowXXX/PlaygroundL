@@ -7,8 +7,8 @@
 
 package net.longbowxxx.playground.function
 
-import net.longbowxxx.playground.utils.DebugLoggable
-import net.longbowxxx.playground.utils.logInfo
+import net.longbowxxx.utils.DebugLoggable
+import net.longbowxxx.utils.logInfo
 import java.io.File
 
 /**

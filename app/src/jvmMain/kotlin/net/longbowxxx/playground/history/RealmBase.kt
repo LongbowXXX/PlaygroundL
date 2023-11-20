@@ -20,8 +20,8 @@ import kotlinx.coroutines.cancelAndJoin
 import kotlinx.coroutines.newSingleThreadContext
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
-import net.longbowxxx.playground.utils.DebugLoggable
-import net.longbowxxx.playground.utils.logTrace
+import net.longbowxxx.utils.DebugLoggable
+import net.longbowxxx.utils.logTrace
 import java.io.Closeable
 import java.io.File
 import kotlin.reflect.KClass

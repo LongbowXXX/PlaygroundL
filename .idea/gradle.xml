@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/generativeai" />
             <option value="$PROJECT_DIR$/openai" />
             <option value="$PROJECT_DIR$/search" />
+            <option value="$PROJECT_DIR$/utils" />
           </set>
         </option>
       </GradleProjectSettings>

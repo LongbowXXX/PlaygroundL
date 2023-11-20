@@ -23,10 +23,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import net.longbowxxx.playground.appDataDirectory
 import net.longbowxxx.playground.ui.appLogo
-import net.longbowxxx.playground.utils.DebugLogLevel
-import net.longbowxxx.playground.utils.appDataDirectory
-import net.longbowxxx.playground.utils.log
+import net.longbowxxx.utils.DebugLogLevel
+import net.longbowxxx.utils.log
 import java.awt.Desktop
 
 private const val APP_CATEGORY_TEXT = "APP SETTINGS"

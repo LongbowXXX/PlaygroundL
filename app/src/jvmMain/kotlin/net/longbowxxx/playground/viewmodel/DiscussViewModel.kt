@@ -21,9 +21,9 @@ import net.longbowxxx.generativeai.DiscussPrompt
 import net.longbowxxx.generativeai.DiscussRequest
 import net.longbowxxx.generativeai.GenerativeAiClient
 import net.longbowxxx.generativeai.GenerativeAiSettings
+import net.longbowxxx.playground.appDataDirectory
 import net.longbowxxx.playground.history.DiscussHistory
 import net.longbowxxx.playground.logger.DiscussLogger
-import net.longbowxxx.playground.utils.appDataDirectory
 import java.io.Closeable
 import java.io.File
 import kotlin.coroutines.CoroutineContext
