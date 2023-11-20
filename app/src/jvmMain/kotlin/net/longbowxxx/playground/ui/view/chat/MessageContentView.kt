@@ -25,6 +25,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
+import net.longbowxxx.playground.ui.widget.function.chatFunctionPluginItemViews
 import net.longbowxxx.playground.viewmodel.appProperties
 import net.longbowxxx.playground.viewmodel.chatViewModel
 import java.awt.event.KeyEvent
@@ -71,8 +72,8 @@ fun MessageContentView(
 
     val content = message.content
     if (message.role == OpenAiChatRoleTypes.FUNCTION && !content.isNullOrEmpty()) {
-        chatViewModel.allFunctions.value.firstOrNull {
-            it.first.functionSpec.name == message.name
-        }?.first?.FunctionView(content)
+        chatFunctionPluginItemViews.firstOrNull {
+            it.functionSpec.name == message.name
+        }?.FunctionView(content)
     }
 }

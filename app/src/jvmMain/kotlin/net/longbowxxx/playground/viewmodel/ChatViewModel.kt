@@ -84,7 +84,7 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             }.toList()
         }
 
-    private val functionLoader = ChatFunctionLoader()
+    private val functionLoader = ChatFunctionLoader(appDataDirectory)
     val allFunctions = mutableStateOf(functionLoader.loadPlugins(File("chatFunction")).map { it to false })
     private val activeFunctions: List<ChatFunctionPlugin>
         get() {

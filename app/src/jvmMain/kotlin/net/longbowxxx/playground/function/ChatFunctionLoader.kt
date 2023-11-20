@@ -8,18 +8,17 @@
 package net.longbowxxx.playground.function
 
 import net.longbowxxx.playground.utils.DebugLoggable
-import net.longbowxxx.playground.utils.appDataDirectory
 import net.longbowxxx.playground.utils.logInfo
 import java.io.File
 
 /**
  * Chat function loader.
  */
-class ChatFunctionLoader : DebugLoggable {
+class ChatFunctionLoader(appDataDir: File) : DebugLoggable {
     private val nativePlugins =
         listOf(
             SaveStringToFileFunctionPlugin(),
-            CreateImageFunctionPlugin(appDataDirectory),
+            CreateImageFunctionPlugin(appDataDir),
             ShowImagePlugin(),
             WebSearchPlugin(),
             ReadDataPlugin(),
@@ -38,9 +37,7 @@ class ChatFunctionLoader : DebugLoggable {
             }.mapNotNull { pluginDirectory ->
                 loadPlugin(pluginDirectory)
             }.toMutableList()
-        allPlugins.addAll(
-            nativePlugins,
-        )
+        allPlugins.addAll(nativePlugins)
         return allPlugins
     }
 
