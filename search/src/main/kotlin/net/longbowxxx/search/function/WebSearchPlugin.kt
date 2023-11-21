@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.function
+package net.longbowxxx.search.function
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -14,12 +14,11 @@ import net.longbowxxx.openai.client.OpenAiChatFunction
 import net.longbowxxx.openai.client.OpenAiChatParameter
 import net.longbowxxx.openai.client.OpenAiChatProperty
 import net.longbowxxx.openai.client.function.ChatFunctionPlugin
-import net.longbowxxx.playground.viewmodel.appProperties
 import net.longbowxxx.search.GoogleCustomSearchClientSettings
 import net.longbowxxx.search.SearchClient
 import net.longbowxxx.search.SearchRequest
 
-class WebSearchPlugin : ChatFunctionPlugin() {
+class WebSearchPlugin(private val settings: GoogleCustomSearchClientSettings) : ChatFunctionPlugin() {
     override val functionSpec: OpenAiChatFunction
         get() =
             OpenAiChatFunction(
@@ -38,12 +37,7 @@ class WebSearchPlugin : ChatFunctionPlugin() {
         val searchResult =
             withContext(Dispatchers.IO) {
                 val client =
-                    SearchClient(
-                        GoogleCustomSearchClientSettings(
-                            appProperties.googleApiKey,
-                            appProperties.googleCustomSearchCx,
-                        ),
-                    )
+                    SearchClient(settings)
                 client.search(SearchRequest(param.query))
             }
         return WebSearchResponse(

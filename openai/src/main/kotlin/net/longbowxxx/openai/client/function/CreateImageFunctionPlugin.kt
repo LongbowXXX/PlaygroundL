@@ -5,7 +5,7 @@
  * http://opensource.org/licenses/mit-license.php
  */
 
-package net.longbowxxx.playground.function
+package net.longbowxxx.openai.client.function
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -15,14 +15,15 @@ import net.longbowxxx.openai.client.OpenAiChatProperty
 import net.longbowxxx.openai.client.OpenAiClient
 import net.longbowxxx.openai.client.OpenAiCreateImageRequest
 import net.longbowxxx.openai.client.OpenAiSettings
-import net.longbowxxx.openai.client.function.ChatFunctionPlugin
-import net.longbowxxx.playground.viewmodel.appProperties
 import net.longbowxxx.utils.copyTo
 import net.longbowxxx.utils.randomShortId
 import net.longbowxxx.utils.toURL
 import java.io.File
 
-class CreateImageFunctionPlugin(private val appDataDir: File) : ChatFunctionPlugin() {
+class CreateImageFunctionPlugin(
+    private val appDataDir: File,
+    private val openAiSettings: OpenAiSettings,
+) : ChatFunctionPlugin() {
     override val functionSpec: OpenAiChatFunction
         get() =
             OpenAiChatFunction(
@@ -47,7 +48,7 @@ class CreateImageFunctionPlugin(private val appDataDir: File) : ChatFunctionPlug
 
     override suspend fun executeInternal(arguments: String): String {
         val imageArgs = arguments.toParams<CreateImageArgs>()
-        val client = OpenAiClient(OpenAiSettings(appProperties.apiKey))
+        val client = OpenAiClient(openAiSettings)
         val request =
             OpenAiCreateImageRequest.ofDallE3(
                 imageArgs.prompt,

@@ -39,6 +39,7 @@ import net.longbowxxx.playground.appDataDirectory
 import net.longbowxxx.playground.function.ChatFunctionLoader
 import net.longbowxxx.playground.history.ChatHistory
 import net.longbowxxx.playground.logger.ChatLogger
+import net.longbowxxx.search.GoogleCustomSearchClientSettings
 import java.io.Closeable
 import java.io.File
 import kotlin.coroutines.CoroutineContext
@@ -84,7 +85,15 @@ class ChatViewModel(dispatcher: CoroutineDispatcher = Dispatchers.Default) : Cor
             }.toList()
         }
 
-    private val functionLoader = ChatFunctionLoader(appDataDirectory)
+    private val functionLoader =
+        ChatFunctionLoader(
+            appDataDirectory,
+            OpenAiSettings(appProperties.apiKey),
+            GoogleCustomSearchClientSettings(
+                appProperties.googleApiKey,
+                appProperties.googleCustomSearchCx,
+            ),
+        )
     val allFunctions = mutableStateOf(functionLoader.loadPlugins(File("chatFunction")).map { it to false })
     private val activeFunctions: List<ChatFunctionPlugin>
         get() {
