@@ -11,9 +11,14 @@ import androidx.compose.ui.window.application
 import net.longbowxxx.playground.ui.PlaygroundWindow
 
 /**
- * It all starts here.
+ * The main entry point of the application.
+ * This function creates a new application and opens the PlaygroundWindow.
  */
 fun main() =
     application {
+        /**
+         * Creates a new PlaygroundWindow.
+         * PlaygroundWindow is a Compose window that contains the main UI of the application.
+         */
         PlaygroundWindow()
     }
