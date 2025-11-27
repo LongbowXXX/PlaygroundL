@@ -14,7 +14,7 @@ import java.io.File
 @Serializable
 data class OpenAiCreateImageRequest(
     val prompt: String,
-    val model: String = OPENAI_IMAGE_MODEL_DALL_E_2,
+    val model: String = OPENAI_IMAGE_MODEL_DALL_E_3,
     val n: Int = 1,
     val quality: String? = null,
     val size: OpenAiSizeTypes = OpenAiSizeTypes.SIZE_1024,

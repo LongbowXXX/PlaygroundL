@@ -13,7 +13,7 @@ import net.longbowxxx.openai.client.CHAT_MAX_TOKENS_DEFAULT
 import net.longbowxxx.openai.client.CHAT_PRESENCE_PENALTY_DEFAULT
 import net.longbowxxx.openai.client.CHAT_TEMPERATURE_DEFAULT
 import net.longbowxxx.openai.client.CHAT_TOP_P_DEFAULT
-import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO_0613
+import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_4_O
 import java.io.File
 
 class ChatPreference(appDataDir: File) : PreferenceBase(appDataDir) {
@@ -35,7 +35,7 @@ class ChatPreference(appDataDir: File) : PreferenceBase(appDataDir) {
     val chatPresencePenalty = mutableStateOf(CHAT_PRESENCE_PENALTY_DEFAULT)
     val chatFrequencyPenalty = mutableStateOf(CHAT_FREQUENCY_PENALTY_DEFAULT)
     val chatSystemPrompt = mutableStateOf("")
-    val chatModel = mutableStateOf(OPENAI_CHAT_MODEL_GPT_35_TURBO_0613)
+    val chatModel = mutableStateOf(OPENAI_CHAT_MODEL_GPT_4_O)
 
     override val fileName = FILE_NAME
     override val fileComment = FILE_COMMENT
@@ -50,12 +50,12 @@ class ChatPreference(appDataDir: File) : PreferenceBase(appDataDir) {
             chatFrequencyPenalty.value =
                 getFloatProperty(CHAT_REQUEST_FREQUENCY_PENALTY_KEY, CHAT_FREQUENCY_PENALTY_DEFAULT)
             chatSystemPrompt.value = getProperty(CHAT_SYSTEM_PROMPT_KEY, "")
-            chatModel.value = getProperty(CHAT_REQUEST_MODEL_KEY, OPENAI_CHAT_MODEL_GPT_35_TURBO_0613)
+            chatModel.value = getProperty(CHAT_REQUEST_MODEL_KEY, OPENAI_CHAT_MODEL_GPT_4_O)
         }
     }
 
     fun reset() {
-        chatModel.value = OPENAI_CHAT_MODEL_GPT_35_TURBO_0613
+        chatModel.value = OPENAI_CHAT_MODEL_GPT_4_O
         chatTemperature.value = CHAT_TEMPERATURE_DEFAULT
         chatTopP.value = CHAT_TOP_P_DEFAULT
         chatMaxTokens.value = CHAT_MAX_TOKENS_DEFAULT

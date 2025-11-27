@@ -8,10 +8,9 @@
 package net.longbowxxx.playground.viewmodel
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.json.Json
 import net.longbowxxx.generativeai.DiscussMessage
-import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_35_TURBO_0613
+import net.longbowxxx.openai.client.OPENAI_CHAT_MODEL_GPT_4_O
 import net.longbowxxx.openai.client.OpenAiChatMessage
 import net.longbowxxx.openai.client.OpenAiChatRequest
 import net.longbowxxx.openai.client.OpenAiChatRoleTypes
@@ -73,7 +72,7 @@ suspend fun updateChatSessionTitle(
             }
         val request =
             OpenAiChatRequest(
-                OPENAI_CHAT_MODEL_GPT_35_TURBO_0613,
+                OPENAI_CHAT_MODEL_GPT_4_O,
                 messages = requestMessages,
                 stream = true,
                 temperature = 0f,
@@ -147,7 +146,7 @@ suspend fun updateDiscussSessionTitle(
             }
         val request =
             OpenAiChatRequest(
-                OPENAI_CHAT_MODEL_GPT_35_TURBO_0613,
+                OPENAI_CHAT_MODEL_GPT_4_O,
                 messages = requestMessages,
                 stream = true,
                 temperature = 0f,
