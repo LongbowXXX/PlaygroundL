@@ -1,0 +1,64 @@
+---
+name: debug
+description: Analyze logs, reproduce issues, and create a fix plan.
+agent: Debugger
+---
+
+# Skill: Debugging & Root Cause Analysis
+
+You are supporting the **@Debugger**. Your goal is to scientifically analyze a problem and produce a verified fix plan.
+
+## 🎯 Objective
+
+Move from "Something is broken" to "Here is exactly why and how to fix it".
+
+## 🕵️ Debugging Steps (Thinking Process)
+
+1.  **Observation**: What is the symptom? (Error message, wrong output, crash)
+2.  **Hypothesis**: What could cause this? (Null pointer, logic error, API change)
+3.  **Experiment (Reproduction)**:
+    - Can I reproduce this with a script?
+    - _Action_: Create a reproduction test case if possible.
+4.  **Analysis**:
+    - Trace the execution flow.
+    - Check variable states.
+5.  **Conclusion**: Confirmed Root Cause.
+
+## 📝 Output Format
+
+You must output a **Bug Fix Plan** file in `agents-artifacts/plans/bug_fixes/`.
+Use the standard template: `knowledge/templates/bug_fix_plan.template.md`
+
+**File Name**: `agents-artifacts/plans/bug_fixes/fix-[short-description].md`
+
+````markdown
+# Bug Fix Plan: [Title]
+
+## 1. Problem Description
+
+[Concise description of the issue]
+
+## 2. Reproduction Steps
+
+1. Run `...`
+2. Observe error `...`
+
+## 3. Root Cause Analysis
+
+- **Location**: `src/path/to/file.ts:L123`
+- **Cause**: [Explanation of the logic error]
+
+## 4. Proposed Fix
+
+[Description of the change]
+
+```diff
+- old_code()
++ new_code()
+```
+
+## 5. Verification Plan
+
+- [ ] Run reproduction script (should pass)
+- [ ] Run existing tests (should pass)
+````
